@@ -233,9 +233,6 @@ public class CanMain {
 			//sendToMSSQL(DForSQL, connectionUrl, dType);
 			//DForSQL.stopListener();
 
-
-
-
 			/////////////////DEBUG PRINT UDP-Package/////////////////
 			System.out.println("udpLength: " + udpFrame.length);
 			for (int i = 0; i < udpFrame.length; i++) {
