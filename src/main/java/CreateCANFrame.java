@@ -3,7 +3,7 @@
  *
  */
 
-public class SendCan extends Thread{
+public class CreateCANFrame extends Thread{
 
 	private byte[] udpFrame= new byte[13];
 	private byte[] header = new byte[5];
@@ -26,7 +26,7 @@ public class SendCan extends Thread{
 	 * DEFAULT
 	 * Constructor
 	 */
-	public SendCan() {
+	public CreateCANFrame() {
 		udpFrame[0] = (byte) prio; //(cargoId >> 24);
 		udpFrame[1] = (byte) command;
 		udpFrame[2] = (byte) 15; // >> 8;//(uid >> 8);
@@ -38,7 +38,7 @@ public class SendCan extends Thread{
 	 * @param dataLength
 	 * Constructor
 	 */
-	public SendCan(int dataLength) {
+	public CreateCANFrame(int dataLength) {
 		udpFrame[0] = (byte) (uid >> 24);
 		udpFrame[1] = (byte) uid;
 		udpFrame[2] = (byte) 15; // >> 8;//(uid >> 8);

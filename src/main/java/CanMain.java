@@ -28,7 +28,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class CanMain {
 
 	private static DatagramSocket dms;
-	private static TestSend send;
+	private static CreateCANFrame send;
 	protected static int coaches;
 
 
@@ -46,7 +46,7 @@ public class CanMain {
         //DForAzure.start();
 
 		//uncomment to send Data
-		send = new TestSend();
+		send = new CreateCANFrame();
 		//uncomment to GET Data
 		//sendCanToCS3(ipAdress, connectionUrl, dType);
 
@@ -70,7 +70,7 @@ public class CanMain {
 		char dlc = 5;
 		int[] testFrame = new int[13];
 
-		TestSend send = new TestSend();
+		CreateCANFrame send = new CreateCANFrame();
 		udpFrame = send.setOil();
 
 
@@ -182,7 +182,7 @@ public class CanMain {
 	 ***************************************************************************************/
 	public static void sendCanToCS3 (String ipAdress, String connectionUrl, String dType) throws IOException, InterruptedException {
 		InetAddress addresse = InetAddress.getByName(ipAdress);
-		//SendCan udp = new SendCan();
+		//CreateCANFrame udp = new CreateCANFrame();
 		//String ipAdress = "192.168.0.2";
 		
 		byte[] udpFrame = new byte[13];
@@ -273,7 +273,7 @@ public class CanMain {
         //System.out.println("3");
         //comment
 
-        // Empfänger auslesen
+        // Empfï¿½nger auslesen
         InetAddress address = sendPacket.getAddress();
         //System.out.println("4");
         int         port2    = sendPacket.getPort();
