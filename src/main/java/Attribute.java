@@ -1,10 +1,10 @@
 import com.microsoft.azure.eventhubs.ConnectionStringBuilder;
 
 public interface Attribute {
-    int port1 = 15730;
-    int port2 = 15731;
-    String address1 = "192.168.0.2";
-    String address2 = "192.168.0.104";
+    int receivePort = 15730;
+    int sendingPort = 15731;
+    String sendingAddress = "192.168.0.2";
+    String receivingAddress = "192.168.0.104";
     double waterRatio = 31.3725;
     double oilRatio = 11.7647;
     double sandRatio = 0.9803;
@@ -16,11 +16,15 @@ public interface Attribute {
 
     String dateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
 
-    String urlSQL = "jdbc:sqlserver://edu.hdm-server.eu;databaseName=TRAIN_IOTHUB;user=TRAIN_DBA;password=Password123";
+    String dbName = "TRAIN_IOTHUB";
+    String dbUser = "TRAIN_DBA";
+    String dbPw = "Password123";
+    String dbUrl = "jdbc:sqlserver://edu.hdm-server.eu;databaseName="+dbName+";user="+dbUser+";password="+dbPw;
     String SQLStatementHeader = "INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], "
             + "[TIME_STAMP], [DATASET], [DELIMITER]) VALUES ('";
-
-    final ConnectionStringBuilder connStr = new ConnectionStringBuilder()
+    String sqlDataType = "STEAMDATA";
+    
+    final ConnectionStringBuilder azureConn = new ConnectionStringBuilder()
             .setNamespaceName("BIAcademyNS")
             .setEventHubName("eventhubmarklinsteamlok")
             .setSasKeyName("RootManageSharedAccessKey")

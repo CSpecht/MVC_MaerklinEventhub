@@ -1,5 +1,4 @@
 
-import com.microsoft.azure.eventhubs.ConnectionStringBuilder;
 import com.microsoft.azure.eventhubs.EventData;
 import com.microsoft.azure.eventhubs.EventHubClient;
 import com.microsoft.azure.eventhubs.EventHubException;
@@ -8,7 +7,6 @@ import org.apache.log4j.BasicConfigurator;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
@@ -25,7 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 //import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 
-public class CanMain {
+public class CanMain implements Attribute{
 
 	private static DatagramSocket dms;
 	private static CreateCANFrame send;
@@ -89,13 +87,6 @@ public class CanMain {
 		//This configures the log4j framework/package, necessary to send data to eventhub
 		BasicConfigurator.configure();
 
-		//Credentials to connect to eventhub
-		final ConnectionStringBuilder connStr = new ConnectionStringBuilder()
-				.setNamespaceName("BIAcademyNS")
-				.setEventHubName("eventhubmarklinsteamlok")
-				.setSasKeyName("RootManageSharedAccessKey")
-				.setSasKey("jiuer6fxPoEnrkrxzVwWVdRi1qw2+5A3rAoevEsiEVs=");
-
 		// The Executor handles all asynchronous tasks and this is passed to the EventHubClient instance.
 		// This enables the user to segregate their thread pool based on the work load.
 		// This pool can then be shared across multiple EventHubClient instances.
@@ -105,7 +96,7 @@ public class CanMain {
 
 		// Each EventHubClient instance spins up a new TCP/SSL connection, which is expensive.
 		// It is always a best practice to reuse these instances. The following sample shows this.
-		final EventHubClient ehClient = EventHubClient.createSync(connStr.toString(), executorService);
+		final EventHubClient ehClient = EventHubClient.createSync(String.valueOf(Attribute.azureConn), executorService);
 
 
 		//----SEND JSON FORMAT TO AZURE EVENTHUB----
@@ -142,19 +133,16 @@ public class CanMain {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		String connectionUrl = "jdbc:sqlserver://edu.hdm-server.eu;databaseName=TRAIN_IOTHUB;user=TRAIN_DBA;password=Password123"; //ports: 1432. 1433. 1434
-		String dType = "STEAMDATA";
-		//String payload = "";
 
         // create DateFormatter for the right format of date for SQLServer.
-        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        DateFormat sdf = new SimpleDateFormat(Attribute.dateFormat);
         Date date = new Date();
 
-        try (Connection con = DriverManager.getConnection(connectionUrl); Statement stmt = con.createStatement();) {
+        try (Connection con = DriverManager.getConnection(Attribute.dbUrl); Statement stmt = con.createStatement();) {
             for (int i = 0; i < DForSQL.payload.size(); i++) {
                 String SQL = "INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], "
                         + "[TIME_STAMP], [DATASET], [DELIMITER])"
-                        + "VALUES ('" + dType + "','"
+                        + "VALUES ('" + Attribute.sqlDataType + "','"
                         + sdf.format(date).toString() + "','"
                         + sdf.format(date).toString() + "','"
                         + DForSQL.payload.get(i)
@@ -180,8 +168,8 @@ public class CanMain {
 	 * SEND CAN MESSAGE
 	 * @throws UnknownHostException 
 	 ***************************************************************************************/
-	public static void sendCanToCS3 (String ipAdress, String connectionUrl, String dType) throws IOException, InterruptedException {
-		InetAddress addresse = InetAddress.getByName(ipAdress);
+	public static void sendCanToCS3 (String connectionUrl, String dType) throws IOException, InterruptedException {
+		InetAddress addresse = InetAddress.getByName(Attribute.sendingAddress);
 		//CreateCANFrame udp = new CreateCANFrame();
 		//String ipAdress = "192.168.0.2";
 		
@@ -197,7 +185,7 @@ public class CanMain {
 
 		//If the variable is setted up as -1, Max Limit = 500
 		//if(iterations == -1) iterations = 500;
-		GetCan DForSQL = new GetCan(ipAdress,15731);
+		GetCan DForSQL = new GetCan(Attribute.sendingAddress,Attribute.sendingPort);
 		DForSQL.start();
 		byte[] testData = new byte[ 13 ];
 		String log = "";
@@ -250,11 +238,11 @@ public class CanMain {
 		boolean result = false;
         byte[] udpFrame = new byte[13];
         byte[] packatData;
-        DatagramSocket ds = new DatagramSocket(15731);
-        DatagramSocket dsReceive = new DatagramSocket(15730);
-        InetAddress ia = InetAddress.getByName("192.168.0.2");
-        InetAddress ib = InetAddress.getByName("192.168.0.104");
-        int port = 15731;
+        DatagramSocket ds = new DatagramSocket(Attribute.sendingPort);
+        DatagramSocket dsReceive = new DatagramSocket(Attribute.receivePort);
+        InetAddress ia = InetAddress.getByName(Attribute.sendingAddress);
+        InetAddress ib = InetAddress.getByName(Attribute.receivingAddress);
+
         udpFrame = send.getSpeed();
         int i = 0;
 
@@ -263,12 +251,12 @@ public class CanMain {
 
 
         //System.out.println("I: " + i);
-        DatagramPacket sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia, 15731 );
+        DatagramPacket sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia, Attribute.sendingPort);
         //System.out.println("1");
         ds.send( sendPacket );
         //System.out.println("2");
         // Auf Anfrage warten
-        sendPacket = new DatagramPacket( new byte[13], 13, ib, 15730 );
+        sendPacket = new DatagramPacket( new byte[13], 13, ib, Attribute.receivePort );
         dsReceive.receive( sendPacket );
         //System.out.println("3");
         //comment
@@ -314,7 +302,7 @@ public class CanMain {
 		try { 	
 			
 			dms = new DatagramSocket();
-			DatagramPacket dmp = new DatagramPacket(udpFrame, udpFrame.length, addresse,15730);
+			DatagramPacket dmp = new DatagramPacket(udpFrame, udpFrame.length, addresse,Attribute.receivePort);
 			dms.send(dmp);
 			System.out.println("SEND!");
 	  
@@ -329,10 +317,8 @@ public class CanMain {
 	 ***************************************************************************************/
 	public static void sendTCP (byte[] udpFrame, int start, int len) {
 		try { 	
-			String ip = "192.168.0.2";
-			int port = 15731;
-			
-			Socket socket = new Socket(ip, port);
+
+			Socket socket = new Socket(Attribute.sendingAddress, Attribute.sendingPort);
 			OutputStream out = socket.getOutputStream(); 
 		    DataOutputStream dos = new DataOutputStream(out);
 		    
