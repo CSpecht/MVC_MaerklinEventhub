@@ -27,12 +27,11 @@ public class GetCan extends Thread{
 	private Socket tcp_socket = null;
 	private String ip; 
 	private int port; 
-	private static final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+	private static final DateFormat sdf = new SimpleDateFormat(Attribute.dateFormat);
 	private int RoundCount = 0;
 	boolean stop = false;
 	private Date startTime = null;
 	String dataset = "";
-	String resource = "water";
 	String resultCSV = "";
 	String resultJSON = "";
 	LinkedList<String> payload = new LinkedList<String>();
@@ -124,101 +123,90 @@ public class GetCan extends Thread{
 
 			water.append("[000e0f72:7][00,00,40,07,04,ed,04,00]");
 
-			if (Pattern.matches("(.[A-F0-9]{8}.[A-F0-9]{2}..00,00,40,07,04,ED,[A-F0-9]{2},[A-F0-9]{2}.)", hexFormatted)) {
-				if(!Pattern.matches("(.[A-F0-9]{8}.[A-F0-9]{2}..00,00,40,07,04,ED,04,[A-F0-9]{2}.)", hexFormatted) &&
-						!Pattern.matches("(.[A-F0-9]{8}.[A-F0-9]{2}..00,00,40,07,04,ED,01,[A-F0-9]{2}.)", hexFormatted)) {
-					String lokId = hexFormatted.substring(20, 25).replace(",", "");
-					//String Res = hexFormatted.substring(32, 34);
-					int Res = data[10];
-					if(Res < 0)
-						Res += 256;
-					/////////////////DEBUG////// ADD hexFormatted
-					//System.out.println(hexFormatted);
-					resultCSV = rowCount + ";" + sdf.format(date) + ";" + lokId + ";" + "Water" + ";" + Res + ";" + (int) (Res*31.3725) + ";" + RoundCount + ";";
-					payload.add(resultCSV);
-					resultJSON = "{"
-                            + "\"RowCount\":" + rowCount + ","
-                            + "\"Date\":" + "\"" + sdf.format(date).toString() + "\"" + ","
-                            + "\"LokID\":" + lokId + ","
-                            + "\"Resource\":" + "\"Water\"" + ","
-                            + "\"ResValue\":" + Res + ","
-                            + "\"ResCalc\":" + (int) (Res*31.3725) + ","
-                            + "\"Round\":" + RoundCount
-                            + "}";
-					jsonPayload.add(resultJSON);
-					dataset = lokId + ";" + CanMain.coaches + ";Water;" + Res + ";" + (int) (Res*31.3725) + ";" + RoundCount;
-					/*SQLstment.add("INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], " +
-							"[TIME_STAMP], [DATASET], [DELIMITER])\n" +
-							"VALUES (STEAMDATA, " + startTime + ", " + sdf.format(date) + ", " + dataset + ", " + ";");*/
-					//System.out.println(resultCSV);
-
-
-
+			if (Pattern.matches(Attribute.waterPattern, hexFormatted) &&
+				!Pattern.matches(Attribute.waterBadPattern, hexFormatted) && !Pattern.matches("(.[A-F0-9]{8}.[A-F0-9]{2}..00,00,40,07,04,ED,01,[A-F0-9]{2}.)", hexFormatted)) {
+				String lokId = hexFormatted.substring(20, 25).replace(",", "");
+				//String Res = hexFormatted.substring(32, 34);
+				int Res = data[10];
+				if(Res < 0)
+					Res += 256;
+				/////////////////DEBUG////// ADD hexFormatted
+				//System.out.println(hexFormatted);
+				resultCSV = rowCount + ";" + sdf.format(date) + ";" + lokId + ";" + "Water" + ";" + Res + ";" + (int) (Res*31.3725) + ";" + RoundCount + ";";
+				payload.add(resultCSV);
+				resultJSON = "{"
+                           + "\"RowCount\":" + rowCount + ","
+                           + "\"Date\":" + "\"" + sdf.format(date).toString() + "\"" + ","
+                           + "\"LokID\":" + lokId + ","
+                           + "\"Resource\":" + "\"Water\"" + ","
+                           + "\"ResValue\":" + Res + ","
+                           + "\"ResCalc\":" + (int) (Res*31.3725) + ","
+                           + "\"Round\":" + RoundCount
+                           + "}";
+				jsonPayload.add(resultJSON);
+				dataset = lokId + ";" + CanMain.coaches + ";Water;" + Res + ";" + (int) (Res*Attribute.waterRatio) + ";" + RoundCount;
+				/*SQLstment.add("INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], " +
+						"[TIME_STAMP], [DATASET], [DELIMITER])\n" +
+						"VALUES (STEAMDATA, " + startTime + ", " + sdf.format(date) + ", " + dataset + ", " + ";");*/
+				//System.out.println(resultCSV);
 
 
 					//System.out.println("WaterTimer: " + (timeEnd - timeStart));
-					rowCount++;
-				}
+				rowCount++;
 			}
 			
-			if (Pattern.matches("(.[A-F0-9]{8}.[A-F0-9]{2}..00,00,40,07,08,ED,[A-F0-9]{2},[A-F0-9]{2}.)", hexFormatted)) {
-				if(!Pattern.matches("(.[A-F0-9]{8}.[A-F0-9]{2}..00,00,40,07,08,ED,01,[A-F0-9]{2}.)", hexFormatted)) {
-					String lokId = hexFormatted.substring(20, 25).replace(",", "");
-					//String Res = hexFormatted.substring(32,34);
-					int Res = data[10];
-					if (Res < 0)
-						Res += 256;
-
+			if (Pattern.matches(Attribute.oilPattern, hexFormatted) && !Pattern.matches("(.[A-F0-9]{8}.[A-F0-9]{2}..00,00,40,07,08,ED,01,[A-F0-9]{2}.)", hexFormatted)) {
+				String lokId = hexFormatted.substring(20, 25).replace(",", "");
+				//String Res = hexFormatted.substring(32,34);
+				int Res = data[10];
+				if (Res < 0)
+					Res += 256;
 					//System.out.println(hexFormatted);
-					resultCSV = rowCount + ";" + sdf.format(date) + ";" + lokId + ";" + "Oil" + ";" + Res + ";" + (int) (Res * 11.7647) + ";" + RoundCount + ";";
-					payload.add(resultCSV);
-					resultJSON = "{"
-							+ "\"RowCount\":" + rowCount + ","
-							+ "\"Date\":" + "\"" + sdf.format(date).toString() + "\"" + ","
-							+ "\"LokID\":" + lokId + ","
-							+ "\"Resource\":" + "\"Oil\"" + ","
-							+ "\"ResValue\":" + Res + ","
-							+ "\"ResCalc\":" + (int) (Res*11.7647) + ","
-							+ "\"Round\":" + RoundCount
-							+ "}";
-					jsonPayload.add(resultJSON);
-					dataset = lokId + ";" + CanMain.coaches + ";Oil;" + Res + ";" + (int) (Res*11.7647) + ";" + RoundCount;
-					/*SQLstment.add("INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], " +
-							"[TIME_STAMP], [DATASET], [DELIMITER])\n" +
-							"VALUES (STEAMDATA, " + startTime + ", " + sdf.format(date) + ", " + dataset + ", " + ";");*/
-					//System.out.println(resultCSV);
-					rowCount++;
-				}
+				resultCSV = rowCount + ";" + sdf.format(date) + ";" + lokId + ";" + "Oil" + ";" + Res + ";" + (int) (Res * 11.7647) + ";" + RoundCount + ";";
+				payload.add(resultCSV);
+				resultJSON = "{"
+						+ "\"RowCount\":" + rowCount + ","
+						+ "\"Date\":" + "\"" + sdf.format(date).toString() + "\"" + ","
+						+ "\"LokID\":" + lokId + ","
+						+ "\"Resource\":" + "\"Oil\"" + ","
+						+ "\"ResValue\":" + Res + ","
+						+ "\"ResCalc\":" + (int) (Res*11.7647) + ","
+						+ "\"Round\":" + RoundCount
+						+ "}";
+				jsonPayload.add(resultJSON);
+				dataset = lokId + ";" + CanMain.coaches + ";Oil;" + Res + ";" + (int) (Res*11.7647) + ";" + RoundCount;
+				/*SQLstment.add("INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], " +
+						"[TIME_STAMP], [DATASET], [DELIMITER])\n" +
+						"VALUES (STEAMDATA, " + startTime + ", " + sdf.format(date) + ", " + dataset + ", " + ";");*/
+				//System.out.println(resultCSV);
+				rowCount++;
 			}
 			
-			if (Pattern.matches("(.[A-F0-9]{8}.[A-F0-9]{2}..00,00,40,07,0C,ED,[A-F0-9]{2},[A-F0-9]{2}.)", hexFormatted)) {
-				if(!Pattern.matches("(.[A-F0-9]{8}.[A-F0-9]{2}..00,00,40,07,0C,ED,01,[A-F0-9]{2}.)", hexFormatted)) {
-					String lokId = hexFormatted.substring(20, 25).replace(",", "");
-					//String Res = hexFormatted.substring(32,34);
-					int Res = data[10];
-					if (Res < 0)
-						Res += 256;
-
+			if (Pattern.matches(Attribute.sandPattern, hexFormatted) && !Pattern.matches("(.[A-F0-9]{8}.[A-F0-9]{2}..00,00,40,07,0C,ED,01,[A-F0-9]{2}.)", hexFormatted)) {
+				String lokId = hexFormatted.substring(20, 25).replace(",", "");
+				//String Res = hexFormatted.substring(32,34);
+				int Res = data[10];
+				if (Res < 0)
+					Res += 256;
 					//System.out.println(hexFormatted);
-					resultCSV = rowCount + ";" + sdf.format(date) + ";" + lokId + ";" + "Sand" + ";" + Res + ";" + (int) (Res * 0.9803) + ";" + RoundCount + ";";
-					payload.add(resultCSV);
-					resultJSON = "{"
-							+ "\"RowCount\":" + rowCount + ","
-							+ "\"Date\":" + "\"" + sdf.format(date).toString() + "\"" + ","
-							+ "\"LokID\":" + lokId + ","
-							+ "\"Resource\":" + "\"Sand\"" + ","
-							+ "\"ResValue\":" + Res + ","
-							+ "\"ResCalc\":" + (int) (Res*0.9803) + ","
-							+ "\"Round\":" + RoundCount
-							+ "}";
-					jsonPayload.add(resultJSON);
-					dataset = lokId + ";" + CanMain.coaches + ";Sand;" + Res + ";" + (int) (Res*0.9803) + ";" + RoundCount;
-					/*SQLstment.add("INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], " +
-							"[TIME_STAMP], [DATASET], [DELIMITER])\n" +
-							"VALUES (STEAMDATA, " + startTime + ", " + sdf.format(date) + ", " + dataset + ", " + ";");*/
-					//System.out.println(resultCSV);
-					rowCount++;
-				}
+				resultCSV = rowCount + ";" + sdf.format(date) + ";" + lokId + ";" + "Sand" + ";" + Res + ";" + (int) (Res * 0.9803) + ";" + RoundCount + ";";
+				payload.add(resultCSV);
+				resultJSON = "{"
+						+ "\"RowCount\":" + rowCount + ","
+						+ "\"Date\":" + "\"" + sdf.format(date).toString() + "\"" + ","
+						+ "\"LokID\":" + lokId + ","
+						+ "\"Resource\":" + "\"Sand\"" + ","
+						+ "\"ResValue\":" + Res + ","
+						+ "\"ResCalc\":" + (int) (Res*0.9803) + ","
+						+ "\"Round\":" + RoundCount
+						+ "}";
+				jsonPayload.add(resultJSON);
+				dataset = lokId + ";" + CanMain.coaches + ";Sand;" + Res + ";" + (int) (Res*0.9803) + ";" + RoundCount;
+				/*SQLstment.add("INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], " +
+						"[TIME_STAMP], [DATASET], [DELIMITER])\n" +
+						"VALUES (STEAMDATA, " + startTime + ", " + sdf.format(date) + ", " + dataset + ", " + ";");*/
+				//System.out.println(resultCSV);
+				rowCount++;
 			}
 
 			//if()
@@ -250,14 +238,6 @@ public class GetCan extends Thread{
 	//it stops conn()
 	public void stopListener(){
 		stop = true;
-	}
-
-	public String getResourceName(){
-		return this.resource;
-	}
-
-	public void setResourceName(String res){
-		this.resource = res;
 	}
 
 	//have Data Container where Data is separated into metadata and data
