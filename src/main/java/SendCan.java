@@ -12,16 +12,16 @@ public class SendCan extends Thread{
 	//dlc has to be 6 if you want to control the speed and uid has to be set
 	private int uid = 0;
 	private char response = 0;
-	private char command = 0; 
+	private char command = 0;
 	private char prio = 0;
-	private char dlc = 5; 
+	private char dlc = 5;
 	private char[] data = new char[dlc];
 	private char hash = 0;
 	int cargoId = 0x4006;
 	int steamId = 0x4007;
-	
 
-	
+
+
 	/**
 	 * DEFAULT
 	 * Constructor
@@ -31,9 +31,9 @@ public class SendCan extends Thread{
 		udpFrame[1] = (byte) command;
 		udpFrame[2] = (byte) 15; // >> 8;//(uid >> 8);
 		udpFrame[3] = (byte) 114;
-		udpFrame[4] = (byte) dlc;			
+		udpFrame[4] = (byte) dlc;
 	}
-	
+
 	/**
 	 * @param dataLength
 	 * Constructor

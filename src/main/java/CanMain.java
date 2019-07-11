@@ -8,6 +8,7 @@ import org.apache.log4j.BasicConfigurator;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
@@ -27,7 +28,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class CanMain {
 
 	private static DatagramSocket dms;
-	private static SendCan send;
+	private static TestSend send;
 	protected static int coaches;
 
 
@@ -45,14 +46,12 @@ public class CanMain {
         //DForAzure.start();
 
 		//uncomment to send Data
-		send = new SendCan();
+		send = new TestSend();
 		//uncomment to GET Data
 		//sendCanToCS3(ipAdress, connectionUrl, dType);
 
 		byte[] udpFrame = new byte[13];
 		String log = "";
-
-		System.out.println();
 
 		//Send Command to CS3
 		//sendCommandToCS3();
@@ -71,7 +70,7 @@ public class CanMain {
 		char dlc = 5;
 		int[] testFrame = new int[13];
 
-		SendCan send = new SendCan();
+		TestSend send = new TestSend();
 		udpFrame = send.setOil();
 
 
@@ -91,7 +90,11 @@ public class CanMain {
 		BasicConfigurator.configure();
 
 		//Credentials to connect to eventhub
-
+		final ConnectionStringBuilder connStr = new ConnectionStringBuilder()
+				.setNamespaceName("BIAcademyNS")
+				.setEventHubName("eventhubmarklinsteamlok")
+				.setSasKeyName("RootManageSharedAccessKey")
+				.setSasKey("jiuer6fxPoEnrkrxzVwWVdRi1qw2+5A3rAoevEsiEVs=");
 
 		// The Executor handles all asynchronous tasks and this is passed to the EventHubClient instance.
 		// This enables the user to segregate their thread pool based on the work load.
@@ -102,7 +105,7 @@ public class CanMain {
 
 		// Each EventHubClient instance spins up a new TCP/SSL connection, which is expensive.
 		// It is always a best practice to reuse these instances. The following sample shows this.
-		final EventHubClient ehClient = EventHubClient.createSync(Attribute.connStr.toString(), executorService);
+		final EventHubClient ehClient = EventHubClient.createSync(connStr.toString(), executorService);
 
 
 		//----SEND JSON FORMAT TO AZURE EVENTHUB----
@@ -139,17 +142,19 @@ public class CanMain {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		String connectionUrl = Attribute.urlSQL; //ports: 1432. 1433. 1434
+		String connectionUrl = "jdbc:sqlserver://edu.hdm-server.eu;databaseName=TRAIN_IOTHUB;user=TRAIN_DBA;password=Password123"; //ports: 1432. 1433. 1434
 		String dType = "STEAMDATA";
 		//String payload = "";
 
         // create DateFormatter for the right format of date for SQLServer.
-        DateFormat sdf = new SimpleDateFormat(Attribute.dateFormat);
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         Date date = new Date();
 
         try (Connection con = DriverManager.getConnection(connectionUrl); Statement stmt = con.createStatement();) {
             for (int i = 0; i < DForSQL.payload.size(); i++) {
-                String SQL = Attribute.SQLStatementHeader + dType + "','"
+                String SQL = "INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], "
+                        + "[TIME_STAMP], [DATASET], [DELIMITER])"
+                        + "VALUES ('" + dType + "','"
                         + sdf.format(date).toString() + "','"
                         + sdf.format(date).toString() + "','"
                         + DForSQL.payload.get(i)
@@ -245,11 +250,11 @@ public class CanMain {
 		boolean result = false;
         byte[] udpFrame = new byte[13];
         byte[] packatData;
-        DatagramSocket ds = new DatagramSocket(Attribute.port2);
-        DatagramSocket dsReceive = new DatagramSocket(Attribute.port1);
-        InetAddress ia = InetAddress.getByName(Attribute.address1);
-        InetAddress ib = InetAddress.getByName(Attribute.address2);
-        //int port = 15731;
+        DatagramSocket ds = new DatagramSocket(15731);
+        DatagramSocket dsReceive = new DatagramSocket(15730);
+        InetAddress ia = InetAddress.getByName("192.168.0.2");
+        InetAddress ib = InetAddress.getByName("192.168.0.104");
+        int port = 15731;
         udpFrame = send.getSpeed();
         int i = 0;
 
@@ -266,6 +271,7 @@ public class CanMain {
         sendPacket = new DatagramPacket( new byte[13], 13, ib, 15730 );
         dsReceive.receive( sendPacket );
         //System.out.println("3");
+        //comment
 
         // Empfänger auslesen
         InetAddress address = sendPacket.getAddress();
