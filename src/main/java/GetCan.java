@@ -16,14 +16,23 @@ import com.google.gson.GsonBuilder;
 
 public class GetCan extends Thread implements Attribute{
 
+	String resource = "";
+
+	GetCan () {
+
+	}
+
+	GetCan (String resource) {
+		this.resource = resource;
+	}
+
 
 	@Override
 	public void run() {
 		Ressources.Resource rs = new Ressources.Resource(Attribute.sendingAddress,Attribute.sendingPort);
 		try {
-			rs.getResource("water");
-			rs.getResource("coil");
-			rs.getResource("sand");
+			rs.getResource(resource);
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {

@@ -10,8 +10,13 @@ public class CanMain implements Attribute{
 
 	public static void main(String[] args) {
 
-		ConstructCANFrame frame = new ConstructCANFrame();
-		SendCan send = new SendCan ();
+		//ConstructCANFrame frame = new ConstructCANFrame();
+
+		//SendCan send = new SendCan();
+
+		GetCan receive = new GetCan("water");
+
+
 
 
 
