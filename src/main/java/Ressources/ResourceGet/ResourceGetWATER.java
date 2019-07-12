@@ -5,15 +5,13 @@ import Ressources.Resource;
 import javax.swing.text.MaskFormatter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
-public class ResourceGetWATER extends Resource {
+public class ResourceGetWATER extends Resource  {
     boolean stop;
     public ResourceGetWATER(String ip, int port, boolean stop) {
         super(ip, port, stop);
@@ -127,7 +125,45 @@ public class ResourceGetWATER extends Resource {
     }
 
 
+    public void NEW_GETWATER () {
 
+        boolean result = false;
+        byte[] udpFrame = new byte[13];
+        byte[] packatData;
+        DatagramSocket ds = new DatagramSocket(Attribute.sendingPort);
+        DatagramSocket dsReceive = new DatagramSocket(Attribute.receivePort);
+        InetAddress ia = InetAddress.getByName(Attribute.sendingAddress);
+        InetAddress ib = InetAddress.getByName(Attribute.receivingAddress);
+
+        udpFrame = ConstructCANFrame.getSpeed();
+        int i = 0;
+
+        //System.out.println("I: " + i);
+        DatagramPacket sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        //System.out.println("1");
+        ds.send( sendPacket );
+        //System.out.println("2");
+        // Auf Anfrage warten
+        sendPacket = new DatagramPacket( new byte[13], 13, ib, Attribute.receivePort );
+        dsReceive.receive( sendPacket );
+        //System.out.println("3");
+        //comment
+
+        // Empf�nger auslesen
+        InetAddress address = sendPacket.getAddress();
+        //System.out.println("4");
+        int         port2    = sendPacket.getPort();
+        int         len     = sendPacket.getLength();
+        byte[]      data    = sendPacket.getData();
+
+        if (data[9] != 0 && data[10] != 0) {
+            return result = true;
+        } else {
+
+            return result = false;
+        }
+
+    }
 
 
     }

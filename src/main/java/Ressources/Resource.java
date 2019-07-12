@@ -106,6 +106,7 @@ public class Resource {
         switch (i) {
             case "water":
                 w_resource.getWater();
+
                 break;
             case "coil":
                 c_resource.getCOIL();
