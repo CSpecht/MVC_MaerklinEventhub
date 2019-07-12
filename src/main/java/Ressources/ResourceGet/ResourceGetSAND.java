@@ -1,8 +1,6 @@
 package Ressources.ResourceGet;
 
 import Ressources.Resource;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import javax.swing.text.MaskFormatter;
 import java.io.IOException;

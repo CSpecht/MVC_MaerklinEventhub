@@ -1,20 +1,12 @@
-import javax.swing.text.MaskFormatter;
+package General;
+
+import Ressources.Resource;
+
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.*;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.regex.Pattern;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-public class GetCan extends Thread implements Attribute{
+public class GetCan implements Attribute{
 
 	String resource = "";
 
@@ -23,21 +15,27 @@ public class GetCan extends Thread implements Attribute{
 	}
 
 	GetCan (String resource) {
+
 		this.resource = resource;
+		System.out.println(resource);
+		this.run();
 	}
 
 
-	@Override
+
 	public void run() {
-		Ressources.Resource rs = new Ressources.Resource(Attribute.sendingAddress,Attribute.sendingPort);
+		Resource rs = new Resource();
+
+
+			System.out.println("THREAD!!");
 		try {
 			rs.getResource(resource);
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+
 
 	}
 

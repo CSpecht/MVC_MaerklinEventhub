@@ -1,3 +1,5 @@
+package General;
+
 import com.microsoft.azure.eventhubs.ConnectionStringBuilder;
 
 public interface Attribute {
@@ -14,12 +16,12 @@ public interface Attribute {
     String sandPattern = "(.[A-F0-9]{8}.[A-F0-9]{2}..00,00,40,07,0C,ED,[A-F0-9]{2},[A-F0-9]{2}.)";
     String waterBadPattern = "(.[A-F0-9]{8}.[A-F0-9]{2}..00,00,40,07,04,ED,04,[A-F0-9]{2}.)";
 
-    String dateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
+    final String DATEFORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
 
-    String dbName = "TRAIN_IOTHUB";
-    String dbUser = "TRAIN_DBA";
-    String dbPw = "Password123";
-    String dbUrl = "jdbc:sqlserver://edu.hdm-server.eu;databaseName="+dbName+";user="+dbUser+";password="+dbPw;
+    final String DBNAME = "TRAIN_IOTHUB";
+    final String DBUSER = "TRAIN_DBA";
+    final String DBPW = "Password123";
+    String dbUrl = "jdbc:sqlserver://edu.hdm-server.eu;databaseName="+DBNAME+";user="+DBUSER+";password="+DBPW;
     String SQLStatementHeader = "INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], "
             + "[TIME_STAMP], [DATASET], [DELIMITER]) VALUES ('";
     String sqlDataType = "STEAMDATA";

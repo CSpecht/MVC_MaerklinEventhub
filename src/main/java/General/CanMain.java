@@ -1,4 +1,4 @@
-//import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
+package General;//import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 
 public class CanMain implements Attribute{
@@ -10,23 +10,22 @@ public class CanMain implements Attribute{
 
 	public static void main(String[] args) {
 
-		//ConstructCANFrame frame = new ConstructCANFrame();
+		//General.ConstructCANFrame frame = new General.ConstructCANFrame();
 
-		//SendCan send = new SendCan();
+		//General.SendCan send = new General.SendCan();
 
 		GetCan receive = new GetCan("water");
 
 
 
 
-
 		/*//START USERINTERFACE
-		final UserInterfaceChart uic = new UserInterfaceChart();
+		final View.UserInterfaceChart uic = new View.UserInterfaceChart();
 		uic.go();
 		*/
 
         //GET Data for Azure
-		//GetCan DForAzure = new GetCan(ipAdress, 15731);
+		//General.GetCan DForAzure = new General.GetCan(ipAdress, 15731);
         //DForAzure.start();
 
 		//uncomment to send Data

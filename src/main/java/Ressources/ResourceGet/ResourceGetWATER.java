@@ -2,6 +2,9 @@ package Ressources.ResourceGet;
 
 import Ressources.Resource;
 
+import General.Attribute;
+import General.ConstructCANFrame;
+
 import javax.swing.text.MaskFormatter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,12 +14,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
-public class ResourceGetWATER extends Resource  {
-    boolean stop;
+public class  ResourceGetWATER extends Resource {
+
+
+    /*   boolean stop;
     public ResourceGetWATER(String ip, int port, boolean stop) {
         super(ip, port, stop);
     }
-
+*/
    public  void getWater() throws IOException, ParseException {
         System.out.println("connected to: " +ip+ " port: " + port);
 
@@ -124,22 +129,37 @@ public class ResourceGetWATER extends Resource  {
 
     }
 
-
-    public void NEW_GETWATER () {
+    //TODO: IMPLEMENTATION WRONG THE RESULT ISN'T RIGHT!!! -> SENDING TO MUCH DATA
+    public void NEW_GETWATER () throws IOException {
 
         boolean result = false;
         byte[] udpFrame = new byte[13];
         byte[] packatData;
         DatagramSocket ds = new DatagramSocket(Attribute.sendingPort);
-        DatagramSocket dsReceive = new DatagramSocket(Attribute.receivePort);
+        DatagramSocket dsReceive = new DatagramSocket(General.Attribute.receivePort);
         InetAddress ia = InetAddress.getByName(Attribute.sendingAddress);
         InetAddress ib = InetAddress.getByName(Attribute.receivingAddress);
 
-        udpFrame = ConstructCANFrame.getSpeed();
-        int i = 0;
+
+        udpFrame = ConstructCANFrame.resourceStart();
+        DatagramPacket sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        ds.send(sendPacket);
+
+        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        ds.send( sendPacket );
+        udpFrame = ConstructCANFrame.resourceStop();
+
+        udpFrame = ConstructCANFrame.getWater();
+
+        System.out.println("GETWATER():");
+        for (int i = 0; i < udpFrame.length; i++) {
+            System.out.println("udpFrame[" + i + "]: " + udpFrame[i]);
+        }
+
+        //int i = 0;
 
         //System.out.println("I: " + i);
-        DatagramPacket sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia, Attribute.sendingPort);
         //System.out.println("1");
         ds.send( sendPacket );
         //System.out.println("2");
@@ -156,11 +176,9 @@ public class ResourceGetWATER extends Resource  {
         int         len     = sendPacket.getLength();
         byte[]      data    = sendPacket.getData();
 
-        if (data[9] != 0 && data[10] != 0) {
-            return result = true;
-        } else {
-
-            return result = false;
+        System.out.println("DATA Received:");
+        for (int j = 0; j<data.length; j++) {
+           System.out.println("data[" + j + "]: " + data[j]);
         }
 
     }

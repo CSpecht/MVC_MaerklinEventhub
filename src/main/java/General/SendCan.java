@@ -1,3 +1,6 @@
+package General;
+
+import Ressources.Resource;
 import com.microsoft.azure.eventhubs.EventData;
 import com.microsoft.azure.eventhubs.EventHubClient;
 import com.microsoft.azure.eventhubs.EventHubException;
@@ -6,7 +9,6 @@ import org.apache.log4j.BasicConfigurator;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
@@ -23,7 +25,7 @@ public class SendCan extends Thread implements Attribute {
 
 
     //----Send received Data from CAN to Azure----
-    public static void sendToAzure(Ressources.Resource DForAzure) throws EventHubException, IOException {
+    public static void sendToAzure(Resource DForAzure) throws EventHubException, IOException {
         //----UNCOMMENT TO CONNECT TO EVENTHUB----
         //This configures the log4j framework/package, necessary to send data to eventhub
         BasicConfigurator.configure();
@@ -69,7 +71,7 @@ public class SendCan extends Thread implements Attribute {
     }
 
     //----Send received Data from CAN to MS SQL----
-    public static void sendToMSSQL(Ressources.Resource DForSQL) {
+    public static void sendToMSSQL(Resource DForSQL) {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         } catch (ClassNotFoundException e) {
@@ -77,7 +79,7 @@ public class SendCan extends Thread implements Attribute {
         }
 
         // create DateFormatter for the right format of date for SQLServer.
-        DateFormat sdf = new SimpleDateFormat(Attribute.dateFormat);
+        DateFormat sdf = new SimpleDateFormat(Attribute.DATEFORMAT);
         Date date = new Date();
 
         try (Connection con = DriverManager.getConnection(Attribute.dbUrl); Statement stmt = con.createStatement();) {
@@ -119,7 +121,7 @@ public class SendCan extends Thread implements Attribute {
         char dlc = 5;
         int[] testFrame = new int[13];
 
-        //ConstructCANFrame frame = new ConstructCANFrame();
+        //General.ConstructCANFrame frame = new General.ConstructCANFrame();
         udpFrame = ConstructCANFrame.setOil();
 
 
@@ -138,7 +140,7 @@ public class SendCan extends Thread implements Attribute {
      ***************************************************************************************/
     public static void sendCanToCS3 (String connectionUrl, String dType) throws IOException, InterruptedException {
         InetAddress addresse = InetAddress.getByName(Attribute.sendingAddress);
-        //ConstructCANFrame udp = new ConstructCANFrame();
+        //General.ConstructCANFrame udp = new General.ConstructCANFrame();
         //String ipAdress = "192.168.0.2";
 
         byte[] udpFrame = new byte[13];
@@ -153,7 +155,7 @@ public class SendCan extends Thread implements Attribute {
 
         //If the variable is setted up as -1, Max Limit = 500
         //if(iterations == -1) iterations = 500;
-        Ressources.Resource DForSQL = new Ressources.Resource(Attribute.sendingAddress,Attribute.sendingPort);
+        Resource DForSQL = new Resource(Attribute.sendingAddress,Attribute.sendingPort);
         //TODO: IMPLEMENT THREADS!!!!
         //DForSQL.start();
 

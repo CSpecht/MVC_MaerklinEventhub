@@ -39,6 +39,7 @@ public class Resource {
         this.ip = ip;
         this.port = port;
     }
+    public Resource () {}
 
 
    /* public void run() {
@@ -99,19 +100,19 @@ public class Resource {
     }
 
     public void getResource (String i) throws IOException, ParseException {
-        ResourceGetWATER w_resource = new ResourceGetWATER(ip,port,stop);
-        ResourceGetCOIL c_resource = new ResourceGetCOIL(ip,port,stop);
-        ResourceGetSAND s_resource = new ResourceGetSAND(ip,port,stop);
 
         switch (i) {
             case "water":
-                w_resource.getWater();
+                ResourceGetWATER w_resource = new ResourceGetWATER(); //ip,port,stop
+                w_resource.NEW_GETWATER();
 
                 break;
             case "coil":
+                ResourceGetCOIL c_resource = new ResourceGetCOIL(ip,port,stop);
                 c_resource.getCOIL();
                 break;
             case "sand":
+                ResourceGetSAND s_resource = new ResourceGetSAND(ip,port,stop);
                 s_resource.getSAND();
                 break;
         }

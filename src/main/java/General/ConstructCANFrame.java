@@ -1,3 +1,5 @@
+package General;
+
 /**
  * @author Cornelius Specht
  *
@@ -382,9 +384,80 @@ public class ConstructCANFrame extends Thread{
 		return udpFrame;	
 	}
 
+	public static byte[] resourceStart() {
+		dlc = 7;
+		data = new char[8];
+		udpFrame[0] = (byte) prio ;
+		udpFrame[1] = (byte) 14;
+		udpFrame[2] = (byte) 10; // >> 8;//(uid >> 8); 160
+		udpFrame[3] = (byte) 1798;
+		udpFrame[4] = (byte) dlc;
+		for (int i = 0; i < data.length; i++) {
+			udpFrame[5+i] = (byte)data[i];
+		}
+
+		for (int i = 0; i < data.length; i++) {
+			if (i == 0) {
+				udpFrame[5+i] = (byte)99;
+			}
+			if (i == 1) {
+				udpFrame[5 + i] = (byte) 115;
+			}
+			if (i == 2) {
+				udpFrame[5+i] = (byte)81;
+			}
+			if (i == 3) {
+				udpFrame[5+i] = (byte)44;
+			}
+			if (i == 4) {
+				udpFrame[5+i] = (byte)48;
+			}
+			if (i == 5) {
+				udpFrame[5+i] = (byte)2;
+			}
+			if (i == 6) {
+				udpFrame[5+i] = (byte)4;
+			}
+		}
+		return udpFrame;
+	}
+	public static byte[] resourceStop() {
+		dlc = 6;
+		data = new char[8];
+		udpFrame[0] = (byte) prio ;
+		udpFrame[1] = (byte) 14;
+		udpFrame[2] = (byte) 10; // >> 8;//(uid >> 8); 160
+		udpFrame[3] = (byte) 1798;
+		udpFrame[4] = (byte) dlc;
+		for (int i = 0; i < data.length; i++) {
+			udpFrame[5+i] = (byte)data[i];
+		}
+
+		for (int i = 0; i < data.length; i++) {
+			if (i == 0) {
+				udpFrame[5+i] = (byte)99;
+			}
+			if (i == 1) {
+				udpFrame[5 + i] = (byte) 115;
+			}
+			if (i == 2) {
+				udpFrame[5+i] = (byte)81;
+			}
+			if (i == 3) {
+				udpFrame[5+i] = (byte)44;
+			}
+			if (i == 4) {
+				udpFrame[5+i] = (byte)48;
+			}
+			if (i == 5) {
+				udpFrame[5+i] = (byte)0;
+			}
+		}
+		return udpFrame;
+	}
 	public static byte[] getWater() {
 		dlc = 7;
-		data = new char[dlc];
+		data = new char[8];
 		udpFrame[0] = (byte) prio ;
 		udpFrame[1] = (byte) 14;
 		udpFrame[2] = (byte) 15; // >> 8;//(uid >> 8); 160
@@ -421,7 +494,7 @@ public class ConstructCANFrame extends Thread{
 				udpFrame[5+i] = (byte)237;
 			}
 			if (i == 6) {
-				udpFrame[5+i] = (byte)1;
+				udpFrame[5+i] = (byte)0;
 			}
 		}
 		return udpFrame;
