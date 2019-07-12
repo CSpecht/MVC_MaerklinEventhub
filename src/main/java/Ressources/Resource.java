@@ -98,7 +98,7 @@ public class Resource {
         stop = true;
     }
 
-    public void getRessource (String i) throws IOException, ParseException {
+    public void getResource (String i) throws IOException, ParseException {
         ResourceGetWATER w_resource = new ResourceGetWATER(ip,port,stop);
         ResourceGetCOIL c_resource = new ResourceGetCOIL(ip,port,stop);
         ResourceGetSAND s_resource = new ResourceGetSAND(ip,port,stop);
@@ -114,6 +114,7 @@ public class Resource {
                 s_resource.getSAND();
                 break;
         }
+
     }
 
     public String getIp() {

@@ -14,8 +14,23 @@ import java.util.regex.Pattern;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class GetCan extends Thread{
+public class GetCan extends Thread implements Attribute{
 
+
+	@Override
+	public void run() {
+		Ressources.Resource rs = new Ressources.Resource(Attribute.sendingAddress,Attribute.sendingPort);
+		try {
+			rs.getResource("water");
+			rs.getResource("coil");
+			rs.getResource("sand");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+	}
 
 	/***************************************************************************************
 	 * GET SPEED OF TRAIN
