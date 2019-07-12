@@ -345,7 +345,7 @@ public class ConstructCANFrame extends Thread{
 	 * The MAX SPEEED 1023!!!
 	 * DLC HAS TO BE 4 to get THE SPEED Otherwise you can't set the SPEED, defined by Maerklin
 	 */
-	public static byte[] getSpeed() {
+	public byte[] getSpeed() {
 		
 		//dlc = 4 mandatory to get the speed!
 		dlc = 4;
@@ -383,7 +383,7 @@ public class ConstructCANFrame extends Thread{
 	}
 
 
-	public static byte[] getWater() {
+	public byte[] getWater() {
 		dlc = 7;
 		data = new char[dlc];
 		udpFrame[0] = (byte) prio ;
@@ -428,7 +428,7 @@ public class ConstructCANFrame extends Thread{
 		return udpFrame;
 	}
 
-	public static byte[] getSand() {
+	public byte[] getSand() {
 		dlc = 7;
 		data = new char[dlc];
 		udpFrame[0] = (byte) prio ;
@@ -462,7 +462,7 @@ public class ConstructCANFrame extends Thread{
 		return udpFrame;
 	}
 
-	public static byte[] getOil() {
+	public byte[] getOil() {
 		dlc = 7;
 		data = new char[dlc];
 		udpFrame[0] = (byte) prio ;
