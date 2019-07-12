@@ -1,8 +1,6 @@
 package Ressources.ResourceGet;
 
 import Ressources.Resource;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import javax.swing.text.MaskFormatter;
 import java.io.IOException;
@@ -16,9 +14,9 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 
 public class ResourceGetWATER extends Resource {
-
-    public ResourceGetWATER(String ip, int port) {
-        super(ip, port);
+    boolean stop;
+    public ResourceGetWATER(String ip, int port, boolean stop) {
+        super(ip, port, stop);
     }
 
    public  void getWater() throws IOException, ParseException {
@@ -28,6 +26,8 @@ public class ResourceGetWATER extends Resource {
 
         byte[] bytes = new byte[13];
         byte[] data = new byte[13];
+
+        int rowCount = 0;
 
         InputStream tcp_inputStream;
 
@@ -48,8 +48,6 @@ public class ResourceGetWATER extends Resource {
             e1.printStackTrace();
         }
 
-        int rowCount = 0;
-        Gson gson = new GsonBuilder().create();
         //While trigger is false, it keeps listening
         while(stop == false) {
 

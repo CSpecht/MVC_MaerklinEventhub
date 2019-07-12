@@ -27,13 +27,13 @@ public class Resource {
     protected int RoundCount = 0;
     protected static int coaches;
     protected static final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-    protected LinkedList<String> payload = new LinkedList<String>();
+    public LinkedList<String> payload = new LinkedList<String>();
     protected ArrayList<String> SQLstment = new ArrayList<String>();
-    protected LinkedList<String> jsonPayload = new LinkedList<String>();
+    public LinkedList<String> jsonPayload = new LinkedList<String>();
 
 
 
-    public Resource(){}
+    public Resource(String ip, int port, boolean stop){}
 
     public Resource(String ip, int port) {
         this.ip = ip;
@@ -53,8 +53,6 @@ public class Resource {
     public void setResource()  {
 
     }
-
-
 
     protected static String hexEncode(byte[] buf) {
         return hexEncode(buf, new StringBuilder()).toString();
@@ -88,12 +86,22 @@ public class Resource {
 
     }
 
+    //it starts conn()
+    public void startListener() {
 
+        stop = false;
+    }
+
+    //it stops conn()
+    public void stopListener(){
+
+        stop = true;
+    }
 
     public void getRessource (String i) throws IOException, ParseException {
-        ResourceGetWATER w_resource = new ResourceGetWATER(ip,port);
-        ResourceGetCOIL c_resource = new ResourceGetCOIL(ip,port);
-        ResourceGetSAND s_resource = new ResourceGetSAND(ip,port);
+        ResourceGetWATER w_resource = new ResourceGetWATER(ip,port,stop);
+        ResourceGetCOIL c_resource = new ResourceGetCOIL(ip,port,stop);
+        ResourceGetSAND s_resource = new ResourceGetSAND(ip,port,stop);
 
         switch (i) {
             case "water":
@@ -106,4 +114,22 @@ public class Resource {
                 s_resource.getSAND();
                 break;
         }
-    }}
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+}

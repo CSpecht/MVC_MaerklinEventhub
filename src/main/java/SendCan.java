@@ -23,7 +23,7 @@ public class SendCan extends Thread implements Attribute {
 
 
     //----Send received Data from CAN to Azure----
-    public static void sendToAzure(GetCan DForAzure) throws EventHubException, IOException {
+    public static void sendToAzure(Ressources.Resource DForAzure) throws EventHubException, IOException {
         //----UNCOMMENT TO CONNECT TO EVENTHUB----
         //This configures the log4j framework/package, necessary to send data to eventhub
         BasicConfigurator.configure();
@@ -69,7 +69,7 @@ public class SendCan extends Thread implements Attribute {
     }
 
     //----Send received Data from CAN to MS SQL----
-    public static void sendToMSSQL(GetCan DForSQL) {
+    public static void sendToMSSQL(Ressources.Resource DForSQL) {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         } catch (ClassNotFoundException e) {
@@ -119,8 +119,8 @@ public class SendCan extends Thread implements Attribute {
         char dlc = 5;
         int[] testFrame = new int[13];
 
-        ConstructCANFrame send = new ConstructCANFrame();
-        udpFrame = send.setOil();
+        //ConstructCANFrame frame = new ConstructCANFrame();
+        udpFrame = ConstructCANFrame.setOil();
 
 
         System.out.println("udpLength: " + udpFrame.length);
@@ -153,11 +153,13 @@ public class SendCan extends Thread implements Attribute {
 
         //If the variable is setted up as -1, Max Limit = 500
         //if(iterations == -1) iterations = 500;
-        GetCan DForSQL = new GetCan(Attribute.sendingAddress,Attribute.sendingPort);
-        DForSQL.start();
+        Ressources.Resource DForSQL = new Ressources.Resource(Attribute.sendingAddress,Attribute.sendingPort);
+        //TODO: IMPLEMENT THREADS!!!!
+        //DForSQL.start();
+
         byte[] testData = new byte[ 13 ];
         String log = "";
-
+        GetCan GC = new GetCan();
 
 
         //DForSQL.stopListener();
@@ -167,7 +169,7 @@ public class SendCan extends Thread implements Attribute {
 
         //sendTCP(udpFrame, 0, udpFrame.length);
 
-        while (GetCan.trainRunning()) {
+        while (GC.trainRunning()) {
             long millis = System.currentTimeMillis();
             DForSQL.startListener();
 

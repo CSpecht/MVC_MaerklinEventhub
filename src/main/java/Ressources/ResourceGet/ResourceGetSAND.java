@@ -16,18 +16,20 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 
 public class ResourceGetSAND extends Resource {
-
-    public ResourceGetSAND(String ip, int port) {
-        super(ip, port);
+    boolean stop;
+    public ResourceGetSAND(String ip, int port, boolean stop) {
+        super(ip, port, stop);
     }
 
-   public void getSAND() throws IOException, ParseException {
+    public void getSAND() throws IOException, ParseException {
         System.out.println("connected to: " +ip+ " port: " + port);
 
         InetSocketAddress endpoint = new InetSocketAddress(ip,port);
 
         byte[] bytes = new byte[13];
         byte[] data = new byte[13];
+
+        int rowCount = 0;
 
         InputStream tcp_inputStream;
 
@@ -48,10 +50,10 @@ public class ResourceGetSAND extends Resource {
             e1.printStackTrace();
         }
 
-        int rowCount = 0;
-        Gson gson = new GsonBuilder().create();
         //While trigger is false, it keeps listening
         while(stop == false) {
+
+            StringBuilder water = new StringBuilder();
 
             for (int i = 0; i < data.length; i++) {
                 data[i] = (byte)tcp_socket.getInputStream().read();
@@ -62,8 +64,6 @@ public class ResourceGetSAND extends Resource {
             String hexNr = "00" + hexEncode(data);
             Date date = new Date();
 
-            if(startTime == null)
-                startTime = date;
 
             HashMap<String, String> dataMap = new HashMap();
             dataMap = translateToHashMap(hexNr);
@@ -75,7 +75,7 @@ public class ResourceGetSAND extends Resource {
             String hexFormatted = mf2.valueToString(hexNr);
             //System.out.println("HEXFORMATTED: " + hexFormatted);
             //99m 11µ>[00000f72:5]       0 [00,00,00,00,00]
-            StringBuilder water = new StringBuilder();
+
             //         [00000F72:0][50,00,00,00,00,00,00,00,000]
 
             water.append("[000e0f72:7][00,00,40,07,04,ed,04,00]");
