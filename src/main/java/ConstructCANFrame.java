@@ -3,7 +3,7 @@
  *
  */
 
-public class CreateCANFrame extends Thread{
+public class ConstructCANFrame extends Thread{
 
 	private byte[] udpFrame= new byte[13];
 	private byte[] header = new byte[5];
@@ -26,7 +26,7 @@ public class CreateCANFrame extends Thread{
 	 * DEFAULT
 	 * Constructor
 	 */
-	public CreateCANFrame() {
+	public ConstructCANFrame() {
 		udpFrame[0] = (byte) prio; //(cargoId >> 24);
 		udpFrame[1] = (byte) command;
 		udpFrame[2] = (byte) 15; // >> 8;//(uid >> 8);
@@ -38,7 +38,7 @@ public class CreateCANFrame extends Thread{
 	 * @param dataLength
 	 * Constructor
 	 */
-	public CreateCANFrame(int dataLength) {
+	public ConstructCANFrame(int dataLength) {
 		udpFrame[0] = (byte) (uid >> 24);
 		udpFrame[1] = (byte) uid;
 		udpFrame[2] = (byte) 15; // >> 8;//(uid >> 8);
@@ -345,7 +345,7 @@ public class CreateCANFrame extends Thread{
 	 * The MAX SPEEED 1023!!!
 	 * DLC HAS TO BE 4 to get THE SPEED Otherwise you can't set the SPEED, defined by Maerklin
 	 */
-	public byte[] getSpeed () {
+	public static byte[] getSpeed() {
 		
 		//dlc = 4 mandatory to get the speed!
 		dlc = 4;
@@ -383,7 +383,7 @@ public class CreateCANFrame extends Thread{
 	}
 
 
-	public byte[] getWater () {
+	public static byte[] getWater() {
 		dlc = 7;
 		data = new char[dlc];
 		udpFrame[0] = (byte) prio ;
@@ -428,7 +428,7 @@ public class CreateCANFrame extends Thread{
 		return udpFrame;
 	}
 
-	public byte[] getSand () {
+	public static byte[] getSand() {
 		dlc = 7;
 		data = new char[dlc];
 		udpFrame[0] = (byte) prio ;
@@ -462,7 +462,7 @@ public class CreateCANFrame extends Thread{
 		return udpFrame;
 	}
 
-	public byte[] getOil () {
+	public static byte[] getOil() {
 		dlc = 7;
 		data = new char[dlc];
 		udpFrame[0] = (byte) prio ;

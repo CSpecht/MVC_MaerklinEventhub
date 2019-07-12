@@ -23,7 +23,7 @@ public interface Attribute {
     String SQLStatementHeader = "INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], "
             + "[TIME_STAMP], [DATASET], [DELIMITER]) VALUES ('";
     String sqlDataType = "STEAMDATA";
-    
+
     final ConnectionStringBuilder azureConn = new ConnectionStringBuilder()
             .setNamespaceName("BIAcademyNS")
             .setEventHubName("eventhubmarklinsteamlok")
