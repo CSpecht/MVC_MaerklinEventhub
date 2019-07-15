@@ -182,13 +182,13 @@ public class SendCan extends Thread implements Attribute {
             //DForSQL.stopListener();
 
             //ask status of oil
-            udpFrame = ConstructCANFrame.getOil();
+            udpFrame = ConstructCANFrame.getCoil(Attribute._STEAM_ID);
             sendTCP(udpFrame, 0, udpFrame.length);
             //sendToMSSQL(DForSQL, connectionUrl, dType);
             //DForSQL.stopListener();
 
             //ask status of sand
-            udpFrame = ConstructCANFrame.getSand();
+            udpFrame = ConstructCANFrame.getSand(Attribute._STEAM_ID);
             sendTCP(udpFrame, 0, udpFrame.length);
             //sendToMSSQL(DForSQL, connectionUrl, dType);
             //DForSQL.stopListener();

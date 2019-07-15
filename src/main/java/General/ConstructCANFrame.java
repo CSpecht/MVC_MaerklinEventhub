@@ -502,7 +502,7 @@ public class ConstructCANFrame extends Thread{
 		return udpFrame;
 	}
 
-	public static byte[] getSand() {
+	public static byte[] getSand(int locID) {
 		dlc = 7;
 		data = new char[dlc];
 		udpFrame[0] = (byte) prio ;
@@ -518,13 +518,13 @@ public class ConstructCANFrame extends Thread{
 		for (int i = 0; i < data.length; i++) {
 
 			if (i == 2) {
-				udpFrame[5+i] = (byte)getFirstByteOfId(steamId);
+				udpFrame[5+i] = (byte)getFirstByteOfId(locID);
 			}
 			if (i == 3) {
-				udpFrame[5+i] = (byte)getSecondByteOfId(steamId);
+				udpFrame[5+i] = (byte)getSecondByteOfId(locID);
 			}
 			if (i == 4) {
-				udpFrame[5+i] = (byte)8; //idx number
+				udpFrame[5+i] = (byte)12; //idx number
 			}
 			if (i == 5) {
 				udpFrame[5+i] = (byte)237;
@@ -536,7 +536,7 @@ public class ConstructCANFrame extends Thread{
 		return udpFrame;
 	}
 
-	public static byte[] getOil() {
+	public static byte[] getCoil(int locID) {
 		dlc = 7;
 		data = new char[dlc];
 		udpFrame[0] = (byte) prio ;
@@ -552,15 +552,15 @@ public class ConstructCANFrame extends Thread{
 		for (int i = 0; i < data.length; i++) {
 
 			if (i == 2) {
-				udpFrame[5+i] = (byte)getFirstByteOfId(steamId);
+				udpFrame[5+i] = (byte)getFirstByteOfId(locID);
 			}
 
 			if (i == 3) {
-				udpFrame[5+i] = (byte)getSecondByteOfId(steamId);
+				udpFrame[5+i] = (byte)getSecondByteOfId(locID);
 			}
 
 			if (i == 4) {
-				udpFrame[5+i] = (byte)12;
+				udpFrame[5+i] = (byte)8;
 			}
 
 			if (i == 5) {

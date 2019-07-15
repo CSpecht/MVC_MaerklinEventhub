@@ -1,8 +1,8 @@
 package Ressources;
 
-import Ressources.ResourceGet.ResourceGetCOIL;
-import Ressources.ResourceGet.ResourceGetSAND;
-import Ressources.ResourceGet.ResourceGetWATER;
+import Ressources.ResourceGet.ResourceCOIL;
+import Ressources.ResourceGet.ResourceSAND;
+import Ressources.ResourceGet.ResourceWATER;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -103,17 +103,17 @@ public class Resource {
 
         switch (i) {
             case "water":
-                ResourceGetWATER w_resource = new ResourceGetWATER(); //ip,port,stop
-                w_resource.NEW_GETWATER();
+                ResourceWATER w_resource = new ResourceWATER(); //ip,port,stop
+                w_resource.getWater();
 
                 break;
             case "coil":
-                ResourceGetCOIL c_resource = new ResourceGetCOIL(ip,port,stop);
-                c_resource.getCOIL();
+                ResourceCOIL c_resource = new ResourceCOIL();
+                c_resource.getCoil();
                 break;
             case "sand":
-                ResourceGetSAND s_resource = new ResourceGetSAND(ip,port,stop);
-                s_resource.getSAND();
+                ResourceSAND s_resource = new ResourceSAND();
+                s_resource.getSand();
                 break;
         }
 
