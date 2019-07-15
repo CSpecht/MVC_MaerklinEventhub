@@ -455,13 +455,15 @@ public class ConstructCANFrame extends Thread{
 		}
 		return udpFrame;
 	}
-	public static byte[] getWater() {
+
+	//SEND THIS COMMAND RESPOND WITH ALL RESSOURCES BECUASE OF THE IDX
+	public static byte[] getWater(int locID) {
 		dlc = 7;
 		data = new char[8];
 		udpFrame[0] = (byte) prio ;
 		udpFrame[1] = (byte) 14;
 		udpFrame[2] = (byte) 15; // >> 8;//(uid >> 8); 160
-		udpFrame[3] = (byte) 1798;
+		udpFrame[3] = (byte) 114; //1798
 		udpFrame[4] = (byte) dlc;
 	/*
 		dlc = 6;
@@ -482,19 +484,19 @@ public class ConstructCANFrame extends Thread{
 		for (int i = 0; i < data.length; i++) {
 
 			if (i == 2) {
-				udpFrame[5+i] = (byte)getFirstByteOfId(steamId);
+				udpFrame[5+i] = (byte)getFirstByteOfId(locID);
 			}
 			if (i == 3) {
-				udpFrame[5+i] = (byte)getSecondByteOfId(steamId);
+				udpFrame[5+i] = (byte)getSecondByteOfId(locID);
 			}
 			if (i == 4) {
-				udpFrame[5+i] = (byte)4;
+				udpFrame[5+i] = (byte)4; //4
 			}
 			if (i == 5) {
 				udpFrame[5+i] = (byte)237;
 			}
 			if (i == 6) {
-				udpFrame[5+i] = (byte)0;
+				udpFrame[5+i] = (byte)1; //3//0
 			}
 		}
 		return udpFrame;
@@ -506,7 +508,7 @@ public class ConstructCANFrame extends Thread{
 		udpFrame[0] = (byte) prio ;
 		udpFrame[1] = (byte) 14;
 		udpFrame[2] = (byte) 15; // >> 8;//(uid >> 8);
-		udpFrame[3] = (byte) 1798;
+		udpFrame[3] = (byte) 114;
 		udpFrame[4] = (byte) dlc;
 
 		for (int i = 0; i < data.length; i++) {
@@ -522,7 +524,7 @@ public class ConstructCANFrame extends Thread{
 				udpFrame[5+i] = (byte)getSecondByteOfId(steamId);
 			}
 			if (i == 4) {
-				udpFrame[5+i] = (byte)12; //idx number
+				udpFrame[5+i] = (byte)8; //idx number
 			}
 			if (i == 5) {
 				udpFrame[5+i] = (byte)237;
@@ -540,7 +542,7 @@ public class ConstructCANFrame extends Thread{
 		udpFrame[0] = (byte) prio ;
 		udpFrame[1] = (byte) 14;
 		udpFrame[2] = (byte) 15; // >> 8;//(uid >> 8);
-		udpFrame[3] = (byte) 1798;
+		udpFrame[3] = (byte) 114;
 		udpFrame[4] = (byte) dlc;
 
 		for (int i = 0; i < data.length; i++) {
@@ -558,7 +560,7 @@ public class ConstructCANFrame extends Thread{
 			}
 
 			if (i == 4) {
-				udpFrame[5+i] = (byte)8;
+				udpFrame[5+i] = (byte)12;
 			}
 
 			if (i == 5) {
@@ -576,14 +578,14 @@ public class ConstructCANFrame extends Thread{
 	 * The speed that we want to set up
 	 * @return udpFrame
 	 */
-	public static byte[] setOil () { //int oilAmount
+	public static byte[] setWater (int locID) { //int oilAmount
 
 		//dlc = 6 mandatory to set the speed!
 		dlc = 8;
 		data = new char[dlc];
 		udpFrame[0] = (byte) prio ;
-		udpFrame[1] = (byte) 16;
-		udpFrame[2] = (byte) 15; // >> 8;//(uid >> 8);
+		udpFrame[1] = (byte) 16; //16
+		udpFrame[2] = (byte) 15; //15// >> 8;//(uid >> 8);
 		udpFrame[3] = (byte) 114;
 		udpFrame[4] = (byte) dlc;
 
@@ -598,19 +600,19 @@ public class ConstructCANFrame extends Thread{
 		for (int i = 0; i < data.length; i++) {
 
 			if (i == 2) {
-				udpFrame[5+i] = (byte)getFirstByteOfId(steamId);
+				udpFrame[5+i] = (byte)getFirstByteOfId(locID);
 			}
 			if (i == 3) {
-				udpFrame[5+i] = (byte)getSecondByteOfId(steamId);
+				udpFrame[5+i] = (byte)getSecondByteOfId(locID);
 			}
 			if (i == 4) {
-				udpFrame[5+i] = (byte) 8;
+				udpFrame[5+i] = (byte) 4;
 			}
 			if(i == 5) {
 				udpFrame[5+i] = (byte) 237;
 			}
 			if(i == 6) {
-				udpFrame[5+i] = (byte) 85;
+				udpFrame[5+i] = (byte) 255;
 			}
 			if(i == 7) {
 				udpFrame[5+i] = (byte) 0;
@@ -623,7 +625,113 @@ public class ConstructCANFrame extends Thread{
 		}
 		return udpFrame;
 	}
-	
+
+	/**
+	 //* @param oilAmount
+	 * The speed that we want to set up
+	 * @return udpFrame
+	 */
+	public static byte[] setCoil (int locID) { //int oilAmount
+
+		//dlc = 6 mandatory to set the speed!
+		dlc = 8;
+		data = new char[dlc];
+		udpFrame[0] = (byte) prio ;
+		udpFrame[1] = (byte) 16; //16
+		udpFrame[2] = (byte) 15; //15// >> 8;//(uid >> 8);
+		udpFrame[3] = (byte) 114;
+		udpFrame[4] = (byte) dlc;
+
+		String s = intToHex(255);
+		System.out.println("hexString :" + s);
+		byte[] hexData = hexStringToByteArray(s);
+
+		for (int i = 0; i < data.length; i++) {
+			udpFrame[5+i] = (byte)data[i];
+		}
+
+		for (int i = 0; i < data.length; i++) {
+
+			if (i == 2) {
+				udpFrame[5+i] = (byte)getFirstByteOfId(locID);
+			}
+			if (i == 3) {
+				udpFrame[5+i] = (byte)getSecondByteOfId(locID);
+			}
+			if (i == 4) {
+				udpFrame[5+i] = (byte) 8;
+			}
+			if(i == 5) {
+				udpFrame[5+i] = (byte) 237;
+			}
+			if(i == 6) {
+				udpFrame[5+i] = (byte) 255;
+			}
+			if(i == 7) {
+				udpFrame[5+i] = (byte) 0;
+			}
+/*			if (i == 7 && hexData.length == 2) {
+				//08ED01
+				udpFrame[5+i] = (byte) (hexData[0] + hexData[1]);
+			}
+*/
+		}
+		return udpFrame;
+	}
+
+	/**
+	 //* @param oilAmount
+	 * The speed that we want to set up
+	 * @return udpFrame
+	 */
+	public static byte[] setSand (int locID) { //int oilAmount
+
+		//dlc = 6 mandatory to set the speed!
+		dlc = 8;
+		data = new char[dlc];
+		udpFrame[0] = (byte) prio ;
+		udpFrame[1] = (byte) 16; //16
+		udpFrame[2] = (byte) 15; //15// >> 8;//(uid >> 8);
+		udpFrame[3] = (byte) 114;
+		udpFrame[4] = (byte) dlc;
+
+		String s = intToHex(255);
+		System.out.println("hexString :" + s);
+		byte[] hexData = hexStringToByteArray(s);
+
+		for (int i = 0; i < data.length; i++) {
+			udpFrame[5+i] = (byte)data[i];
+		}
+
+		for (int i = 0; i < data.length; i++) {
+
+			if (i == 2) {
+				udpFrame[5+i] = (byte)getFirstByteOfId(locID);
+			}
+			if (i == 3) {
+				udpFrame[5+i] = (byte)getSecondByteOfId(locID);
+			}
+			if (i == 4) {
+				udpFrame[5+i] = (byte) 12;
+			}
+			if(i == 5) {
+				udpFrame[5+i] = (byte) 237;
+			}
+			if(i == 6) {
+				udpFrame[5+i] = (byte) 255;
+			}
+			if(i == 7) {
+				udpFrame[5+i] = (byte) 0;
+			}
+/*			if (i == 7 && hexData.length == 2) {
+				//08ED01
+				udpFrame[5+i] = (byte) (hexData[0] + hexData[1]);
+			}
+*/
+		}
+		return udpFrame;
+	}
+
 	/**
 	 * @param direction
 	 * sets the direction of the train based on the documentation rules

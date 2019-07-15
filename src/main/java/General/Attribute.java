@@ -32,4 +32,10 @@ public interface Attribute {
             .setSasKeyName("RootManageSharedAccessKey")
             .setSasKey("jiuer6fxPoEnrkrxzVwWVdRi1qw2+5A3rAoevEsiEVs=");
 
+
+    public static final int _CARGO_ID = 0x4006;
+    public static final int _STEAM_ID = 0x4007;
+
+
+
 }

@@ -122,7 +122,7 @@ public class SendCan extends Thread implements Attribute {
         int[] testFrame = new int[13];
 
         //General.ConstructCANFrame frame = new General.ConstructCANFrame();
-        udpFrame = ConstructCANFrame.setOil();
+        //udpFrame = ConstructCANFrame.setOil();
 
 
         System.out.println("udpLength: " + udpFrame.length);
@@ -176,7 +176,7 @@ public class SendCan extends Thread implements Attribute {
             DForSQL.startListener();
 
             //ask status of water
-            udpFrame = ConstructCANFrame.getWater();
+            udpFrame = ConstructCANFrame.getWater(Attribute._STEAM_ID);
             sendTCP(udpFrame, 0, udpFrame.length);
             //sendToMSSQL(DForSQL, connectionUrl, dType);
             //DForSQL.stopListener();

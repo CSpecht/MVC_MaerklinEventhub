@@ -140,16 +140,18 @@ public class  ResourceGetWATER extends Resource {
         InetAddress ia = InetAddress.getByName(Attribute.sendingAddress);
         InetAddress ib = InetAddress.getByName(Attribute.receivingAddress);
 
-
+        //ressource Start
         udpFrame = ConstructCANFrame.resourceStart();
         DatagramPacket sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia, Attribute.sendingPort);
         ds.send(sendPacket);
 
+        //train STOP
+        udpFrame = ConstructCANFrame.stopTrain();
         sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
-        ds.send( sendPacket );
-        udpFrame = ConstructCANFrame.resourceStop();
+        ds.send(sendPacket);
 
-        udpFrame = ConstructCANFrame.getWater();
+        //SET WATER
+        udpFrame = ConstructCANFrame.setWater(Attribute._STEAM_ID);
 
         System.out.println("GETWATER():");
         for (int i = 0; i < udpFrame.length; i++) {
@@ -162,6 +164,25 @@ public class  ResourceGetWATER extends Resource {
         sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia, Attribute.sendingPort);
         //System.out.println("1");
         ds.send( sendPacket );
+
+
+        //SET COIL
+        udpFrame = ConstructCANFrame.setCoil(Attribute._STEAM_ID);
+        sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        ds.send( sendPacket );
+
+        //SET SAND
+        udpFrame = ConstructCANFrame.setSand(Attribute._STEAM_ID);
+        sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        ds.send( sendPacket );
+
+        //RESOURCE STOP
+        udpFrame = ConstructCANFrame.resourceStop();
+        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        ds.send( sendPacket );
+
+
+
         //System.out.println("2");
         // Auf Anfrage warten
         sendPacket = new DatagramPacket( new byte[13], 13, ib, Attribute.receivePort );
@@ -181,6 +202,8 @@ public class  ResourceGetWATER extends Resource {
            System.out.println("data[" + j + "]: " + data[j]);
         }
 
+        udpFrame = ConstructCANFrame.go();
+        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
     }
 
 
