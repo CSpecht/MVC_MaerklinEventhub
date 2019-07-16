@@ -340,6 +340,231 @@ public class TestSend extends Thread{
 		return udpFrame;	
 	}
 
+
+	public byte[] resourceStart() {
+		dlc = 7;
+		data = new char[8];
+		udpFrame[0] = (byte) prio ;
+		udpFrame[1] = (byte) 14;
+		udpFrame[2] = (byte) 10; // >> 8;//(uid >> 8); 160
+		udpFrame[3] = (byte) 1798;
+		udpFrame[4] = (byte) dlc;
+		for (int i = 0; i < data.length; i++) {
+			udpFrame[5+i] = (byte)data[i];
+		}
+
+		for (int i = 0; i < data.length; i++) {
+			if (i == 0) {
+				udpFrame[5+i] = (byte)99;
+			}
+			if (i == 1) {
+				udpFrame[5 + i] = (byte) 115;
+			}
+			if (i == 2) {
+				udpFrame[5+i] = (byte)81;
+			}
+			if (i == 3) {
+				udpFrame[5+i] = (byte)44;
+			}
+			if (i == 4) {
+				udpFrame[5+i] = (byte)48;
+			}
+			if (i == 5) {
+				udpFrame[5+i] = (byte)2;
+			}
+			if (i == 6) {
+				udpFrame[5+i] = (byte)4;
+			}
+		}
+		return udpFrame;
+	}
+	public byte[] resourceStop() {
+		dlc = 6;
+		data = new char[8];
+		udpFrame[0] = (byte) prio ;
+		udpFrame[1] = (byte) 14;
+		udpFrame[2] = (byte) 10; // >> 8;//(uid >> 8); 160
+		udpFrame[3] = (byte) 1798;
+		udpFrame[4] = (byte) dlc;
+		for (int i = 0; i < data.length; i++) {
+			udpFrame[5+i] = (byte)data[i];
+		}
+
+		for (int i = 0; i < data.length; i++) {
+			if (i == 0) {
+				udpFrame[5+i] = (byte)99;
+			}
+			if (i == 1) {
+				udpFrame[5 + i] = (byte) 115;
+			}
+			if (i == 2) {
+				udpFrame[5+i] = (byte)81;
+			}
+			if (i == 3) {
+				udpFrame[5+i] = (byte)44;
+			}
+			if (i == 4) {
+				udpFrame[5+i] = (byte)48;
+			}
+			if (i == 5) {
+				udpFrame[5+i] = (byte)0;
+			}
+		}
+		return udpFrame;
+	}
+	public byte[] setWater (int locID) { //int oilAmount
+
+		//dlc = 6 mandatory to set the speed!
+		dlc = 8;
+		data = new char[dlc];
+		udpFrame[0] = (byte) prio ;
+		udpFrame[1] = (byte) 16; //16
+		udpFrame[2] = (byte) 15; //15// >> 8;//(uid >> 8);
+		udpFrame[3] = (byte) 114;
+		udpFrame[4] = (byte) dlc;
+
+		String s = intToHex(255);
+		System.out.println("hexString :" + s);
+		byte[] hexData = hexStringToByteArray(s);
+
+		for (int i = 0; i < data.length; i++) {
+			udpFrame[5+i] = (byte)data[i];
+		}
+
+		for (int i = 0; i < data.length; i++) {
+
+			if (i == 2) {
+				udpFrame[5+i] = (byte)getFirstByteOfId(locID);
+			}
+			if (i == 3) {
+				udpFrame[5+i] = (byte)getSecondByteOfId(locID);
+			}
+			if (i == 4) {
+				udpFrame[5+i] = (byte) 4;
+			}
+			if(i == 5) {
+				udpFrame[5+i] = (byte) 237;
+			}
+			if(i == 6) {
+				udpFrame[5+i] = (byte) 255;
+			}
+			if(i == 7) {
+				udpFrame[5+i] = (byte) 0;
+			}
+/*			if (i == 7 && hexData.length == 2) {
+				//08ED01
+				udpFrame[5+i] = (byte) (hexData[0] + hexData[1]);
+			}
+*/
+		}
+		return udpFrame;
+	}
+
+	/**
+	 //* @param oilAmount
+	 * The speed that we want to set up
+	 * @return udpFrame
+	 */
+	public byte[] setCoil (int locID) { //int oilAmount
+
+		//dlc = 6 mandatory to set the speed!
+		dlc = 8;
+		data = new char[dlc];
+		udpFrame[0] = (byte) prio ;
+		udpFrame[1] = (byte) 16; //16
+		udpFrame[2] = (byte) 15; //15// >> 8;//(uid >> 8);
+		udpFrame[3] = (byte) 114;
+		udpFrame[4] = (byte) dlc;
+
+		String s = intToHex(255);
+		System.out.println("hexString :" + s);
+		byte[] hexData = hexStringToByteArray(s);
+
+		for (int i = 0; i < data.length; i++) {
+			udpFrame[5+i] = (byte)data[i];
+		}
+
+		for (int i = 0; i < data.length; i++) {
+
+			if (i == 2) {
+				udpFrame[5+i] = (byte)getFirstByteOfId(locID);
+			}
+			if (i == 3) {
+				udpFrame[5+i] = (byte)getSecondByteOfId(locID);
+			}
+			if (i == 4) {
+				udpFrame[5+i] = (byte) 8;
+			}
+			if(i == 5) {
+				udpFrame[5+i] = (byte) 237;
+			}
+			if(i == 6) {
+				udpFrame[5+i] = (byte) 255;
+			}
+			if(i == 7) {
+				udpFrame[5+i] = (byte) 0;
+			}
+/*			if (i == 7 && hexData.length == 2) {
+				//08ED01
+				udpFrame[5+i] = (byte) (hexData[0] + hexData[1]);
+			}
+*/
+		}
+		return udpFrame;
+	}
+
+	/**
+	 //* @param oilAmount
+	 * The speed that we want to set up
+	 * @return udpFrame
+	 */
+	public byte[] setSand (int locID) { //int oilAmount
+
+		//dlc = 6 mandatory to set the speed!
+		dlc = 8;
+		data = new char[dlc];
+		udpFrame[0] = (byte) prio ;
+		udpFrame[1] = (byte) 16; //16
+		udpFrame[2] = (byte) 15; //15// >> 8;//(uid >> 8);
+		udpFrame[3] = (byte) 114;
+		udpFrame[4] = (byte) dlc;
+
+		String s = intToHex(255);
+		System.out.println("hexString :" + s);
+		byte[] hexData = hexStringToByteArray(s);
+
+		for (int i = 0; i < data.length; i++) {
+			udpFrame[5+i] = (byte)data[i];
+		}
+
+		for (int i = 0; i < data.length; i++) {
+
+			if (i == 2) {
+				udpFrame[5+i] = (byte)getFirstByteOfId(locID);
+			}
+			if (i == 3) {
+				udpFrame[5+i] = (byte)getSecondByteOfId(locID);
+			}
+			if (i == 4) {
+				udpFrame[5+i] = (byte) 12;
+			}
+			if(i == 5) {
+				udpFrame[5+i] = (byte) 237;
+			}
+			if(i == 6) {
+				udpFrame[5+i] = (byte) 255;
+			}
+			if(i == 7) {
+				udpFrame[5+i] = (byte) 0;
+			}
+/*			if (i == 7 && hexData.length == 2) {
+				//08ED01
+				udpFrame[5+i] = (byte) (hexData[0] + hexData[1]);
+			}
+*/
+		}
+		return udpFrame;
+	}
 	/**
 	 * @return udpFrame
 	 * The MAX SPEEED 1023!!!

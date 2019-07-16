@@ -147,10 +147,10 @@ public class GetCan extends Thread{
                             + "}";
 					jsonPayload.add(resultJSON);
 					dataset = lokId + ";" + CanMain.coaches + ";Water;" + Res + ";" + (int) (Res*31.3725) + ";" + RoundCount;
-					/*SQLstment.add("INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], " +
+					SQLstment.add("INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], " +
 							"[TIME_STAMP], [DATASET], [DELIMITER])\n" +
-							"VALUES (STEAMDATA, " + startTime + ", " + sdf.format(date) + ", " + dataset + ", " + ";");*/
-					//System.out.println(resultCSV);
+							"VALUES (STEAMDATA, " + startTime + ", " + sdf.format(date) + ", " + dataset + ", " + ";");
+					System.out.println(resultCSV);
 
 
 
@@ -183,10 +183,10 @@ public class GetCan extends Thread{
 							+ "}";
 					jsonPayload.add(resultJSON);
 					dataset = lokId + ";" + CanMain.coaches + ";Oil;" + Res + ";" + (int) (Res*11.7647) + ";" + RoundCount;
-					/*SQLstment.add("INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], " +
+					SQLstment.add("INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], " +
 							"[TIME_STAMP], [DATASET], [DELIMITER])\n" +
-							"VALUES (STEAMDATA, " + startTime + ", " + sdf.format(date) + ", " + dataset + ", " + ";");*/
-					//System.out.println(resultCSV);
+							"VALUES (STEAMDATA, " + startTime + ", " + sdf.format(date) + ", " + dataset + ", " + ";");
+					System.out.println(resultCSV);
 					rowCount++;
 				}
 			}
@@ -213,10 +213,10 @@ public class GetCan extends Thread{
 							+ "}";
 					jsonPayload.add(resultJSON);
 					dataset = lokId + ";" + CanMain.coaches + ";Sand;" + Res + ";" + (int) (Res*0.9803) + ";" + RoundCount;
-					/*SQLstment.add("INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], " +
+					SQLstment.add("INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], " +
 							"[TIME_STAMP], [DATASET], [DELIMITER])\n" +
-							"VALUES (STEAMDATA, " + startTime + ", " + sdf.format(date) + ", " + dataset + ", " + ";");*/
-					//System.out.println(resultCSV);
+							"VALUES (STEAMDATA, " + startTime + ", " + sdf.format(date) + ", " + dataset + ", " + ";");
+					System.out.println(resultCSV);
 					rowCount++;
 				}
 			}
@@ -224,15 +224,17 @@ public class GetCan extends Thread{
 			//if()
 
 			//[0023a706:8]    r 17 [00,01,00,02,00,01,09,7e]
-
+			//   583  1s826m558µ>[0023a706:8]    r 17 [00,01,00,02,00,01,ff,ff] S88Event>S88-Meld(Ger  1.Bus0.Mod 1.Kon 2)0->1,655350ms
 			//GET RoundCount from contact track Every Round --> RoundCount++
 			if (Pattern.matches("(.[A-F0-9]{8}.[A-F0-9]{2}..00,01,00,09,00,01,[A-F0-9]{2},[A-F0-9]{2}.)", hexFormatted)) {
 				String lokId = hexFormatted.substring(20 , 25).replace(",","");
 				rowCount++;
 				RoundCount++;
-				//System.out.println(rowCount + ";" + "\t\tRound:" + RoundCount);
+				System.out.println(rowCount + ";" + "\t\tRound:" + RoundCount);
 
 			}
+
+
 
 			//System.out.println("sb: \t" + sb);			
 			//else {
@@ -295,7 +297,12 @@ public class GetCan extends Thread{
 		}
 
 	}
-	
+
+	public int getRoundCount() {
+		return RoundCount;
+	}
+
+
 	public String getIp() {
 		return ip;
 	}
