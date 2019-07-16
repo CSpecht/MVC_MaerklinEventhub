@@ -9,26 +9,28 @@ import java.text.ParseException;
 public class GetCan implements Attribute{
 
 	String resource = "";
-
-	GetCan () {
-
-	}
+	DatagramPacket dp;
 
 	GetCan (String resource) {
 
 		this.resource = resource;
+
+
 		System.out.println(resource);
-		this.run();
+	}
+
+	public GetCan() {
+
 	}
 
 
-
 	public void run() {
-		Resource rs = new Resource();
+
 
 
 			System.out.println("THREAD!!");
 		try {
+			Resource rs = new Resource();
 			rs.getResource(resource);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -42,7 +44,7 @@ public class GetCan implements Attribute{
 	/***************************************************************************************
 	 * GET SPEED OF TRAIN
 	 ***************************************************************************************/
-	public boolean trainRunning() throws IOException {
+	public boolean isTrainRunning() throws IOException {
 		boolean result = false;
 		byte[] udpFrame = new byte[13];
 		byte[] packatData;
@@ -80,6 +82,14 @@ public class GetCan implements Attribute{
 		}
 
 	}
+
+	public DatagramPacket getRes () throws IOException, ParseException {
+		return dp;
+
+	}
+
+
+
 
 
 
