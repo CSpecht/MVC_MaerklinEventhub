@@ -31,12 +31,17 @@ public class CanMain implements Attribute{
 
 		Ressources.ResourceGet.ResourceWATER w = new Ressources.ResourceGet.ResourceWATER();
 		DatagramPacket dp = w.getWater();
+
+		SendCan sc = new SendCan(dp);
+		sc.transformData2CSV(dp.getData());
+
+
 		byte[] data = dp.getData();
 
-		System.out.println("DATA Received:");
+	/*	System.out.println("DATA Received:");
 		for (int j = 0; j<data.length; j++) {
 			System.out.println("data[" + j + "]: " + data[j]);
-		}
+		}*/
 
 		//GetCan test = new GetCan("water");
 

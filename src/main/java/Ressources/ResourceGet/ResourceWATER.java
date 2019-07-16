@@ -48,31 +48,30 @@ public class ResourceWATER extends Resource {
 
         System.out.println("I: " + i);
         DatagramPacket sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia, Attribute.sendingPort);
-        System.out.println("1");
         ds.send( sendPacket );
 
-        System.out.println("2");
-        byte[] buf = new byte[13];
-        // Auf Anfrage warten
-        DatagramPacket receivePacket = new DatagramPacket(buf,buf.length);
-        System.out.println("3");
-        dsReceive.receive(receivePacket);
-        System.out.println("4");
-        //comment
+        while (true) {
+            byte[] buf = new byte[13];
+            // Auf Anfrage warten
+            DatagramPacket receivePacket = new DatagramPacket(buf,buf.length,ib,Attribute.receivePort);
+            ds.receive(receivePacket);
+            // Empfaenger auslesen
+            InetAddress address = receivePacket.getAddress();
+            System.out.println("5");
+            int    port2    = receivePacket.getPort();
+            int    len     = receivePacket.getLength();
+            byte[] data    = receivePacket.getData();
 
-        // Empf�nger auslesen
-        InetAddress address = receivePacket.getAddress();
-        System.out.println("5");
-        int         port2    = receivePacket.getPort();
-        int         len     = receivePacket.getLength();
-        byte[]      data    = receivePacket.getData();
+            System.out.println("DATA Received:");
+            for (int j = 0; j<data.length; j++) {
+                System.out.println("data[" + j + "]: " + data[j]);
+            }
 
-        System.out.println("DATA Received:");
-        for (int j = 0; j<data.length; j++) {
-            System.out.println("data[" + j + "]: " + data[j]);
+            i++;
+            System.out.println("i: " + i);
+            return receivePacket;
         }
 
-        return receivePacket;
     }
 
     public void setWater() throws IOException {
@@ -97,7 +96,7 @@ public class ResourceWATER extends Resource {
         //SET WATER
         udpFrame = ConstructCANFrame.setWater(Attribute._STEAM_ID);
 
-        System.out.println("GETWATER():");
+        System.out.println("SETWATER():");
         for (int i = 0; i < udpFrame.length; i++) {
             System.out.println("udpFrame[" + i + "]: " + udpFrame[i]);
         }
