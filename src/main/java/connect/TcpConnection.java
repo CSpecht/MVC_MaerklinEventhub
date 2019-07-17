@@ -1,17 +1,17 @@
-package connect;
+package java.connect;
 
 import General.Attribute;
 import General.UdpPackage;
-import jdk.internal.jline.internal.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
+import java.net.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-public class TcpConnection extends Cs3Connection {
+public class TcpConnection extends connect.Cs3Connection {
 
     private static ConcurrentSkipListMap<InetAddress, TcpConnection> tcpVerbindungen = new ConcurrentSkipListMap();
 
@@ -28,7 +28,163 @@ public class TcpConnection extends Cs3Connection {
 
     private boolean empfangIstEin = false;
 
-    @Deprecated
+
+    public TcpConnection(String ipAdresse) throws UnknownHostException  {
+        InetAddress ip = null;
+        try {
+            ip = InetAddress.getByName(ipAdresse);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            System.out.println("No IP given");
+        }
+        this.tcp_ip = ip;
+
+        try {
+            System.out.println("verbinde per TCP mit " + General.Attribute.sendingAddress);
+            this.tcp_socket = new Socket(InetAddress.getByName(General.Attribute.sendingAddress), Attribute.sendingPort);
+
+        }
+        //catch (UnknownHostException ignore) {
+         //   System.err.println(String.valueOf(TcpConnection.class.getSimpleName()) + ignore.toString()); //+ " " + arg_ip.toString());
+            //fireCs2ConnectionEvent(arg_ip.getInet(), false, null);
+        //}
+        catch (SocketException e) {
+            System.err.println("TcpConnection" + e.toString() + " " + ip.toString());
+            //fireCs2ConnectionEvent(arg_ip.getInet(), false, null);
+        } catch (IOException f) {
+            f.printStackTrace();
+        }
+
+        if (this.tcp_socket == null) throw new UnknownHostException("Konnte keinen Socket erzeugen (" + ip + ")");
+        try {
+            this.tcp_socket.setSoTimeout(5000);
+            this.tcp_socket.setReuseAddress(true);
+            this.tcp_socket.setReceiveBufferSize(16000);
+            this.tcp_socket.setSendBufferSize(16000);
+            InetAddress tcpadr = this.tcp_socket.getInetAddress();
+            this.tcp_sendQueue = new ConcurrentLinkedQueue();
+            this.tcp_inputStream = this.tcp_socket.getInputStream();
+            this.tcp_outputStream = this.tcp_socket.getOutputStream();
+            //fireCs3ConnectionEvent(tcpadr, true, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public TcpConnection () {
+        try {
+            new TcpConnection(Attribute.sendingAddress);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+    }
+
+/*    @Deprecated
+    public static final TcpConnection getVerbindung(String ip) {
+        TcpConnection connection = getVerbindung(ip);
+        if (connection != null) return connection;
+
+        return null;
+    }*/
+
+    public void getVerbindung (String testipAdress) {
+
+        synchronized (lock) {
+            InetAddress testip = null;
+            try {
+                testip = InetAddress.getByName(testipAdress);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+            System.out.println(String.valueOf(TcpConnection.class.getSimpleName())
+                    + ".getVerbindung " + testip.getHostAddress());
+            TcpConnection connection = (TcpConnection)tcpVerbindungen.get(testip);
+
+            if (connection != null && (
+                    connection.tcp_socket == null || connection.tcp_socket.isClosed())) {
+                System.out.println("geschlossene Verbindung " + connection + " ignoriert");
+                connection = null;
+            }
+
+            if (connection == null) {
+                try {
+                    connection = new TcpConnection(testipAdress);
+                    connection.start();
+                    tcpVerbindungen.put(testip, connection);
+                    lastTcpVerbindung_weak = new WeakReference(connection);
+                } catch (UnknownHostException melde) {
+                    System.err.println(String.valueOf(TcpConnection.class.getSimpleName()) + melde.toString() + testip);
+                }
+            }
+        }
+    }
+
+    public void doSend(UdpPackage udpPackage, DatagramPacket dm) {
+        if (this.tcp_sendQueue == null)
+            return;  if (this.tcp_outputStream == null)
+            return;  this.tcp_sendQueue.add(udpPackage);
+        getExecutorService().execute(new Runnable()
+        {
+            public void run() {
+               TcpConnection t = new TcpConnection();
+               t.doSend();
+            }
+        });
+    }
+
+    protected void doSend() {
+        if (this.tcp_sendQueue == null)
+            return;
+        while (!this.tcp_sendQueue.isEmpty()) {
+            try {
+                OutputStream os = this.tcp_socket.getOutputStream();
+                if (os == null) {
+                    System.err.println("nicht gesendet");
+                    return;
+                }
+                UdpPackage udpPackage = (UdpPackage) this.tcp_sendQueue.poll();
+
+                os.write(udpPackage.getData());
+                udpPackage.setNanotime(System.nanoTime());
+                udpPackage.setPacketnr(this.counterOut.incrementAndGet());
+
+                fireUdpEvent(udpPackage, true);
+            } catch (SocketException e) {
+                close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+        public void close() {
+            try {
+                if (this.tcp_inputStream != null) this.tcp_inputStream.close();
+                this.tcp_inputStream = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (this.tcp_outputStream != null) this.tcp_outputStream.close();
+                this.tcp_outputStream = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (this.tcp_socket != null) {
+                    fireCs3ConnectionEvent(this.tcp_socket.getInetAddress(), false, null);
+                    this.tcp_socket.close();
+                    this.tcp_socket = null;
+                    System.out.println("TCP-Verbindung zu " + this.tcp_ip + " closed");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
+   /* @Deprecated
     private TcpConnection(String[] args) throws UnknownHostException {
         if (args == null || args.length == 0) throw new UnknownHostException("Keine IP angegeben");  byte b; int i; int arrayOfString;
         for (i = arrayOfString = args.length, b = 0; b < i; ) { String arg = arrayOfString[b];
@@ -110,10 +266,10 @@ public class TcpConnection extends Cs3Connection {
     }
 
 
-/*    public static final TcpConnection getVerbindung(String arg) throws UnknownHostException, SocketException {
+*//*    public static final TcpConnection getVerbindung(String arg) throws UnknownHostException, SocketException {
         getVerbindung(arg);
         return (TcpConnection) tcpVerbindungen.get(testip);
-    }*/
+    }*//*
 
 
 
@@ -145,11 +301,11 @@ public class TcpConnection extends Cs3Connection {
     }
 
 
-  /* public static final TcpConnection getVerbindung(InetAddress arg) throws UnknownHostException {
+  *//* public static final TcpConnection getVerbindung(InetAddress arg) throws UnknownHostException {
         //InetAddress testip = arg;
         getVerbindung(arg);
         return (TcpConnection) tcpVerbindungen.get(arg);
-    }*/
+    }*//*
 
 
 
@@ -332,6 +488,6 @@ public class TcpConnection extends Cs3Connection {
         if (this.tcp_socket == null) return null;
 
         return this.tcp_ip;
-    }
+    }*/
 
 }
