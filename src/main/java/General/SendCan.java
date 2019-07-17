@@ -9,8 +9,7 @@ import org.apache.log4j.BasicConfigurator;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -177,19 +176,19 @@ public class SendCan extends Thread implements General.Attribute {
             DForSQL.startListener();
 
             //ask status of water
-            udpFrame = ConstructCANFrame.getWater(Attribute._STEAM_ID);
+            udpFrame = ConstructCANFrame.getWater(General.Attribute._STEAM_ID);
             sendTCP(udpFrame, 0, udpFrame.length);
             //sendToMSSQL(DForSQL, connectionUrl, dType);
             //DForSQL.stopListener();
 
             //ask status of oil
-            udpFrame = ConstructCANFrame.getCoil(Attribute._STEAM_ID);
+            udpFrame = ConstructCANFrame.getCoil(General.Attribute._STEAM_ID);
             sendTCP(udpFrame, 0, udpFrame.length);
             //sendToMSSQL(DForSQL, connectionUrl, dType);
             //DForSQL.stopListener();
 
             //ask status of sand
-            udpFrame = ConstructCANFrame.getSand(Attribute._STEAM_ID);
+            udpFrame = ConstructCANFrame.getSand(General.Attribute._STEAM_ID);
             sendTCP(udpFrame, 0, udpFrame.length);
             //sendToMSSQL(DForSQL, connectionUrl, dType);
             //DForSQL.stopListener();
@@ -213,7 +212,7 @@ public class SendCan extends Thread implements General.Attribute {
         try {
 
             DatagramSocket dms = new DatagramSocket();
-            DatagramPacket dmp = new DatagramPacket(udpFrame, udpFrame.length, adress,Attribute.receivePort);
+            DatagramPacket dmp = new DatagramPacket(udpFrame, udpFrame.length, adress,General.Attribute.receivePort);
             dms.send(dmp);
             System.out.println("SEND!");
 
@@ -229,7 +228,7 @@ public class SendCan extends Thread implements General.Attribute {
     public static void sendTCP (byte[] udpFrame, int start, int len) {
         try {
 
-            Socket socket = new Socket(Attribute.sendingAddress, Attribute.sendingPort);
+            Socket socket = new Socket(General.Attribute.sendingAddress, General.Attribute.sendingPort);
             OutputStream out = socket.getOutputStream();
             DataOutputStream dos = new DataOutputStream(out);
 
