@@ -1,11 +1,11 @@
 package java.General;
 
-import Ressources.Resource;
 import com.microsoft.azure.eventhubs.EventData;
 import com.microsoft.azure.eventhubs.EventHubClient;
 import com.microsoft.azure.eventhubs.EventHubException;
 import org.apache.log4j.BasicConfigurator;
 
+import java.Ressources.Resource;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public class SendCan extends Thread implements General.Attribute {
+public class SendCan extends Thread implements Attribute {
 
 
     //----Send received Data from CAN to Azure----
@@ -39,7 +39,7 @@ public class SendCan extends Thread implements General.Attribute {
 
         // Each EventHubClient instance spins up a new TCP/SSL connection, which is expensive.
         // It is always a best practice to reuse these instances. The following sample shows this.
-        final EventHubClient ehClient = EventHubClient.createSync(String.valueOf(General.Attribute.azureConn), executorService);
+        final EventHubClient ehClient = EventHubClient.createSync(String.valueOf(Attribute.azureConn), executorService);
 
 
         //----SEND JSON FORMAT TO AZURE EVENTHUB----
@@ -79,14 +79,14 @@ public class SendCan extends Thread implements General.Attribute {
         }
 
         // create DateFormatter for the right format of date for SQLServer.
-        DateFormat sdf = new SimpleDateFormat(General.Attribute.DATEFORMAT);
+        DateFormat sdf = new SimpleDateFormat(Attribute.DATEFORMAT);
         Date date = new Date();
 
-        try (Connection con = DriverManager.getConnection(General.Attribute.dbUrl); Statement stmt = con.createStatement();) {
+        try (Connection con = DriverManager.getConnection(Attribute.dbUrl); Statement stmt = con.createStatement();) {
             for (int i = 0; i < DForSQL.payload.size(); i++) {
                 String SQL = "INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], "
                         + "[TIME_STAMP], [DATASET], [DELIMITER])"
-                        + "VALUES ('" + General.Attribute.sqlDataType + "','"
+                        + "VALUES ('" + Attribute.sqlDataType + "','"
                         + sdf.format(date).toString() + "','"
                         + sdf.format(date).toString() + "','"
                         + DForSQL.payload.get(i)
@@ -139,7 +139,7 @@ public class SendCan extends Thread implements General.Attribute {
      * @throws UnknownHostException
      ***************************************************************************************/
     public static void sendCanToCS3 (String connectionUrl, String dType) throws IOException, InterruptedException {
-        InetAddress addresse = InetAddress.getByName(General.Attribute.sendingAddress);
+        InetAddress addresse = InetAddress.getByName(Attribute.sendingAddress);
         //General.ConstructCANFrame udp = new General.ConstructCANFrame();
         //String ipAdress = "192.168.0.2";
 
@@ -155,13 +155,13 @@ public class SendCan extends Thread implements General.Attribute {
 
         //If the variable is setted up as -1, Max Limit = 500
         //if(iterations == -1) iterations = 500;
-        Resource DForSQL = new Resource(General.Attribute.sendingAddress,General.Attribute.sendingPort);
+        Resource DForSQL = new Resource(Attribute.sendingAddress,Attribute.sendingPort);
         //TODO: IMPLEMENT THREADS!!!!
         //DForSQL.start();
 
         byte[] testData = new byte[ 13 ];
         String log = "";
-        General.GetCan GC = new General.GetCan();
+        GetCan GC = new GetCan();
 
 
         //DForSQL.stopListener();
@@ -176,19 +176,19 @@ public class SendCan extends Thread implements General.Attribute {
             DForSQL.startListener();
 
             //ask status of water
-            udpFrame = ConstructCANFrame.getWater(General.Attribute._STEAM_ID);
+            udpFrame = ConstructCANFrame.getWater(Attribute._STEAM_ID);
             sendTCP(udpFrame, 0, udpFrame.length);
             //sendToMSSQL(DForSQL, connectionUrl, dType);
             //DForSQL.stopListener();
 
             //ask status of oil
-            udpFrame = ConstructCANFrame.getCoil(General.Attribute._STEAM_ID);
+            udpFrame = ConstructCANFrame.getCoil(Attribute._STEAM_ID);
             sendTCP(udpFrame, 0, udpFrame.length);
             //sendToMSSQL(DForSQL, connectionUrl, dType);
             //DForSQL.stopListener();
 
             //ask status of sand
-            udpFrame = ConstructCANFrame.getSand(General.Attribute._STEAM_ID);
+            udpFrame = ConstructCANFrame.getSand(Attribute._STEAM_ID);
             sendTCP(udpFrame, 0, udpFrame.length);
             //sendToMSSQL(DForSQL, connectionUrl, dType);
             //DForSQL.stopListener();
@@ -212,7 +212,7 @@ public class SendCan extends Thread implements General.Attribute {
         try {
 
             DatagramSocket dms = new DatagramSocket();
-            DatagramPacket dmp = new DatagramPacket(udpFrame, udpFrame.length, adress,General.Attribute.receivePort);
+            DatagramPacket dmp = new DatagramPacket(udpFrame, udpFrame.length, adress,Attribute.receivePort);
             dms.send(dmp);
             System.out.println("SEND!");
 
@@ -228,7 +228,7 @@ public class SendCan extends Thread implements General.Attribute {
     public static void sendTCP (byte[] udpFrame, int start, int len) {
         try {
 
-            Socket socket = new Socket(General.Attribute.sendingAddress, General.Attribute.sendingPort);
+            Socket socket = new Socket(Attribute.sendingAddress, Attribute.sendingPort);
             OutputStream out = socket.getOutputStream();
             DataOutputStream dos = new DataOutputStream(out);
 
