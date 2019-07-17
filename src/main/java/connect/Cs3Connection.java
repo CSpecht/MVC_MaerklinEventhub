@@ -1,7 +1,6 @@
 package connect;
 import General.UdpPackage;
 
-import javax.swing.*;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.util.Arrays;
