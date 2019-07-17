@@ -1,7 +1,7 @@
 package connect;
-import General.ConstructCANFrame;
 import General.UdpPackage;
 
+import javax.swing.*;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.util.Arrays;
@@ -10,7 +10,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
-import javax.swing.SwingWorker;
 
 public abstract class Cs3Connection extends Thread {
 
