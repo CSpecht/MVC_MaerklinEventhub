@@ -1,4 +1,4 @@
-package General;//import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
+package java.General;//import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 
 public class CanMain implements Attribute{
