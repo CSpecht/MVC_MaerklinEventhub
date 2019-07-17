@@ -1,17 +1,20 @@
-package connect;
+package java.connect;
 
 
+import General.Attribute;
 import General.UdpPackage;
 
 import java.io.IOException;
+import java.net.*;
 import java.util.ArrayList;
 
 public class UdpConnection
-        extends Cs3Connection
+        extends connect.Cs3Connection
 {
-    private static Cs3Connection UdpConnection;
+    private static connect.Cs3Connection UdpConnection;
     private DatagramSocket empfang;
     private ArrayList<Long> cs2LastPacketTime;
+    private boolean empfangIstEin;
 
     private UdpConnection() {
         this.cs2LastPacketTime = new ArrayList();
@@ -20,7 +23,7 @@ public class UdpConnection
         setName("UdpConnection");
     }
 
-    public static final Cs3Connection getVerbindung() {
+    public static final connect.Cs3Connection getVerbindung() {
         if (nurTcpVerbindungenErlauben) return null;
         if (UdpConnection == null) {
             synchronized (lock) {
@@ -31,6 +34,25 @@ public class UdpConnection
             }
         }
         return UdpConnection;
+    }
+
+    @Override
+    public void doSend(UdpPackage paramUdpPacket, DatagramPacket paramDatagramPacket) {
+        getExecutorService().execute(new Runnable()
+        {
+            public void run() {
+                try {
+                    UdpConnection.this.getSender().send(paramDatagramPacket);
+
+                    paramUdpPacket.setNanotime(System.nanoTime());
+                    paramUdpPacket.setPacketnr(UdpConnection.this.counterOut.incrementAndGet());
+
+                    UdpConnection.this.fireUdpEvent(paramUdpPacket, true);
+                } catch (Exception e) {
+                    System.err.println("UdpVerbindung: " + e.toString());
+                }
+            }
+        });
     }
 
     public void start() { super.start(); }
@@ -46,7 +68,7 @@ public class UdpConnection
                 } catch (InterruptedException interruptedException) {}
             }
             try {
-                this.empfang = new DatagramSocket(15730 - this.proxy);
+                this.empfang = new DatagramSocket(Attribute.receivePort);
                 System.out.println(this.empfang.isBound());
                 try {
                     this.empfang.setReuseAddress(true);
@@ -70,10 +92,7 @@ public class UdpConnection
                 }
 
             }
-            catch (BindException e) {
-                this.proxy++;
-                this.proxytimeout = 10;
-            } catch (SocketException e) {
+            catch (SocketException e) {
                 e.printStackTrace();
                 try {
                     sleep(60L);
@@ -81,7 +100,7 @@ public class UdpConnection
             }
         }
 
-        if (debug) System.out.println(String.valueOf(getName()) + ".empfang()" + this.proxy);
+        if (debug) System.out.println(String.valueOf(getName()) + ".empfang()");
         while (!this.empfang.isClosed()) {
             do {
                 DatagramPacket packet = new DatagramPacket(new byte[13], 13);
@@ -91,8 +110,8 @@ public class UdpConnection
                         if (jetzt < timeout.longValue() ||
                                 timeout.longValue() < 0L)
                             continue;  int index = this.cs2LastPacketTime.indexOf(timeout);
-                        InetAddress cs2Adresse = (InetAddress)this.cs2Adressen.get(index);
-                        fireCs2ConnectionEvent(cs2Adresse, false, null);
+                        //InetAddress cs2Adresse = (InetAddress)this.cs2Adressen.get(index);
+                        //fireCs3ConnectionEvent(cs2Adresse, false, null);
                         timeout = Long.valueOf(-timeout.longValue());
                     }
                     this.empfang.receive(packet);
@@ -102,16 +121,15 @@ public class UdpConnection
                     InetAddress cs2Adress = packet.getAddress();
                     if (this.cs2Adressen.addIfAbsent(cs2Adress)) {
                         this.cs2LastPacketTime.add(Long.valueOf(System.nanoTime() + 30000000000L));
-                        fireCs2ConnectionEvent(cs2Adress, true, packet);
+                        fireCs3ConnectionEvent(cs2Adress, true, packet);
                     } else {
                         this.cs2LastPacketTime.set(this.cs2Adressen.indexOf(cs2Adress), Long.valueOf(System.nanoTime() + 30000000000L));
                     }
                     this.empfangIstEin = true;
-                    this.proxytimeout = 10;
-                    fireUdpEvent(new UdpPacket(packet, nr, jetzt), false);
+                    
+                    fireUdpEvent(new UdpPackage(packet, nr, jetzt), false);
                 } catch (SocketTimeoutException se) {
                     this.empfangIstEin = false;
-                    this.proxytimeout--;
                     if (debug_inp) System.out.println("x");
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -121,32 +139,10 @@ public class UdpConnection
                 }
                 if (!debug_inp) continue;  System.out.println(".");
             } while (this.empfangIstEin);
-            if (this.proxy > 0 && this.proxytimeout < 0) {
-                this.empfang.close();
-                if (debug) System.out.println("Fallback from Proxyport " + (15730 + this.proxy));
-                this.proxy = 0;
-            }
         }
     }
 
-    public void doSend(final UdpPackage udpPackage, final DatagramPacket packet) {
-        getExecutorService().execute(new Runnable()
-        {
-            public void run() {
-                try {
-                    UdpConnection.this.getSender().send(packet);
-
-                    udpPackage.setNanotime(System.nanoTime());
-                    udpPackage.setPacketnr(UdpConnection.this.counterOut.incrementAndGet());
-
-                    UdpConnection.this.fireUdpEvent(udpPackage, true);
-                } catch (Exception e) {
-                    System.err.println("UdpVerbindung: " + e.toString());
-                }
-            }
-        });
-    }
-
+   
     public final DatagramSocket getSender() {
         return this.empfang;
     }
