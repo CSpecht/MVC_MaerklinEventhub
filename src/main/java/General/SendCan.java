@@ -71,7 +71,7 @@ public class SendCan extends Thread implements Attribute {
     }
 
     //----Send received Data from CAN to MS SQL----
-    public static void sendToMSSQL(DatagramPacket DForSQL) {
+    public static void sendToMSSQL(Resource DForSQL) {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         } catch (ClassNotFoundException e) {
@@ -83,13 +83,13 @@ public class SendCan extends Thread implements Attribute {
         Date date = new Date();
 
         try (Connection con = DriverManager.getConnection(Attribute.dbUrl); Statement stmt = con.createStatement();) {
-            for (int i = 0; i < DForSQL.getData().length; i++) {
+            for (int i = 0; i < DForSQL.payload.size(); i++) {
                 String SQL = "INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], "
                         + "[TIME_STAMP], [DATASET], [DELIMITER])"
                         + "VALUES ('" + Attribute.sqlDataType + "','"
                         + sdf.format(date).toString() + "','"
                         + sdf.format(date).toString() + "','"
-                        + DForSQL.getData().toString()
+                        + DForSQL.payload.get(i)
                         + "', ';')";
                 System.out.println("SQL: " + SQL);
                 //ResultSet rs =
@@ -100,7 +100,6 @@ public class SendCan extends Thread implements Attribute {
                 }
 
             }
-
 
         }
         // Handle any errors that may have occurred.
@@ -156,13 +155,13 @@ public class SendCan extends Thread implements Attribute {
 
         //If the variable is setted up as -1, Max Limit = 500
         //if(iterations == -1) iterations = 500;
-        Resource DForSQL = new Resource(); //Attribute.sendingAddress,Attribute.sendingPort
+        Resource DForSQL = new Resource(Attribute.sendingAddress,Attribute.sendingPort);
         //TODO: IMPLEMENT THREADS!!!!
         //DForSQL.start();
 
         byte[] testData = new byte[ 13 ];
         String log = "";
-        GetCan GC = new GetCan("water");
+        GetCan GC = new GetCan();
 
 
         //DForSQL.stopListener();
@@ -172,12 +171,12 @@ public class SendCan extends Thread implements Attribute {
 
         //sendTCP(udpFrame, 0, udpFrame.length);
 
-        while (GC.isTrainRunning()) {
+        while (GC.trainRunning()) {
             long millis = System.currentTimeMillis();
             DForSQL.startListener();
 
             //ask status of water
-            //udpFrame = ConstructCANFrame.getWater(Attribute._STEAM_ID);
+            udpFrame = ConstructCANFrame.getWater(Attribute._STEAM_ID);
             sendTCP(udpFrame, 0, udpFrame.length);
             //sendToMSSQL(DForSQL, connectionUrl, dType);
             //DForSQL.stopListener();
@@ -199,7 +198,7 @@ public class SendCan extends Thread implements Attribute {
             for (int i = 0; i < udpFrame.length; i++) {
                 System.out.println("udpFrame["+i+"]: " + udpFrame[i]);
             }
-            //sendToMSSQL(DForSQL);
+            sendToMSSQL(DForSQL);
             DForSQL.stopListener();
             Thread.sleep(1000 - millis % 1000);
         }

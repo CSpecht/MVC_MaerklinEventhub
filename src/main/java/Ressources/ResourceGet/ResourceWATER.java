@@ -25,7 +25,7 @@ public class ResourceWATER extends Resource {
 
 
     //TODO: IMPLEMENTATION WRONG THE RESULT ISN'T RIGHT!!! -> SENDING TO MUCH DATA
-    public DatagramPacket getWater () throws IOException {
+    public void getWater () throws IOException {
 
         boolean result = false;
         byte[] udpFrame = new byte[13];
@@ -36,43 +36,38 @@ public class ResourceWATER extends Resource {
         InetAddress ib = InetAddress.getByName(Attribute.receivingAddress);
 
         //GET WATER
-
         udpFrame = ConstructCANFrame.getWater(Attribute._STEAM_ID);
 
-       System.out.println("GETWATER():");
+        System.out.println("GETWATER():");
         for (int i = 0; i < udpFrame.length; i++) {
             System.out.println("udpFrame[" + i + "]: " + udpFrame[i]);
         }
 
-        int i = 0;
+        //int i = 0;
 
-        System.out.println("I: " + i);
+        //System.out.println("I: " + i);
         DatagramPacket sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia, Attribute.sendingPort);
-        System.out.println("1");
+        //System.out.println("1");
         ds.send( sendPacket );
 
-        System.out.println("2");
-        byte[] buf = new byte[13];
+        //System.out.println("2");
         // Auf Anfrage warten
-        DatagramPacket receivePacket = new DatagramPacket(buf,buf.length);
-        System.out.println("3");
-        dsReceive.receive(receivePacket);
-        System.out.println("4");
+        sendPacket = new DatagramPacket( new byte[13], 13, ib, Attribute.receivePort );
+        dsReceive.receive( sendPacket );
+        //System.out.println("3");
         //comment
 
         // Empf�nger auslesen
-        InetAddress address = receivePacket.getAddress();
-        System.out.println("5");
-        int         port2    = receivePacket.getPort();
-        int         len     = receivePacket.getLength();
-        byte[]      data    = receivePacket.getData();
+        InetAddress address = sendPacket.getAddress();
+        //System.out.println("4");
+        int         port2    = sendPacket.getPort();
+        int         len     = sendPacket.getLength();
+        byte[]      data    = sendPacket.getData();
 
         System.out.println("DATA Received:");
         for (int j = 0; j<data.length; j++) {
-            System.out.println("data[" + j + "]: " + data[j]);
+           System.out.println("data[" + j + "]: " + data[j]);
         }
-
-        return receivePacket;
     }
 
     public void setWater() throws IOException {

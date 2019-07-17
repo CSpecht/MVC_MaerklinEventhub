@@ -1,12 +1,10 @@
 package Ressources;
 
-import General.GetCan;
 import Ressources.ResourceGet.ResourceCOIL;
 import Ressources.ResourceGet.ResourceSAND;
 import Ressources.ResourceGet.ResourceWATER;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.Socket;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -16,7 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public class Resource extends GetCan {
+public class Resource {
     protected String ip;
     protected int port;
     protected Socket tcp_socket = null;
@@ -33,18 +31,15 @@ public class Resource extends GetCan {
     protected ArrayList<String> SQLstment = new ArrayList<String>();
     public LinkedList<String> jsonPayload = new LinkedList<String>();
 
-    public Resource() {
-        super();
 
-    }
 
-/*    public Resource(String ip, int port, boolean stop){}
+    public Resource(String ip, int port, boolean stop){}
 
     public Resource(String ip, int port) {
         this.ip = ip;
         this.port = port;
     }
-    public Resource () {}*/
+    public Resource () {}
 
 
    /* public void run() {
@@ -104,21 +99,24 @@ public class Resource extends GetCan {
         stop = true;
     }
 
-    public DatagramPacket getResource(String i) throws IOException, ParseException {
+    public void getResource (String i) throws IOException, ParseException {
 
         switch (i) {
             case "water":
                 ResourceWATER w_resource = new ResourceWATER(); //ip,port,stop
-                return w_resource.getWater();
+                w_resource.getWater();
+
+                break;
             case "coil":
                 ResourceCOIL c_resource = new ResourceCOIL();
-                return c_resource.getCoil();
+                c_resource.getCoil();
+                break;
             case "sand":
                 ResourceSAND s_resource = new ResourceSAND();
-                return s_resource.getSand();
+                s_resource.getSand();
+                break;
         }
 
-        return null;
     }
 
     public String getIp() {

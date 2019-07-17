@@ -22,7 +22,7 @@ public class ResourceCOIL extends Resource {
    */
 
 
-    public DatagramPacket getCoil () throws IOException {
+    public void getCoil () throws IOException {
 
         boolean result = false;
         byte[] udpFrame = new byte[13];
@@ -65,8 +65,6 @@ public class ResourceCOIL extends Resource {
         for (int j = 0; j<data.length; j++) {
             System.out.println("data[" + j + "]: " + data[j]);
         }
-
-        return sendPacket;
     }
 
     public void setCoil() throws IOException {

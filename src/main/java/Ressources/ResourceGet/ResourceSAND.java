@@ -21,7 +21,7 @@ public class ResourceSAND extends Resource {
 
     */
 
-    public DatagramPacket getSand () throws IOException {
+    public void getSand () throws IOException {
 
         boolean result = false;
         byte[] udpFrame = new byte[13];
@@ -64,8 +64,6 @@ public class ResourceSAND extends Resource {
         for (int j = 0; j<data.length; j++) {
             System.out.println("data[" + j + "]: " + data[j]);
         }
-
-        return sendPacket;
     }
 
     public void setSand() throws IOException {

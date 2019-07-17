@@ -61,27 +61,17 @@ public class ConstructCANFrame extends Thread{
 	/**
 	 * @return udpFrame
 	 * send stop to all
-	 * s566m579µ>[00000f72:5]       0 [00,00,00,00,00]          System STOPP:Befehl a.alle UID=0
 	 */
 	public static byte[] stopTrain() {
-		udpFrame= new byte[13];
-		dlc = 5;
-		data = new char[dlc];
-		udpFrame[0] = (byte) prio ;
-		udpFrame[1] = (byte) 0;
-		udpFrame[2] = (byte) 15; // >> 8;//(uid >> 8);
-		udpFrame[3] = (byte) 114;
-		udpFrame[4] = (byte) dlc;
-
 		for (int i = 0; i < data.length; i++) {
 			udpFrame[5+i] = (byte)data[i];
-		}
-
-		for (int i = 0; i < data.length; i++) {
-			//udpFrame[5+i] = (byte)data[i];
 			
 			if (i <= 4) {
-				udpFrame[5+i] = 0;// (byte)data[i];
+				udpFrame[5+i] = (byte)data[i];
+			} 
+			
+			if (i >= 4) {
+				udpFrame[5+i] = 0; 			
 			}
 		}
 		return udpFrame;
@@ -93,14 +83,8 @@ public class ConstructCANFrame extends Thread{
 	 * @return udpFrame
 	 * send stop command to the train id
 	 */
-	public byte[] stop(int id)   {
-		dlc = 5;
-		data = new char[dlc];
-		udpFrame[0] = (byte) prio ;
-		udpFrame[1] = (byte) 12;
-		udpFrame[2] = (byte) 15; // >> 8;//(uid >> 8);
-		udpFrame[3] = (byte) 114;
-		udpFrame[4] = (byte) dlc;
+	public static byte[] stop(int id)   {
+		
 		for (int i = 0; i < data.length; i++) {
 			udpFrame[5+i] = (byte)data[i];		
 			
@@ -298,21 +282,13 @@ public class ConstructCANFrame extends Thread{
 	 * Give a go for the provided train ID
 	 */
 	public static byte[] go(int id) {
-		dlc = 5;
-		data = new char[dlc];
-		udpFrame[0] = (byte) prio ;
-		udpFrame[1] = (byte) 12;
-		udpFrame[2] = (byte) 15; // >> 8;//(uid >> 8);
-		udpFrame[3] = (byte) 114;
-		udpFrame[4] = (byte) dlc;
-
 		for (int i = 0; i < data.length; i++) {
 			udpFrame[5+i] = (byte)data[i];
 			if (i == 2) {
-				udpFrame[5+i] = (byte) getFirstByteOfId(id); //0
+				udpFrame[5+i] = 0;//(byte) getFirstByteOfId(id);
 			}
 			if (i == 3) {
-				udpFrame[5+i] = (byte) getSecondByteOfId(id);	//id
+				udpFrame[5+i] = (byte) id;//getSecondByteOfId(id);			
 			}
 			if (i >= 4) {
 				udpFrame[5+i] = 1; 			
