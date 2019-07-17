@@ -1,18 +1,13 @@
-package Ressources.ResourceGet;
+package java.Ressources.ResourceGet;
 
 import Ressources.Resource;
 
-import General.Attribute;
-import General.ConstructCANFrame;
-
-import javax.swing.text.MaskFormatter;
+import java.General.Attribute;
+import java.General.ConstructCANFrame;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.*;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.regex.Pattern;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 
 public class ResourceWATER extends Resource {
 
@@ -31,7 +26,7 @@ public class ResourceWATER extends Resource {
         byte[] udpFrame = new byte[13];
         byte[] packatData;
         DatagramSocket ds = new DatagramSocket(Attribute.sendingPort);
-        DatagramSocket dsReceive = new DatagramSocket(General.Attribute.receivePort);
+        DatagramSocket dsReceive = new DatagramSocket(Attribute.receivePort);
         InetAddress ia = InetAddress.getByName(Attribute.sendingAddress);
         InetAddress ib = InetAddress.getByName(Attribute.receivingAddress);
 
@@ -75,7 +70,7 @@ public class ResourceWATER extends Resource {
         byte[] udpFrame = new byte[13];
         byte[] packatData;
         DatagramSocket ds = new DatagramSocket(Attribute.sendingPort);
-        DatagramSocket dsReceive = new DatagramSocket(General.Attribute.receivePort);
+        DatagramSocket dsReceive = new DatagramSocket(Attribute.receivePort);
         InetAddress ia = InetAddress.getByName(Attribute.sendingAddress);
         InetAddress ib = InetAddress.getByName(Attribute.receivingAddress);
 

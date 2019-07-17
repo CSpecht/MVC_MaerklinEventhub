@@ -1,8 +1,8 @@
-package Ressources;
+package java.Ressources;
 
-import Ressources.ResourceGet.ResourceCOIL;
-import Ressources.ResourceGet.ResourceSAND;
-import Ressources.ResourceGet.ResourceWATER;
+import java.Ressources.ResourceGet.ResourceCOIL;
+import java.Ressources.ResourceGet.ResourceSAND;
+import java.Ressources.ResourceGet.ResourceWATER;
 
 import java.io.IOException;
 import java.net.Socket;
