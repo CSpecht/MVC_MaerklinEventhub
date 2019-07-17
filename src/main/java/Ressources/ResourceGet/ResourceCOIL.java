@@ -1,7 +1,7 @@
 package java.Ressources.ResourceGet;
 
 
-import Ressources.Resource;
+import java.Ressources.Resource;
 
 import java.General.Attribute;
 import java.General.ConstructCANFrame;
