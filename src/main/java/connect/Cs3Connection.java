@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Cs3Connection extends Thread {
+public abstract class Cs3Connection extends Thread {
 
     protected static final int CAN_EMPFANGS_TIMEOUT_MS = 5000;
     public static final int CAN_TELEGRAMM_LEN = 13;
@@ -20,7 +20,7 @@ public class Cs3Connection extends Thread {
     protected static final int UDP15730_CS2_out = 15730;
     public static final int UDP15731_CS2_in = 15731;
     protected static final long CS2TIMEOUT_NS = 30000000000L;
-    private Cs3Connection cs3Connection;
+    private static Cs3Connection cs3;
     protected static boolean nurTcpVerbindungenErlauben = false;
     private static final ExecutorService pool = Executors.newWorkStealingPool();
     protected static Boolean lock = new Boolean(false);
@@ -39,11 +39,10 @@ public class Cs3Connection extends Thread {
 
 
     public static Cs3Connection getVerbindung() {
-        Cs3Connection cs3  = new Cs3Connection();
-        //cs3 = TcpConnection.getVerbindung();
+        cs3 = TcpConnection.getVerbindung();
         if (cs3 != null) return cs3;
         if (nurTcpVerbindungenErlauben) return null;
-       // cs3 = UdpConnection.getVerbindung();
+        cs3 = UdpConnection.getVerbindung();
         return cs3;
     }
 
@@ -58,7 +57,7 @@ public class Cs3Connection extends Thread {
 
     public void setEmpfangAktiv(boolean aktiv) { this.empfangEinschalten = aktiv; }
 
-    //public abstract void doSend(UdpPackage paramUdpPacket, DatagramPacket paramDatagramPacket);
+    public abstract void doSend(UdpPackage paramUdpPacket, DatagramPacket paramDatagramPacket);
 
     //public static void addUdpListener(CanListener l) { listenerList.add(CanListener.class, l); }
 

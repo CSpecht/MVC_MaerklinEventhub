@@ -1,7 +1,7 @@
 package java.connect;
 
 
-import General.Attribute;
+import java.General.Attribute;
 import java.General.UdpPackage;
 
 import java.io.IOException;
@@ -9,21 +9,21 @@ import java.net.*;
 import java.util.ArrayList;
 
 public class UdpConnection
-        extends connect.Cs3Connection
+        extends Cs3Connection
 {
-    private static connect.Cs3Connection UdpConnection;
+    private static Cs3Connection UdpConnection;
     private DatagramSocket empfang;
     private ArrayList<Long> cs2LastPacketTime;
     private boolean empfangIstEin;
 
-    private UdpConnection() {
+    public UdpConnection() {
         this.cs2LastPacketTime = new ArrayList();
 
         setDaemon(true);
         setName("UdpConnection");
     }
 
-    public static final connect.Cs3Connection getVerbindung() {
+    public static final Cs3Connection getVerbindung() {
         if (nurTcpVerbindungenErlauben) return null;
         if (UdpConnection == null) {
             synchronized (lock) {

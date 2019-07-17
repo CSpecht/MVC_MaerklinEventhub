@@ -1,6 +1,6 @@
 package java.connect;
 
-import General.Attribute;
+import java.General.Attribute;
 import java.General.UdpPackage;
 
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.net.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-public class TcpConnection extends connect.Cs3Connection {
+public class TcpConnection extends Cs3Connection {
 
     private static ConcurrentSkipListMap<InetAddress, TcpConnection> tcpVerbindungen = new ConcurrentSkipListMap();
 
@@ -40,8 +40,8 @@ public class TcpConnection extends connect.Cs3Connection {
         this.tcp_ip = ip;
 
         try {
-            System.out.println("verbinde per TCP mit " + General.Attribute.sendingAddress);
-            this.tcp_socket = new Socket(InetAddress.getByName(General.Attribute.sendingAddress), Attribute.sendingPort);
+            System.out.println("verbinde per TCP mit " + Attribute.sendingAddress);
+            this.tcp_socket = new Socket(InetAddress.getByName(Attribute.sendingAddress), Attribute.sendingPort);
 
         }
         //catch (UnknownHostException ignore) {
@@ -78,6 +78,7 @@ public class TcpConnection extends connect.Cs3Connection {
             e.printStackTrace();
         }
     }
+
 
 /*    @Deprecated
     public static final TcpConnection getVerbindung(String ip) {
