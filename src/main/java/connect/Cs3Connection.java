@@ -1,17 +1,16 @@
-package connect;
+package java.connect;
+
 import General.UdpPackage;
 
-import java.connect.UdpConnection;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.util.Arrays;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class Cs3Connection extends Thread {
+public class Cs3Connection extends Thread {
 
     protected static final int CAN_EMPFANGS_TIMEOUT_MS = 5000;
     public static final int CAN_TELEGRAMM_LEN = 13;
@@ -21,7 +20,7 @@ public abstract class Cs3Connection extends Thread {
     protected static final int UDP15730_CS2_out = 15730;
     public static final int UDP15731_CS2_in = 15731;
     protected static final long CS2TIMEOUT_NS = 30000000000L;
-    private static Cs3Connection cs3Connection;
+    private Cs3Connection cs3Connection;
     protected static boolean nurTcpVerbindungenErlauben = false;
     private static final ExecutorService pool = Executors.newWorkStealingPool();
     protected static Boolean lock = new Boolean(false);
@@ -38,34 +37,19 @@ public abstract class Cs3Connection extends Thread {
 
     private boolean empfangIstEin;
 
-    public static Cs3Connection getVerbindung(String... args) {
-        byte b;
-        int i;
-        String[] arrayOfString;
-        for (i = arrayOfString = args.length, b = 0; b < i; ) { String ip = arrayOfString[b];
-            try {
-                cs3Connection = TcpConnection.getVerbindung(ip);
-                if (cs3Connection != null) return cs3Connection;
-            } catch (Exception ignore) {
-                System.err.println("Cs2Verbindung: " + ignore);
-            }  b++; }
-        if (nurTcpVerbindungenErlauben) return null;
-
-        if (cs3Connection == null) cs3Connection = UdpConnection.getVerbindung();
-        return cs3Connection;
-    }
 
     public static Cs3Connection getVerbindung() {
-        cs3Connection = TcpConnection.getVerbindung();
-        if (cs3Connection != null) return cs3Connection;
+        Cs3Connection cs3  = new Cs3Connection();
+        //cs3 = TcpConnection.getVerbindung();
+        if (cs3 != null) return cs3;
         if (nurTcpVerbindungenErlauben) return null;
-        cs3Connection = UdpConnection.getVerbindung();
-        return cs3Connection;
+       // cs3 = UdpConnection.getVerbindung();
+        return cs3;
     }
 
     public static ExecutorService getExecutorService() { return pool; }
 
-    protected static WeakEventListenerList listenerList = new WeakEventListenerList();
+    //protected static WeakEventListenerList listenerList = new WeakEventListenerList();
 
     protected AtomicInteger counterIn = new AtomicInteger();
     protected AtomicInteger counterOut = new AtomicInteger();
@@ -74,7 +58,7 @@ public abstract class Cs3Connection extends Thread {
 
     public void setEmpfangAktiv(boolean aktiv) { this.empfangEinschalten = aktiv; }
 
-    public abstract void doSend(UdpPackage paramUdpPacket, DatagramPacket paramDatagramPacket);
+    //public abstract void doSend(UdpPackage paramUdpPacket, DatagramPacket paramDatagramPacket);
 
     //public static void addUdpListener(CanListener l) { listenerList.add(CanListener.class, l); }
 
@@ -93,14 +77,14 @@ public abstract class Cs3Connection extends Thread {
     }
     protected final void fireUdpEvent(UdpPackage udpPacket, boolean out) throws Exception {
         if (out ? debug_out : debug_inp) {
-            System.out.println(new CanBefehlRaw(udpPacket));
+           // System.out.println(new CanBefehlRaw(udpPacket));
             if (debug_bytes) System.out.println(Arrays.toString(udpPacket.getData()));
 
         }
-        final CanBefehl befehl = CanProtokoll.Command.translate(new CanBefehl(udpPacket)); byte b; int i; CanListener[] arrayOfCanListener;
+       // final CanBefehl befehl = CanProtokoll.Command.translate(new CanBefehl(udpPacket)); byte b; int i; CanListener[] arrayOfCanListener;
 
 
-        for (i = arrayOfCanListener = (CanListener[])listenerList.getListeners(CanListener.class).length, b = 0; b < i; ) { final CanListener empfaenger = arrayOfCanListener[b];
+       /* for (i = arrayOfCanListener = (CanListener[])listenerList.getListeners(CanListener.class).length, b = 0; b < i; ) { final CanListener empfaenger = arrayOfCanListener[b];
 
             if (empfaenger != null) {
               //  CanFilter filter = empfaenger.getCanFilter();
@@ -120,7 +104,7 @@ public abstract class Cs3Connection extends Thread {
                     });
                 }
             }
-            b++; }
+            b++; }*/
 
     }
 
@@ -131,8 +115,11 @@ public abstract class Cs3Connection extends Thread {
     public CopyOnWriteArrayList<InetAddress> getCS2_IPs() { return this.cs2Adressen; }
 
     protected final void fireCs3ConnectionEvent(final InetAddress cs2Adress, final boolean connected, final DatagramPacket packet) {
-        final long jetzt = System.nanoTime(); byte b; int i; Cs2ConnectionListener[] arrayOfCs2ConnectionListener;
-        for (i = arrayOfCs2ConnectionListener = (Cs2ConnectionListener[])listenerList.getListeners(Cs2ConnectionListener.class).length, b = 0; b < i; ) { final Cs2ConnectionListener empfaenger = arrayOfCs2ConnectionListener[b];
+        final long jetzt = System.nanoTime();
+        byte b;
+        int i;
+        //Cs2ConnectionListener[] arrayOfCs2ConnectionListener;
+        /*for (i = arrayOfCs2ConnectionListener = (Cs2ConnectionListener[])listenerList.getListeners(Cs2ConnectionListener.class).length, b = 0; b < i; ) { final Cs2ConnectionListener empfaenger = arrayOfCs2ConnectionListener[b];
             if (empfaenger != null) {
                 (new SwingWorker<Cs2ConnectionEvent, String>()
                 {
@@ -149,7 +136,7 @@ public abstract class Cs3Connection extends Thread {
                     }
                 }).execute();
             }
-            b++; }
+            b++; }*/
 
     }
 
