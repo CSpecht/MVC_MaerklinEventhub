@@ -1,4 +1,4 @@
-package java.General;
+package specht.General;
 
 /**
  * @author Cornelius Specht

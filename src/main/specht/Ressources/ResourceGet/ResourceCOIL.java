@@ -1,23 +1,24 @@
-package java.Ressources.ResourceGet;
+package specht.Ressources.ResourceGet;
 
-import java.Ressources.Resource;
 
-import java.General.Attribute;
-import java.General.ConstructCANFrame;
+import specht.Ressources.Resource;
+
+import specht.General.Attribute;
+import specht.General.ConstructCANFrame;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-public class ResourceSAND extends Resource {
+public class ResourceCOIL extends Resource {
     boolean stop;
-    /*public ResourceSAND(String ip, int port, boolean stop) {
+   /* public ResourceCOIL(String ip, int port, boolean stop) {
         super(ip, port, stop);
     }
+   */
 
-    */
 
-    public void getSand () throws IOException {
+    public void getCoil () throws IOException {
 
         boolean result = false;
         byte[] udpFrame = new byte[13];
@@ -28,9 +29,9 @@ public class ResourceSAND extends Resource {
         InetAddress ib = InetAddress.getByName(Attribute.receivingAddress);
 
         //GET WATER
-        udpFrame = ConstructCANFrame.getSand(Attribute._STEAM_ID);
+        udpFrame = ConstructCANFrame.getCoil(Attribute._STEAM_ID);
 
-        System.out.println("GETSAND():");
+        System.out.println("GETCOIL():");
         for (int i = 0; i < udpFrame.length; i++) {
             System.out.println("udpFrame[" + i + "]: " + udpFrame[i]);
         }
@@ -62,7 +63,7 @@ public class ResourceSAND extends Resource {
         }
     }
 
-    public void setSand() throws IOException {
+    public void setCoil() throws IOException {
         boolean result = false;
         byte[] udpFrame = new byte[13];
         byte[] packatData;
@@ -81,10 +82,10 @@ public class ResourceSAND extends Resource {
         sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
         ds.send(sendPacket);
 
-        //SET SAND
-        udpFrame = ConstructCANFrame.setSand(Attribute._STEAM_ID);
+        //SET COIL
+        udpFrame = ConstructCANFrame.setCoil(Attribute._STEAM_ID);
 
-        System.out.println("SETSAND():");
+        System.out.println("SETCOIL():");
         for (int i = 0; i < udpFrame.length; i++) {
             System.out.println("udpFrame[" + i + "]: " + udpFrame[i]);
         }
@@ -128,6 +129,4 @@ public class ResourceSAND extends Resource {
     }
 
 
-
 }
-

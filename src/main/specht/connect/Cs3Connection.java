@@ -1,6 +1,6 @@
-package java.connect;
+package specht.connect;
 
-import java.General.UdpPackage;
+import specht.General.UdpPackage;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -81,7 +81,9 @@ public abstract class Cs3Connection extends Thread {
 
         }
        // final CanBefehl befehl = CanProtokoll.Command.translate(new CanBefehl(udpPacket)); byte b; int i; CanListener[] arrayOfCanListener;
+      //  if (empfaenger != null) {
 
+       // }
 
        /* for (i = arrayOfCanListener = (CanListener[])listenerList.getListeners(CanListener.class).length, b = 0; b < i; ) { final CanListener empfaenger = arrayOfCanListener[b];
 

@@ -1,4 +1,4 @@
-package View;
+package specht;
 
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;

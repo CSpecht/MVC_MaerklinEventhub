@@ -1,11 +1,12 @@
-package java.General;
+package specht.General;
 
 import com.microsoft.azure.eventhubs.EventData;
 import com.microsoft.azure.eventhubs.EventHubClient;
 import com.microsoft.azure.eventhubs.EventHubException;
 import org.apache.log4j.BasicConfigurator;
+import specht.Ressources.Resource;
 
-import java.Ressources.Resource;
+import javax.swing.text.MaskFormatter;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,13 +17,97 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class SendCan extends Thread implements Attribute {
+    DatagramPacket dmp;
+    byte[] dataFrame = new byte[13];
+    LinkedList<String> csvPayload = new LinkedList<String>();
+    LinkedList<String> jsonPayload = new LinkedList<String>();
 
+    private static final ExecutorService pool = Executors.newWorkStealingPool();
+
+
+    public SendCan (DatagramPacket packet) {
+        dmp = packet;
+    }
+
+    public LinkedList<String> getCsvPayload() {
+        return csvPayload;
+    }
+
+    public void setCsvPayload(LinkedList<String> csvPayload) {
+        this.csvPayload = csvPayload;
+    }
+
+    public LinkedList<String> getJsonPayload() {
+        return jsonPayload;
+    }
+
+    public void setJsonPayload(LinkedList<String> jsonPayload) {
+        this.jsonPayload = jsonPayload;
+    }
+
+    public byte[] getData (DatagramPacket p) {
+        dataFrame = p.getData();
+        return dataFrame;
+    }
+
+    public void transformData2JSON(byte[] df){
+
+
+        // jsonPayload.add(resultCSV);
+    }
+
+    public void transformData2CSV(byte[] df) {
+        String byteStream  = Base64.getEncoder().encodeToString(df);
+        System.out.println(byteStream);
+        String hexFormatted ="";
+        String hexNr = "";
+        String csvFormatted = "";
+        MaskFormatter mfHEX = null;
+        MaskFormatter mfCSV = null;
+        try {
+            mfHEX = new MaskFormatter("[HHHHHHHH:HH][HH,HH,HH,HH,HH,HH,HH,HH]");
+            mfHEX.setValueContainsLiteralCharacters(false);
+            hexNr =  hexEncode(df); //"00" +
+            hexFormatted = mfHEX.valueToString(hexNr);
+
+            mfCSV = new MaskFormatter("HH;HH;HH;HH;HH;HH;HH;HH;HH;HH;HH;HH;HH");
+            mfCSV.setValueContainsLiteralCharacters(false);
+            csvFormatted = mfCSV.valueToString(hexNr);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("hexFo: " + hexFormatted);
+        System.out.println("hexNr:  " + hexNr);
+        System.out.println("heCSV:  " + csvFormatted);
+        //csvPayload.add(byteStream);
+
+    }
+
+    //Encoding the byte[] into hexadecimal Number, RETURN STRING
+    private static String hexEncode(byte[] buf) {
+
+        return hexEncode(buf, new StringBuilder()).toString();
+    }
+
+    //Encoding byte[] into hexadecimal Number, RETURN STRINGBUILDER
+    public static StringBuilder hexEncode (byte[] buf, StringBuilder sb) {
+        for (byte b : buf) {
+            sb.append(String.format("%02x",b));
+        }
+        return sb;
+    }
 
     //----Send received Data from CAN to Azure----
     public static void sendToAzure(Resource DForAzure) throws EventHubException, IOException {

@@ -1,4 +1,4 @@
-package java.General;
+package specht.General;
 
 import com.microsoft.azure.eventhubs.ConnectionStringBuilder;
 

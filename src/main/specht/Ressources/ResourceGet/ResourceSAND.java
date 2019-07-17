@@ -1,26 +1,23 @@
-package java.Ressources.ResourceGet;
+package specht.Ressources.ResourceGet;
 
-import java.Ressources.Resource;
+import specht.Ressources.Resource;
 
-import java.General.Attribute;
-import java.General.ConstructCANFrame;
+import specht.General.Attribute;
+import specht.General.ConstructCANFrame;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-public class ResourceWATER extends Resource {
-
-
-    /*   boolean stop;
-    public ResourceWATER(String ip, int port, boolean stop) {
+public class ResourceSAND extends Resource {
+    boolean stop;
+    /*public ResourceSAND(String ip, int port, boolean stop) {
         super(ip, port, stop);
     }
-*/
 
+    */
 
-    //TODO: IMPLEMENTATION WRONG THE RESULT ISN'T RIGHT!!! -> SENDING TO MUCH DATA
-    public void getWater () throws IOException {
+    public void getSand () throws IOException {
 
         boolean result = false;
         byte[] udpFrame = new byte[13];
@@ -31,9 +28,9 @@ public class ResourceWATER extends Resource {
         InetAddress ib = InetAddress.getByName(Attribute.receivingAddress);
 
         //GET WATER
-        udpFrame = ConstructCANFrame.getWater(Attribute._STEAM_ID);
+        udpFrame = ConstructCANFrame.getSand(Attribute._STEAM_ID);
 
-        System.out.println("GETWATER():");
+        System.out.println("GETSAND():");
         for (int i = 0; i < udpFrame.length; i++) {
             System.out.println("udpFrame[" + i + "]: " + udpFrame[i]);
         }
@@ -61,11 +58,11 @@ public class ResourceWATER extends Resource {
 
         System.out.println("DATA Received:");
         for (int j = 0; j<data.length; j++) {
-           System.out.println("data[" + j + "]: " + data[j]);
+            System.out.println("data[" + j + "]: " + data[j]);
         }
     }
 
-    public void setWater() throws IOException {
+    public void setSand() throws IOException {
         boolean result = false;
         byte[] udpFrame = new byte[13];
         byte[] packatData;
@@ -84,10 +81,10 @@ public class ResourceWATER extends Resource {
         sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
         ds.send(sendPacket);
 
-        //SET WATER
-        udpFrame = ConstructCANFrame.setWater(Attribute._STEAM_ID);
+        //SET SAND
+        udpFrame = ConstructCANFrame.setSand(Attribute._STEAM_ID);
 
-        System.out.println("GETWATER():");
+        System.out.println("SETSAND():");
         for (int i = 0; i < udpFrame.length; i++) {
             System.out.println("udpFrame[" + i + "]: " + udpFrame[i]);
         }
@@ -131,5 +128,6 @@ public class ResourceWATER extends Resource {
     }
 
 
-    }
+
+}
 

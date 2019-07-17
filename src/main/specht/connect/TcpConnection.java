@@ -1,7 +1,7 @@
-package java.connect;
+package specht.connect;
 
-import java.General.Attribute;
-import java.General.UdpPackage;
+import specht.General.Attribute;
+import specht.General.UdpPackage;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,6 +1,6 @@
-package java.General;
+package specht.General;
 
-import java.Ressources.Resource;
+import specht.Ressources.Resource;
 
 import java.io.IOException;
 import java.net.*;

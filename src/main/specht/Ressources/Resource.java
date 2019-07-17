@@ -1,8 +1,8 @@
-package java.Ressources;
+package specht.Ressources;
 
-import java.Ressources.ResourceGet.ResourceCOIL;
-import java.Ressources.ResourceGet.ResourceSAND;
-import java.Ressources.ResourceGet.ResourceWATER;
+import specht.Ressources.ResourceGet.ResourceCOIL;
+import specht.Ressources.ResourceGet.ResourceSAND;
+import specht.Ressources.ResourceGet.ResourceWATER;
 
 import java.io.IOException;
 import java.net.Socket;

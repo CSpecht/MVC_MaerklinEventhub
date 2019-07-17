@@ -1,7 +1,8 @@
-package java.General;
+package specht.General;
 
 
-import java.connect.TcpConnection;
+import specht.connect.TcpConnection;
+
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;

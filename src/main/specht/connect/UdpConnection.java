@@ -1,8 +1,8 @@
-package java.connect;
+package specht.connect;
 
 
-import java.General.Attribute;
-import java.General.UdpPackage;
+import specht.General.Attribute;
+import specht.General.UdpPackage;
 
 import java.io.IOException;
 import java.net.*;
@@ -64,7 +64,7 @@ public class UdpConnection
 
             while (!this.empfangEinschalten) {
                 try {
-                    Thread.sleep(100L);
+                    sleep(100L);
                 } catch (InterruptedException interruptedException) {}
             }
             try {
