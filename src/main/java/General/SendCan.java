@@ -1,4 +1,4 @@
-package General;
+package java.General;
 
 import Ressources.Resource;
 import com.microsoft.azure.eventhubs.EventData;
@@ -9,6 +9,7 @@ import org.apache.log4j.BasicConfigurator;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
@@ -21,7 +22,7 @@ import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public class SendCan extends Thread implements Attribute {
+public class SendCan extends Thread implements General.Attribute {
 
 
     //----Send received Data from CAN to Azure----
@@ -39,7 +40,7 @@ public class SendCan extends Thread implements Attribute {
 
         // Each EventHubClient instance spins up a new TCP/SSL connection, which is expensive.
         // It is always a best practice to reuse these instances. The following sample shows this.
-        final EventHubClient ehClient = EventHubClient.createSync(String.valueOf(Attribute.azureConn), executorService);
+        final EventHubClient ehClient = EventHubClient.createSync(String.valueOf(General.Attribute.azureConn), executorService);
 
 
         //----SEND JSON FORMAT TO AZURE EVENTHUB----
@@ -79,14 +80,14 @@ public class SendCan extends Thread implements Attribute {
         }
 
         // create DateFormatter for the right format of date for SQLServer.
-        DateFormat sdf = new SimpleDateFormat(Attribute.DATEFORMAT);
+        DateFormat sdf = new SimpleDateFormat(General.Attribute.DATEFORMAT);
         Date date = new Date();
 
-        try (Connection con = DriverManager.getConnection(Attribute.dbUrl); Statement stmt = con.createStatement();) {
+        try (Connection con = DriverManager.getConnection(General.Attribute.dbUrl); Statement stmt = con.createStatement();) {
             for (int i = 0; i < DForSQL.payload.size(); i++) {
                 String SQL = "INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], "
                         + "[TIME_STAMP], [DATASET], [DELIMITER])"
-                        + "VALUES ('" + Attribute.sqlDataType + "','"
+                        + "VALUES ('" + General.Attribute.sqlDataType + "','"
                         + sdf.format(date).toString() + "','"
                         + sdf.format(date).toString() + "','"
                         + DForSQL.payload.get(i)
@@ -139,7 +140,7 @@ public class SendCan extends Thread implements Attribute {
      * @throws UnknownHostException
      ***************************************************************************************/
     public static void sendCanToCS3 (String connectionUrl, String dType) throws IOException, InterruptedException {
-        InetAddress addresse = InetAddress.getByName(Attribute.sendingAddress);
+        InetAddress addresse = InetAddress.getByName(General.Attribute.sendingAddress);
         //General.ConstructCANFrame udp = new General.ConstructCANFrame();
         //String ipAdress = "192.168.0.2";
 
@@ -155,13 +156,13 @@ public class SendCan extends Thread implements Attribute {
 
         //If the variable is setted up as -1, Max Limit = 500
         //if(iterations == -1) iterations = 500;
-        Resource DForSQL = new Resource(Attribute.sendingAddress,Attribute.sendingPort);
+        Resource DForSQL = new Resource(General.Attribute.sendingAddress,General.Attribute.sendingPort);
         //TODO: IMPLEMENT THREADS!!!!
         //DForSQL.start();
 
         byte[] testData = new byte[ 13 ];
         String log = "";
-        GetCan GC = new GetCan();
+        General.GetCan GC = new General.GetCan();
 
 
         //DForSQL.stopListener();

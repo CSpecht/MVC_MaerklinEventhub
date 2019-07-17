@@ -10,7 +10,7 @@ public class GetCan implements Attribute{
 
 	String resource = "";
 
-	GetCan () {
+	public GetCan() {
 
 	}
 
