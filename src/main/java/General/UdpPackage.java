@@ -1,7 +1,7 @@
-package General;
+package java.General;
 
-import connect.*;
 
+import java.connect.TcpConnection;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -49,7 +49,7 @@ public class UdpPackage {
         }
         TcpConnection tcp = null;
         try {
-            tcp = new TcpConnection(Attribute.inet);
+            tcp = new TcpConnection(Attribute.sendingAddress);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }

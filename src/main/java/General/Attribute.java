@@ -1,4 +1,4 @@
-package General;
+package java.General;
 
 import com.microsoft.azure.eventhubs.ConnectionStringBuilder;
 

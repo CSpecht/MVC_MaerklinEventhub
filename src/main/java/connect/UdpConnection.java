@@ -2,7 +2,7 @@ package java.connect;
 
 
 import General.Attribute;
-import General.UdpPackage;
+import java.General.UdpPackage;
 
 import java.io.IOException;
 import java.net.*;
