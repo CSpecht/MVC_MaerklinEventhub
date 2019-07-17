@@ -1,6 +1,6 @@
-package General;
+package java.General;
 
-import Ressources.Resource;
+import java.Ressources.Resource;
 
 import java.io.IOException;
 import java.net.*;
