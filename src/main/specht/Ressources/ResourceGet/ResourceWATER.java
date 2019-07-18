@@ -1,7 +1,9 @@
 package specht.Ressources.ResourceGet;
 
 import specht.General.Attribute;
+import specht.General.CanBefehlRaw;
 import specht.General.ConstructCANFrame;
+import specht.General.UdpPackage;
 import specht.Ressources.Resource;
 
 import javax.swing.text.MaskFormatter;
@@ -15,16 +17,104 @@ import java.util.HashMap;
 
 public class ResourceWATER extends Resource {
 
-    boolean debug = false;
+    boolean debug = true;
     HashMap<Integer, String> kvs = new HashMap<Integer, String>();
     HashMap hMap = new HashMap();
+    byte[] data = new byte[13];
+
     /*   boolean stop;
     public ResourceWATER(String ip, int port, boolean stop) {
         super(ip, port, stop);
     }
 */
 
+    public byte[] newGetWater() throws IOException {
 
+        boolean result = false;
+        byte[] udpFrame = new byte[13];
+        byte[] packatData;
+        DatagramSocket ds = new DatagramSocket(Attribute.sendingPort);
+        DatagramSocket dsReceive = new DatagramSocket(Attribute.receivePort);
+        InetAddress ia = InetAddress.getByName(Attribute.sendingAddress);
+        InetAddress ib = InetAddress.getByName(Attribute.receivingAddress);
+
+        //GET WATER
+        udpFrame = ConstructCANFrame.getWater(Attribute._STEAM_ID);
+
+        System.out.println("GETWATER():");
+        for (int i = 0; i < udpFrame.length; i++) {
+            System.out.println("udpFrame[" + i + "]: " + udpFrame[i]);
+        }
+
+        //int i = 0;
+
+        //System.out.println("I: " + i);
+        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        //System.out.println("1");
+        ds.send(sendPacket);
+
+
+
+
+
+
+
+        boolean empfang = true;
+        long timestamp = new Date().getTime();
+        //System.out.println("timestamp: " + timestamp);
+
+
+
+        int i = 0;
+        while (empfang) {
+
+
+            sendPacket = new DatagramPacket(new byte[13], 13, ib, Attribute.receivePort);
+            dsReceive.receive(sendPacket);
+            // Empf�nger auslesen
+            InetAddress address = sendPacket.getAddress();
+            //System.out.println("4");
+            int port2 = sendPacket.getPort();
+            int len = sendPacket.getLength();
+            data = sendPacket.getData();
+
+            //kvs.put(i, hexFormatted);
+            Date now = new Date();
+            long mills = now.getTime();
+            int pkNr = 1;
+            CanBefehlRaw canRaw = null;
+            UdpPackage udpP = new UdpPackage(sendPacket,pkNr,mills);
+            try {
+                canRaw = new CanBefehlRaw(udpP);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (canRaw.isResponse()) {
+                empfang = false;
+            }
+
+            i++;
+        }
+
+        if (debug) {
+            MaskFormatter mfHEX = null;
+            String hexFormatted = "";
+            String hexNr = "";
+            try {
+                mfHEX = new MaskFormatter("[HHHHHHHH:HH][HH,HH,HH,HH,HH,HH,HH,HH]");
+                mfHEX.setValueContainsLiteralCharacters(false);
+                hexNr = hexEncode(data);
+                hexFormatted = mfHEX.valueToString(hexNr);
+                System.out.println("hex: " + hexFormatted);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        return data;
+    }
     //TODO: IMPLEMENTATION WRONG THE RESULT ISN'T RIGHT!!! -> SENDING TO MUCH DATA
     public void getWater () throws IOException {
 

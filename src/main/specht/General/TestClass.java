@@ -15,6 +15,7 @@ public class TestClass {
         boolean debug = false;
         HashMap<Integer, String> kvs = new HashMap<Integer, String>();
         HashMap hMap = new HashMap();
+        byte[] data = new byte[13];
     /*   boolean stop;
     public ResourceWATER(String ip, int port, boolean stop) {
         super(ip, port, stop);
@@ -25,7 +26,9 @@ public class TestClass {
             getWater();
         }
 
-
+        public byte[] getWaterData () {
+            return data;
+        }
         //TODO: IMPLEMENTATION WRONG THE RESULT ISN'T RIGHT!!! -> SENDING TO MUCH DATA
         public void getWater () throws IOException {
 
@@ -48,42 +51,54 @@ public class TestClass {
             //int i = 0;
 
             //System.out.println("I: " + i);
-            DatagramPacket sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+            DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
             //System.out.println("1");
-            ds.send( sendPacket );
+            ds.send(sendPacket);
 
             //System.out.println("2");
             // Auf Anfrage warten
             boolean empfang = true;
+            boolean debug = true;
             long timestamp = new Date().getTime();
-            System.out.println(timestamp);
+            System.out.println("timestamp: " + timestamp);
 
+
+
+            //System.out.println("3");
+            //comment
             int i = 0;
-            do{
+            while (empfang) {
+
 
                 sendPacket = new DatagramPacket(new byte[13], 13, ib, Attribute.receivePort);
                 dsReceive.receive(sendPacket);
-                //System.out.println("3");
-                //comment
-
                 // Empf�nger auslesen
                 InetAddress address = sendPacket.getAddress();
                 //System.out.println("4");
                 int port2 = sendPacket.getPort();
                 int len = sendPacket.getLength();
-                byte[] data = sendPacket.getData();
+                data = sendPacket.getData();
 
-                int bytecounter = 1;
-                for (int j = 0; j < data.length ; j++) {
-                    hMap.put(bytecounter,data[j]);
-                    System.out.println("hMap: " + hMap.get(bytecounter));
-                    if (14 == bytecounter) {
-                        bytecounter = 1;
-                    }
+                //kvs.put(i, hexFormatted);
+                Date now = new Date();
+                long mills = now.getTime();
+                int pkNr = 1;
+                CanBefehlRaw canRaw = null;
+                UdpPackage udpP = new UdpPackage(sendPacket,pkNr,mills);
+                try {
+                    canRaw = new CanBefehlRaw(udpP);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
+                if (canRaw.isResponse()) {
+                    empfang = false;
+                }
 
+                i++;
+            }
 
+            if (debug) {
                 MaskFormatter mfHEX = null;
                 String hexFormatted = "";
                 String hexNr = "";
@@ -92,38 +107,27 @@ public class TestClass {
                     mfHEX.setValueContainsLiteralCharacters(false);
                     hexNr = hexEncode(data);
                     hexFormatted = mfHEX.valueToString(hexNr);
+                    System.out.println("hex: " + hexFormatted);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+            }
 
-                kvs.put(i, hexFormatted);
-
-                //System.out.println("DATA Received:");
-            /*for (int j = 0; j < data.length; j++) {
-                System.out.println("data[" + j + "]: " + data[j]);
-            }*/
-
-
-                if (i == 20) {
-                    empfang = false;
-                }
-                System.out.println("i: " + i);
-                i++;
-            } while(empfang == true);
-
-
+            //Ausgabe von KVS
             System.out.println("KVS:");
-            for (int j = 0; j <kvs.size(); j++) {
+            for (int j = 0; j < kvs.size(); j++) {
 
-                System.out.println(kvs.get(j));
+                if (j == 3) {
+                    System.out.println(kvs.get(j));
+                }
+
+
+                //System.out.println();
+
+                //handlePackage(hMap);
 
             }
-            //System.out.println();
-
-            handlePackage(hMap);
-
         }
-
         private void handlePackage(HashMap packet) {
             // die Message ID
             int messageID = getValueFromBytes(packet, 3, 7, true).intValue();

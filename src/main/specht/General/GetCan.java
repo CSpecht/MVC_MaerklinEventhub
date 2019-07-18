@@ -9,6 +9,7 @@ import java.text.ParseException;
 public class GetCan implements Attribute{
 
 	String resource = "";
+	byte[] data = new byte[13];
 
 	public GetCan() {
 
@@ -29,7 +30,7 @@ public class GetCan implements Attribute{
 
 			System.out.println("THREAD!!");
 		try {
-			rs.getResource(resource);
+			data = rs.getResource(resource);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
@@ -37,6 +38,10 @@ public class GetCan implements Attribute{
 		}
 
 
+	}
+
+	public byte[] getData () {
+		return data;
 	}
 
 	/***************************************************************************************

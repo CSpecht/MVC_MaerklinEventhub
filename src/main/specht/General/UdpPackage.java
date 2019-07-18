@@ -37,7 +37,12 @@ public class UdpPackage {
         StringBuilder sb = new StringBuilder();
         sb.append(getPacketnr());
         sb.append(":");
-        sb.append(this.datagramm);
+
+        for (int i = 0; i < this.datagramm.getData().length; i++) {
+            sb.append(this.getData()[i]);
+        }
+
+        //sb.append(this.datagramm.getData());
         return sb.toString();
     }
 
