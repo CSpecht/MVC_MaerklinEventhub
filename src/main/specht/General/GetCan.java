@@ -6,10 +6,11 @@ import java.io.IOException;
 import java.net.*;
 import java.text.ParseException;
 
-public class GetCan implements Attribute{
+public class GetCan extends Thread implements Attribute{
 
 	String resource = "";
 	byte[] data = new byte[13];
+	int resAmmount;
 
 	public GetCan() {
 
@@ -18,8 +19,9 @@ public class GetCan implements Attribute{
 	GetCan (String resource) {
 
 		this.resource = resource;
-		System.out.println(resource);
+		//System.out.println(resource);
 		this.run();
+
 	}
 
 
@@ -27,10 +29,11 @@ public class GetCan implements Attribute{
 	public void run() {
 		Resource rs = new Resource();
 
-
 			System.out.println("THREAD!!");
 		try {
 			data = rs.getResource(resource);
+			resAmmount = rs.getRessourceAmmount();
+			//this.sleep(1000);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
@@ -43,6 +46,8 @@ public class GetCan implements Attribute{
 	public byte[] getData () {
 		return data;
 	}
+	public int getRessourceAmmount() { return resAmmount; }
+
 
 	/***************************************************************************************
 	 * GET SPEED OF TRAIN

@@ -524,7 +524,7 @@ public class ConstructCANFrame extends Thread{
                 udpFrame[5+i] = (byte)getSecondByteOfId(locID);
             }
             if (i == 4) {
-                udpFrame[5+i] = (byte)8; //idx number
+                udpFrame[5+i] = (byte)12; //idx number
             }
             if (i == 5) {
                 udpFrame[5+i] = (byte)237;
@@ -560,7 +560,7 @@ public class ConstructCANFrame extends Thread{
             }
 
             if (i == 4) {
-                udpFrame[5+i] = (byte)12;
+                udpFrame[5+i] = (byte)8;
             }
 
             if (i == 5) {

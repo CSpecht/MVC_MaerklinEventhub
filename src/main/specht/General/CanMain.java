@@ -1,10 +1,6 @@
 package specht.General;//import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 
-import java.io.IOException;
-import java.net.*;
-import java.util.Date;
-
 public class CanMain implements Attribute{
 
 
@@ -18,16 +14,58 @@ public class CanMain implements Attribute{
 
 		//General.SendCan send = new General.SendCan();
 
-		GetCan receive = new GetCan("water");
 
-		byte[] data = receive.getData();
 
-		for (int i = 0; i < data.length; i++) {
-			System.out.println("received_Data["+i+"]: " + data[i]);
+		/*UdpConnectionResponse udpConnect = new UdpConnectionResponse();
+		udpConnect.start();
+*/
+		GetCan recWater = new GetCan("water");
+		GetCan recSand = new GetCan("sand");
+
+
+		//GetCan receiveWater = new GetCan("water");
+		//GetCan receiveCoil = new GetCan("coil");
+		//GetCan receiveSand = new GetCan("sand");
+		//GetCan receiveCoil = new GetCan("coil");
+		//receiveWater.start();
+		//receiveSand.start();
+	/*	try {
+			receiveWater.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}*/
+		//System.out.println("water: " + receiveWater.getRessourceAmmount());
+		//System.out.println("sand: " + receiveSand.getRessourceAmmount());
+		//System.out.println("coil: " + receiveCoil.getRessourceAmmount());
+
+		//receiveCoil.start();
+
+		//GetCan receiveSand = new GetCan("sand");
+		//receiveSand.start();
+
+		//byte[] water = receiveWater.getData();
+		//byte[] coil = receiveCoil.getData();
+		//byte[] sand = receiveSand.getData();
+
+		//System.out.println("Water: " + receiveWater.getRessourceAmmount());
+		//System.out.println("Coil: " + receiveCoil.getRessourceAmmount());
+		//System.out.println("Sand: " + receiveSand.getRessourceAmmount());
+
+/*		System.out.println("\nWATER");
+		for (int i = 0; i < water.length; i++) {
+			System.out.println("water["+i+"]: " + water[i]);
 		}
-
-		//UdpConnection con = new UdpConnection();
-		Date now = new Date();
+		System.out.println("\nCOIL");
+		for (int i = 0; i < coil.length; i++) {
+			System.out.println("coil["+i+"]: " + coil[i]);
+		}
+		System.out.println("\nSAND");
+		for (int i = 0; i < sand.length; i++) {
+			System.out.println("sand["+i+"]: " + sand[i]);
+		}
+*/
+		//UdpConnectionResponse con = new UdpConnectionResponse();
+/*		Date now = new Date();
 		int pkNr = 1;
 		byte[] Frame = new byte[13];
 		InetAddress ia = null;
@@ -53,7 +91,9 @@ public class CanMain implements Attribute{
 
 		UdpPackage udpP = new UdpPackage(dp,pkNr,mills);
 		System.out.println("UDP: " + udpP.toString());
-	/*	byte[] canId = { 003 };
+*/
+
+		/*	byte[] canId = { 003 };
 		for (int i = 0; i < canId.length; i++) {
 			System.out.println("canIdByte["+i+"]: "+canId[i]);
 		}

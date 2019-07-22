@@ -46,7 +46,7 @@ public class TcpConnection extends Cs3Connection {
         }
         //catch (UnknownHostException ignore) {
          //   System.err.println(String.valueOf(TcpConnection.class.getSimpleName()) + ignore.toString()); //+ " " + arg_ip.toString());
-            //fireCs2ConnectionEvent(arg_ip.getInet(), false, null);
+            //fireCs3ConnectionEvent(arg_ip.getInet(), false, null);
         //}
         catch (SocketException e) {
             System.err.println("TcpConnection" + e.toString() + " " + ip.toString());
@@ -86,41 +86,44 @@ public class TcpConnection extends Cs3Connection {
         if (connection != null) return connection;
 
         return null;
-    }*/
+    }
+*/
+    public boolean getVerbindung (String testipAdress) {
 
-    public void getVerbindung (String testipAdress) {
-
-        synchronized (lock) {
-            InetAddress testip = null;
+        InetAddress testip = null;
             try {
                 testip = InetAddress.getByName(testipAdress);
             } catch (UnknownHostException e) {
                 e.printStackTrace();
+                return false;
             }
+            System.out.println("TEST!");
+
             System.out.println(String.valueOf(TcpConnection.class.getSimpleName())
                     + ".getVerbindung " + testip.getHostAddress());
-            TcpConnection connection = (TcpConnection)tcpVerbindungen.get(testip);
+            //TcpConnection connection = (TcpConnection)tcpVerbindungen.get(testip);
 
-            if (connection != null && (
-                    connection.tcp_socket == null || connection.tcp_socket.isClosed())) {
-                System.out.println("geschlossene Verbindung " + connection + " ignoriert");
-                connection = null;
-            }
-
-            if (connection == null) {
-                try {
-                    connection = new TcpConnection(testipAdress);
-                    connection.start();
-                    tcpVerbindungen.put(testip, connection);
-                    lastTcpVerbindung_weak = new WeakReference(connection);
-                } catch (UnknownHostException melde) {
-                    System.err.println(String.valueOf(TcpConnection.class.getSimpleName()) + melde.toString() + testip);
-                }
-            }
+//            if (connection != null && (
+//                    connection.tcp_socket == null || connection.tcp_socket.isClosed())) {
+//                System.out.println("geschlossene Verbindung " + connection + " ignoriert");
+//                connection = null;
+//            }
+//
+//            if (connection == null) {
+//                try {
+//                    connection = new TcpConnection(testipAdress);
+//                    connection.start();
+//                    tcpVerbindungen.put(testip, connection);
+//                    lastTcpVerbindung_weak = new WeakReference(connection);
+//                } catch (UnknownHostException melde) {
+//                    System.err.println(String.valueOf(TcpConnection.class.getSimpleName()) + melde.toString() + testip);
+//                }
+//            }
+        return true;
         }
-    }
 
-    public void doSend(UdpPackage udpPackage, DatagramPacket dm) {
+
+  /*  public void doSend(UdpPackage udpPackage, DatagramPacket dm) {
         if (this.tcp_sendQueue == null)
             return;  if (this.tcp_outputStream == null)
             return;  this.tcp_sendQueue.add(udpPackage);
@@ -132,8 +135,8 @@ public class TcpConnection extends Cs3Connection {
             }
         });
     }
-
-    protected void doSend() {
+*/
+    public void doSend() {
         if (this.tcp_sendQueue == null)
             return;
         while (!this.tcp_sendQueue.isEmpty()) {
@@ -147,9 +150,9 @@ public class TcpConnection extends Cs3Connection {
 
                 os.write(udpPackage.getData());
                 udpPackage.setNanotime(System.nanoTime());
-                udpPackage.setPacketnr(this.counterOut.incrementAndGet());
+               // udpPackage.setPacketnr(this.counterOut.incrementAndGet());
 
-                fireUdpEvent(udpPackage, true);
+                //(udpPackage, true);
             } catch (SocketException e) {
                 close();
             } catch (Exception e) {
@@ -173,7 +176,7 @@ public class TcpConnection extends Cs3Connection {
             }
             try {
                 if (this.tcp_socket != null) {
-                    fireCs3ConnectionEvent(this.tcp_socket.getInetAddress(), false, null);
+                    //fireCs3ConnectionEvent(this.tcp_socket.getInetAddress(), false, null);
                     this.tcp_socket.close();
                     this.tcp_socket = null;
                     System.out.println("TCP-Verbindung zu " + this.tcp_ip + " closed");

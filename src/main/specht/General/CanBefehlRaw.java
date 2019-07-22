@@ -8,8 +8,6 @@ package specht.General;
 //import specht.connect.Cs3Connection;
 //import specht.General.UdpPackage;
 
-import specht.connect.Cs3Connection;
-
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.util.Arrays;
@@ -64,7 +62,7 @@ public class CanBefehlRaw
 
     public boolean isResponse()
     {
-        System.out.println("CANID_Length: "+ this.canId.length);
+        //System.out.println("CANID_Length: "+ this.canId.length);
         return ( canHeader[1] & 0x1) == 1; //canId[0]
     }
     public int getIntOfByte (byte[] canId, int index) {
@@ -125,7 +123,7 @@ public class CanBefehlRaw
         if ((packet.getLength() == 13) ||
                 (packet.getLength() == 16))
         {
-            System.out.println("lengthPackage: " + packet.getLength());
+            //System.out.println("lengthPackage: " + packet.getLength());
             byte[] packetdata = packet.getData();
             for (int i = 0; i < packet.getData().length ; i++) {
                 if (i<=4)
@@ -136,14 +134,14 @@ public class CanBefehlRaw
             }
             this.canDlc = canHeader[canHeader.length-1];
             int offset = packet.getOffset();
-            System.out.println("offset: " + offset);
+            //System.out.println("offset: " + offset);
             for (int i = 0; i < this.canId.length; i++) {
                 this.canId[i] = packetdata[(offset++)];
-                System.out.println("this.canId["+i+"]: " +packetdata[offset]);//+ packetdata[(offset++)]);
+                //System.out.println("this.canId["+i+"]: " +packetdata[offset]);//+ packetdata[(offset++)]);
             }
             //this.canDlc = packetdata[(offset++)];
-            System.out.println("DLC: " + canHeader[4]);
-            System.out.println();
+           // System.out.println("DLC: " + canHeader[4]);
+            //System.out.println();
             for (int i = 0; i < this.canData.length; i++) {
                 if(i >= canHeader.length)
                 this.canData[i] = packetdata[i];
@@ -328,7 +326,7 @@ public class CanBefehlRaw
         if (ip == null) {
             try
             {
-                zielIP = Cs3Connection.getVerbindung().getCS2_IP(0);
+               // zielIP = Cs3Connection.getVerbindung().getCS3_IP(0);
             }
             catch (Exception localException) {}
         }

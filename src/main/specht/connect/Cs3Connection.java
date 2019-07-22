@@ -1,85 +1,51 @@
 package specht.connect;
 
-import specht.General.UdpPackage;
+import java.net.*;
+import java.util.ArrayList;
 
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.util.Arrays;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
+public class Cs3Connection extends Thread {
 
-public abstract class Cs3Connection extends Thread {
+    TcpConnection tcp;
+    UdpConnectionResponse udp;
+   // Cs3Connection cs3 = new Cs3Connection();
+    ArrayList<InetAddress> ia = new ArrayList<InetAddress>();
+    DatagramSocket ds;
 
-    protected static final int CAN_EMPFANGS_TIMEOUT_MS = 5000;
-    public static final int CAN_TELEGRAMM_LEN = 13;
-    public static final int CAN_TELEGRAMM_LEN2 = 16;
-    protected static final int CAN_EMPFANGSPUFFER = 16000;
-    protected static final int CAN_SENDEPUFFER = 16000;
-    protected static final int UDP15730_CS2_out = 15730;
-    public static final int UDP15731_CS2_in = 15731;
-    protected static final long CS2TIMEOUT_NS = 30000000000L;
-    private static Cs3Connection cs3;
-    protected static boolean nurTcpVerbindungenErlauben = false;
-    private static final ExecutorService pool = Executors.newWorkStealingPool();
-    protected static Boolean lock = new Boolean(false);
-
-    public static boolean debug = true;
-
-    public static boolean debug_inp = false;
-
-    public static boolean debug_out = false;
-
-    public static boolean debug_bytes = false;
-
-    public boolean empfangEinschalten = false;
-
-    private boolean empfangIstEin;
-
-
-    public static Cs3Connection getVerbindung() {
-        cs3 = TcpConnection.getVerbindung();
-        if (cs3 != null) return cs3;
-        if (nurTcpVerbindungenErlauben) return null;
-        cs3 = UdpConnection.getVerbindung();
-        return cs3;
+    public Cs3Connection () {
+        try {
+            ds = new DatagramSocket();
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static ExecutorService getExecutorService() { return pool; }
-
-    //protected static WeakEventListenerList listenerList = new WeakEventListenerList();
-
-    protected AtomicInteger counterIn = new AtomicInteger();
-    protected AtomicInteger counterOut = new AtomicInteger();
-
-    protected CopyOnWriteArrayList<InetAddress> cs2Adressen = new CopyOnWriteArrayList();
-
-    public void setEmpfangAktiv(boolean aktiv) { this.empfangEinschalten = aktiv; }
-
-    public abstract void doSend(UdpPackage paramUdpPacket, DatagramPacket paramDatagramPacket);
-
-    //public static void addUdpListener(CanListener l) { listenerList.add(CanListener.class, l); }
-
-    //public static void removeUdpListener(CanListener l) { listenerList.remove(CanListener.class, l); }
-
-    //public static void addConListener(Cs2ConnectionListener l) { listenerList.add(Cs2ConnectionListener.class, l); }
-
-    //public static void removeConListener(Cs2ConnectionListener l) { listenerList.remove(Cs2ConnectionListener.class, l); }
-
-    public boolean isEmpfangEin() { return this.empfangIstEin; }
-
-    public void start() {
-        if (debug) System.out.println(String.valueOf(getName()) + ".start()");
-        this.empfangEinschalten = true;
-        super.start();
+    public void getVerbindung() {
+         //tcp = new TcpConnection();
+        // udp = new UdpConnectionResponse();
+         //tcp.getVerbindung(Attribute.sendingAddress);
+         //udp.getVerbindung();
     }
-    protected final void fireUdpEvent(UdpPackage udpPacket, boolean out) throws Exception {
+
+    public void run() {
+        while(true) {
+
+            //DatagramPacket packet = ds.receive();
+            //new Thread(new UdpConnectionResponse(ds,packet)).start();
+        }
+        //getVerbindung();
+        //cs3.getVerbindung();
+//
+//        System.out.println("Cs3Connection...");
+    }
+    //protected
+
+
+ /*   protected final void fireUdpEvent(UdpPackage udpPacket, boolean out) throws Exception {
         if (out ? debug_out : debug_inp) {
            // System.out.println(new CanBefehlRaw(udpPacket));
             if (debug_bytes) System.out.println(Arrays.toString(udpPacket.getData()));
 
-        }
+        } */
        // final CanBefehl befehl = CanProtokoll.Command.translate(new CanBefehl(udpPacket)); byte b; int i; CanListener[] arrayOfCanListener;
       //  if (empfaenger != null) {
 
@@ -107,18 +73,18 @@ public abstract class Cs3Connection extends Thread {
             }
             b++; }*/
 
-    }
 
-    public int getCounter_in() { return this.counterIn.get(); }
 
-    public int getCounter_out() { return this.counterOut.get(); }
+   // public int getCounter_in() { return this.counterIn.get(); }
 
-    public CopyOnWriteArrayList<InetAddress> getCS2_IPs() { return this.cs2Adressen; }
+   // public int getCounter_out() { return this.counterOut.get(); }
 
-    protected final void fireCs3ConnectionEvent(final InetAddress cs2Adress, final boolean connected, final DatagramPacket packet) {
-        final long jetzt = System.nanoTime();
-        byte b;
-        int i;
+    //public CopyOnWriteArrayList<InetAddress> getCS2_IPs() { return this.cs2Adressen; }
+
+   //protected final void fireCs3ConnectionEvent(final InetAddress cs2Adress, final boolean connected, final DatagramPacket packet) {
+    //    final long jetzt = System.nanoTime();
+    //    byte b;
+    //    int i;
         //Cs2ConnectionListener[] arrayOfCs2ConnectionListener;
         /*for (i = arrayOfCs2ConnectionListener = (Cs2ConnectionListener[])listenerList.getListeners(Cs2ConnectionListener.class).length, b = 0; b < i; ) { final Cs2ConnectionListener empfaenger = arrayOfCs2ConnectionListener[b];
             if (empfaenger != null) {
@@ -139,12 +105,18 @@ public abstract class Cs3Connection extends Thread {
             }
             b++; }*/
 
+   // }
+
+    public InetAddress getCS3_IP(int index) {
+        return (InetAddress)ia.get(index);
+
     }
 
-    public InetAddress getCS2_IP(int index) { return (InetAddress)getCS2_IPs().get(index); }
 
+
+/*
     public static boolean isNurTcpVerbindungenErlauben() { return nurTcpVerbindungenErlauben; }
 
     public static void setNurTcpVerbindungenErlauben(boolean nurTcpVerbindungenErlauben) { Cs3Connection.nurTcpVerbindungenErlauben = nurTcpVerbindungenErlauben; }
-
+*/
 }

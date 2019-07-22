@@ -59,7 +59,7 @@ public class UdpPackage {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        tcp.doSend(this, this.datagramm);
+        //tcp.doSend(this, this.datagramm);
     }
 
     public int getPacketNr() { return getPacketnr(); }
