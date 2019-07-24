@@ -63,11 +63,18 @@ public class ConstructCANFrame extends Thread{
      * send stop to all
      */
     public static byte[] stopTrain() {
+        dlc = 5;
+        data = new char[dlc];
+        udpFrame[0] = (byte) prio ;
+        udpFrame[1] = (byte) 0;
+        udpFrame[2] = (byte) 15; // >> 8;//(uid >> 8);
+        udpFrame[3] = (byte) 114;
+        udpFrame[4] = (byte) dlc;
         for (int i = 0; i < data.length; i++) {
             udpFrame[5+i] = (byte)data[i];
 
             if (i <= 4) {
-                udpFrame[5+i] = (byte)data[i];
+                udpFrame[5+i] = (byte)0;
             }
 
             if (i >= 4) {
@@ -109,6 +116,32 @@ public class ConstructCANFrame extends Thread{
             }
         }
         return udpFrame;
+    }
+
+    public static byte[] emergencyStop(int id) {
+        dlc = 5;
+        data = new char[dlc];
+        udpFrame[0] = (byte) prio ;
+        udpFrame[1] = (byte) 0;
+        udpFrame[2] = (byte) 15; // >> 8;//(uid >> 8);
+        udpFrame[3] = (byte) 114;
+        udpFrame[4] = (byte) dlc;
+        for (int i = 0; i < data.length; i++) {
+            udpFrame[5+i] = (byte)data[i];
+            if (i == 2) {
+                udpFrame[5+i] = (byte) getFirstByteOfId(id);
+            }
+
+            if (i == 3) {
+                udpFrame[5+i] = (byte) getSecondByteOfId(id);
+            }
+
+            if (i == 4) {
+                udpFrame[5+i] = 3;
+            }
+        }
+        return udpFrame;
+
     }
 
     /**
@@ -265,10 +298,21 @@ public class ConstructCANFrame extends Thread{
      * Send go to All
      */
     public static byte[] go() {
+        dlc = 5;
+        data = new char[dlc];
+        udpFrame[0] = (byte) prio ;
+        udpFrame[1] = (byte) 0;
+        udpFrame[2] = (byte) 15; // >> 8;//(uid >> 8);
+        udpFrame[3] = (byte) 114;
+        udpFrame[4] = (byte) dlc;
         for (int i = 0; i < data.length; i++) {
             udpFrame[5+i] = (byte)data[i];
 
-            if (i >= 4) {
+            if (i <= 3) {
+                udpFrame[5+i] = (byte)0;
+            }
+
+            if (i > 3) {
                 udpFrame[5+i] = 1;
             }
         }
@@ -572,7 +616,41 @@ public class ConstructCANFrame extends Thread{
         }
         return udpFrame;
     }
+    public static byte[] getRound() {
+        //dlc = 5 mandatory to set the speed!
+        dlc = 5;
+        data = new char[dlc];
+        udpFrame[0] = (byte) prio ;
+        udpFrame[1] = (byte) 32; //16
+        udpFrame[2] = (byte) 167; //15// >> 8;//(uid >> 8);
+        udpFrame[3] = (byte) 6;
+        udpFrame[4] = (byte) dlc;
 
+
+        for (int i = 0; i < data.length; i++) {
+            udpFrame[5+i] = (byte)data[i];
+        }
+
+        for (int i = 0; i < data.length; i++) {
+            if (i == 0) {
+                udpFrame[5+i] = (byte)0;
+            }
+            if (i == 1) {
+                udpFrame[5+i] = (byte)1;
+            }
+            if (i == 2) {
+                udpFrame[5+i] = (byte)0;
+            }
+            if (i == 3) {
+                udpFrame[5+i] = (byte)9;
+            }
+            if (i == 4) {
+                udpFrame[5+i] = (byte)22;
+            }
+
+        }
+        return udpFrame;
+    }
     /**
      //* @param oilAmount
      * The speed that we want to set up
@@ -744,15 +822,27 @@ public class ConstructCANFrame extends Thread{
      * 2 = direction backwards
      * 3 = direction switch
      */
-    public static byte [] setDirection (int direction) {
-        udpFrame[1] = (byte) 10;
+    public static byte [] setDirection (int locID, int direction) {
+        //dlc = 6 mandatory to set the speed!
+        dlc = 5;
+        data = new char[dlc];
+        udpFrame[0] = (byte) prio ;
+        udpFrame[1] = (byte) 10; //16
+        udpFrame[2] = (byte) 15; //15// >> 8;//(uid >> 8);
+        udpFrame[3] = (byte) 114;
+        udpFrame[4] = (byte) dlc;
+
+
+        for (int i = 0; i < data.length; i++) {
+            udpFrame[5+i] = (byte)data[i];
+        }
 
         for (int i = 0; i < data.length; i++) {
             if (i == 2) {
-                udpFrame[5+i] = (byte)getFirstByteOfId(cargoId);
+                udpFrame[5+i] = (byte)getFirstByteOfId(locID);
             }
             if (i == 3) {
-                udpFrame[5+i] = (byte)getSecondByteOfId(cargoId);
+                udpFrame[5+i] = (byte)getSecondByteOfId(locID);
             }
             if (i == 4) {
                 udpFrame[5+i] = (byte)direction;
@@ -760,6 +850,158 @@ public class ConstructCANFrame extends Thread{
         }
         return udpFrame;
     }
+
+
+    /**
+     * @return udpFrame
+     * DLC HAS TO BE 8
+     * switch the position of the Switch
+     */
+    public static byte [] setSwitchRedOn () {
+        //dlc = 6 mandatory to set the speed!
+        dlc = 8;
+        data = new char[dlc];
+        udpFrame[0] = (byte) prio ;
+        udpFrame[1] = (byte) 22; //16
+        udpFrame[2] = (byte) 15; //15// >> 8;//(uid >> 8);
+        udpFrame[3] = (byte) 114;
+        udpFrame[4] = (byte) dlc;
+
+
+        for (int i = 0; i < data.length; i++) {
+            udpFrame[5+i] = (byte)data[i];
+        }
+
+        for (int i = 0; i < data.length; i++) {
+            if (i == 2) {
+                udpFrame[5+i] = (byte)56;
+            }
+            if (i == 3) {
+                udpFrame[5+i] = (byte)4;
+            }
+            if (i == 4) {
+                udpFrame[5+i] = (byte)0;
+            }
+            if (i == 5) {
+                udpFrame[5+i] = (byte)1;
+            }
+        }
+        return udpFrame;
+    }
+
+    /**
+     * @return udpFrame
+     * DLC HAS TO BE 8
+     * switch the position of the Switch
+     */
+
+    public static byte [] setSwitchRedOff () {
+        //dlc = 6 mandatory to set the speed!
+        dlc = 8;
+        data = new char[dlc];
+        udpFrame[0] = (byte) prio ;
+        udpFrame[1] = (byte) 22; //16
+        udpFrame[2] = (byte) 15; //15// >> 8;//(uid >> 8);
+        udpFrame[3] = (byte) 114;
+        udpFrame[4] = (byte) dlc;
+
+
+        for (int i = 0; i < data.length; i++) {
+            udpFrame[5+i] = (byte)data[i];
+        }
+
+        for (int i = 0; i < data.length; i++) {
+            if (i == 2) {
+                udpFrame[5+i] = (byte)56;
+            }
+            if (i == 3) {
+                udpFrame[5+i] = (byte)4;
+            }
+            if (i == 4) {
+                udpFrame[5+i] = (byte)0;
+            }
+            if (i == 5) {
+                udpFrame[5+i] = (byte)0;
+            }
+        }
+        return udpFrame;
+    }
+    /**
+     * @return udpFrame
+     * DLC HAS TO BE 8
+     * switch the position of the Switch
+     */
+
+    public static byte [] setSwitchGreenOff () {
+        //dlc = 6 mandatory to set the speed!
+        dlc = 8;
+        data = new char[dlc];
+        udpFrame[0] = (byte) prio ;
+        udpFrame[1] = (byte) 22; //16
+        udpFrame[2] = (byte) 15; //15// >> 8;//(uid >> 8);
+        udpFrame[3] = (byte) 114;
+        udpFrame[4] = (byte) dlc;
+
+
+        for (int i = 0; i < data.length; i++) {
+            udpFrame[5+i] = (byte)data[i];
+        }
+
+        for (int i = 0; i < data.length; i++) {
+            if (i == 2) {
+                udpFrame[5+i] = (byte)56;
+            }
+            if (i == 3) {
+                udpFrame[5+i] = (byte)4;
+            }
+            if (i == 4) {
+                udpFrame[5+i] = (byte)1;
+            }
+            if (i == 5) {
+                udpFrame[5+i] = (byte)0;
+            }
+        }
+        return udpFrame;
+    }
+
+    /**
+     * @return udpFrame
+     * DLC HAS TO BE 8
+     * switch the position of the Switch
+     */
+
+    public static byte [] setSwitchGreenOn () {
+        //dlc = 6 mandatory to set the speed!
+        dlc = 8;
+        data = new char[dlc];
+        udpFrame[0] = (byte) prio ;
+        udpFrame[1] = (byte) 22; //16
+        udpFrame[2] = (byte) 15; //15// >> 8;//(uid >> 8);
+        udpFrame[3] = (byte) 114;
+        udpFrame[4] = (byte) dlc;
+
+
+        for (int i = 0; i < data.length; i++) {
+            udpFrame[5+i] = (byte)data[i];
+        }
+
+        for (int i = 0; i < data.length; i++) {
+            if (i == 2) {
+                udpFrame[5+i] = (byte)56;
+            }
+            if (i == 3) {
+                udpFrame[5+i] = (byte)4;
+            }
+            if (i == 4) {
+                udpFrame[5+i] = (byte)1;
+            }
+            if (i == 5) {
+                udpFrame[5+i] = (byte)1;
+            }
+        }
+        return udpFrame;
+    }
+
 
     /**
      * @param value

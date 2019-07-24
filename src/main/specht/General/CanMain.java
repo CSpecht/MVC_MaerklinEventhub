@@ -1,6 +1,8 @@
 package specht.General;//import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 
+import java.net.SocketException;
+
 public class CanMain implements Attribute{
 
 
@@ -8,7 +10,7 @@ public class CanMain implements Attribute{
 
 
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SocketException {
 
 		//General.ConstructCANFrame frame = new General.ConstructCANFrame();
 
@@ -19,8 +21,21 @@ public class CanMain implements Attribute{
 		/*UdpConnectionResponse udpConnect = new UdpConnectionResponse();
 		udpConnect.start();
 */
-		GetCan recWater = new GetCan("water");
-		GetCan recSand = new GetCan("sand");
+		GetCan recWater = new GetCan("Fred_1");
+		recWater.start();
+
+		//GetCan rec1 = new GetCan("Fred_2");
+		//rec1.start();
+
+
+
+
+
+		//GetCan rec = new GetCan("Fred_2");
+		//rec.start();
+
+
+
 
 
 		//GetCan receiveWater = new GetCan("water");
@@ -117,8 +132,8 @@ public class CanMain implements Attribute{
 		//uncomment to GET Data
 		//sendCanToCS3(ipAdress, connectionUrl, dType);
 
-		byte[] udpFrame = new byte[13];
-		String log = "";
+		//byte[] udpFrame = new byte[13];
+		//String log = "";
 
 		//Send Command to CS3
 		//sendCommandToCS3();

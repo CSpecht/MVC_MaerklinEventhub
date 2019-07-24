@@ -3,51 +3,64 @@ package specht.General;
 import specht.Ressources.Resource;
 
 import java.io.IOException;
-import java.net.*;
-import java.text.ParseException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 
 public class GetCan extends Thread implements Attribute{
 
 	String resource = "";
-	byte[] data = new byte[13];
-	int resAmmount;
+	byte[] dataWater = new byte[13];
+	byte[] dataCoil = new byte[13];
+	byte[] dataSand = new byte[13];
+	int resAmmountWater;
+	int resAmmountCoil;
+	int resAmmountSand;
+String name;
 
-	public GetCan() {
+	GetCan (String name) {
+		this.name = name;
+		//System.out.println(resource);
+		//this.run();
 
 	}
 
-	GetCan (String resource) {
-
-		this.resource = resource;
-		//System.out.println(resource);
-		this.run();
+	GetCan() {
 
 	}
 
 
 
 	public void run() {
-		Resource rs = new Resource();
 
-			System.out.println("THREAD!!");
-		try {
-			data = rs.getResource(resource);
-			resAmmount = rs.getRessourceAmmount();
-			//this.sleep(1000);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+
+			System.out.println(this.name);
+			Resource rs = new Resource();
+
+			dataWater = rs.getDataWater();
+			dataCoil = rs.getDataCoil();
+			dataSand = rs.getDataSand();
+			resAmmountWater = rs.getRessourceAmmountWater();
+			resAmmountCoil = rs.getRessourceAmmountCoil();
+			resAmmountSand = rs.getRessourceAmmountSand();
+
+			System.out.println("w:" + resAmmountWater + " c: " + resAmmountCoil + " s: "+ resAmmountSand );
+
+
+
+		rs.closeConnection();
+
+
+
+
 
 
 	}
-
-	public byte[] getData () {
+/*	public byte[] getData () {
 		return data;
 	}
 	public int getRessourceAmmount() { return resAmmount; }
-
+*/
 
 	/***************************************************************************************
 	 * GET SPEED OF TRAIN

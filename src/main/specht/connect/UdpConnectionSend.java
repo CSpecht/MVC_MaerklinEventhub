@@ -35,7 +35,9 @@ public class UdpConnectionSend extends Thread {
 
         //setDaemon(true);
         setName("UdpConnectionSend");
+
         socket = new DatagramSocket(Attribute.sendingPort);
+        socket.setReuseAddress(true);
         this.data = data;
     }
 

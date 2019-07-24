@@ -24,6 +24,7 @@ public class UdpConnectionResponse extends Thread
     private boolean empfanEinschalten;
 
     protected DatagramSocket socket = null;
+
     protected boolean listen = true;
     protected int ressourceAmmountInt;
     protected byte[] data = new byte[13];
@@ -33,7 +34,9 @@ public class UdpConnectionResponse extends Thread
 
         //setDaemon(true);
         setName("UdpConnectionResponse");
+
         socket = new DatagramSocket(Attribute.receivePort);
+        socket.setReuseAddress(true);
     }
 
     public synchronized void run() {

@@ -20,8 +20,8 @@ public interface Attribute {
 
     final String DBNAME = "TRAIN_IOTHUB";
     final String DBUSER = "TRAIN_DBA";
-    final String DBPW = "Password123";
-    String dbUrl = "jdbc:sqlserver://edu.hdm-server.eu;databaseName="+DBNAME+";user="+DBUSER+";password="+DBPW;
+    final String DBPW = "Stuttgart01$";
+    String dbUrl = "jdbc:sqlserver://dev.hdm-server.eu;databaseName="+DBNAME+";user="+DBUSER+";password="+DBPW;
     String SQLStatementHeader = "INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], "
             + "[TIME_STAMP], [DATASET], [DELIMITER]) VALUES ('";
     String sqlDataType = "STEAMDATA";
