@@ -1,7 +1,9 @@
 package specht.General;//import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 
-import java.net.SocketException;
+import specht.Ressources.RoundCount;
+
+import java.io.IOException;
 
 public class CanMain implements Attribute{
 
@@ -10,7 +12,7 @@ public class CanMain implements Attribute{
 
 
 
-	public static void main(String[] args) throws SocketException {
+	public static void main(String[] args) throws IOException {
 
 		//General.ConstructCANFrame frame = new General.ConstructCANFrame();
 
@@ -21,18 +23,20 @@ public class CanMain implements Attribute{
 		/*UdpConnectionResponse udpConnect = new UdpConnectionResponse();
 		udpConnect.start();
 */
-		GetCan recWater = new GetCan("Fred_1");
-		recWater.start();
+		//GetCan recWater = new GetCan("Fred_1");
+		//recWater.start();
 
-		//GetCan rec1 = new GetCan("Fred_2");
-		//rec1.start();
+		RoundCount rc = new RoundCount();
+		rc.start();
+		int RoundCount = rc.getRoundCount();
+		//System.out.println("MAINROUNDS: " + RoundCount);
 
 
 
 
+		GetCan rec = new GetCan("Fred_1");
 
-		//GetCan rec = new GetCan("Fred_2");
-		//rec.start();
+
 
 
 

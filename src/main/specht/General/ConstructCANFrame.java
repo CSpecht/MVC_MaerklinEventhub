@@ -618,10 +618,10 @@ public class ConstructCANFrame extends Thread{
     }
     public static byte[] getRound() {
         //dlc = 5 mandatory to set the speed!
-        dlc = 5;
+        dlc = 4;
         data = new char[dlc];
         udpFrame[0] = (byte) prio ;
-        udpFrame[1] = (byte) 32; //16
+        udpFrame[1] = (byte) 34; //16
         udpFrame[2] = (byte) 167; //15// >> 8;//(uid >> 8);
         udpFrame[3] = (byte) 6;
         udpFrame[4] = (byte) dlc;
@@ -644,16 +644,16 @@ public class ConstructCANFrame extends Thread{
             if (i == 3) {
                 udpFrame[5+i] = (byte)9;
             }
-            if (i == 4) {
+         /*   if (i == 4) {
                 udpFrame[5+i] = (byte)22;
             }
-
+*/
         }
         return udpFrame;
     }
     /**
-     //* @param oilAmount
-     * The speed that we want to set up
+     //* @param locID
+     * Locomotive ID to fill up water 100%
      * @return udpFrame
      */
     public static byte[] setWater (int locID) { //int oilAmount
@@ -705,8 +705,8 @@ public class ConstructCANFrame extends Thread{
     }
 
     /**
-     //* @param oilAmount
-     * The speed that we want to set up
+     //* @param locID
+     * Locomotive ID to fill up coil 100%
      * @return udpFrame
      */
     public static byte[] setCoil (int locID) { //int oilAmount
@@ -758,8 +758,8 @@ public class ConstructCANFrame extends Thread{
     }
 
     /**
-     //* @param oilAmount
-     * The speed that we want to set up
+     //* @param locID
+     * Locomotive ID to set the sand
      * @return udpFrame
      */
     public static byte[] setSand (int locID) { //int oilAmount

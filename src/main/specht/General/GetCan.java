@@ -3,11 +3,9 @@ package specht.General;
 import specht.Ressources.Resource;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
+import java.net.*;
 
-public class GetCan extends Thread implements Attribute{
+public class GetCan implements Attribute{
 
 	String resource = "";
 	byte[] dataWater = new byte[13];
@@ -16,12 +14,44 @@ public class GetCan extends Thread implements Attribute{
 	int resAmmountWater;
 	int resAmmountCoil;
 	int resAmmountSand;
-String name;
+	String name;
 
-	GetCan (String name) {
+	DatagramSocket ds;
+	DatagramSocket dr;
+	InetAddress ia;
+	InetAddress ib;
+
+	public DatagramSocket getDatagramSocketSending () throws SocketException {
+		if (ds == null) {
+			ds = new DatagramSocket(Attribute.sendingPort);
+		}
+		return ds;
+	}
+	public DatagramSocket getDatagramSocketReceiving () throws SocketException {
+		if (dr == null) {
+			dr = new DatagramSocket(Attribute.receivePort);
+		}
+		return dr;
+	}
+
+
+
+	GetCan (String name) throws SocketException {
 		this.name = name;
+
+		try {
+			ds = getDatagramSocketSending();
+			dr = getDatagramSocketReceiving();
+			ia = InetAddress.getByName(Attribute.sendingAddress);
+			ib = InetAddress.getByName(Attribute.receivingAddress);
+		} catch (SocketException e) {
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+
 		//System.out.println(resource);
-		//this.run();
+		this.run();
 
 	}
 
@@ -31,29 +61,29 @@ String name;
 
 
 
-	public void run() {
+	public void run() throws SocketException {
 
 
 			System.out.println(this.name);
-			Resource rs = new Resource();
+			Resource rsW = new Resource(getDatagramSocketSending(), getDatagramSocketReceiving(), ia, ib);
+			rsW.start();
 
-			dataWater = rs.getDataWater();
-			dataCoil = rs.getDataCoil();
-			dataSand = rs.getDataSand();
-			resAmmountWater = rs.getRessourceAmmountWater();
-			resAmmountCoil = rs.getRessourceAmmountCoil();
-			resAmmountSand = rs.getRessourceAmmountSand();
+			Resource rsC = new Resource(getDatagramSocketSending(), getDatagramSocketReceiving(), ia, ib);
+			rsC.start();
 
-			System.out.println("w:" + resAmmountWater + " c: " + resAmmountCoil + " s: "+ resAmmountSand );
+			Resource rsS = new Resource(getDatagramSocketSending(), getDatagramSocketReceiving(), ia, ib);
+			rsS.start();
 
+			dataWater = rsW.getDataWater();
+			dataCoil = rsC.getDataCoil();
+			dataSand = rsS.getDataSand();
+			resAmmountWater = rsW.getRessourceAmmountWater();
+			resAmmountCoil = rsC.getRessourceAmmountCoil();
+			resAmmountSand = rsS.getRessourceAmmountSand();
 
+			//System.out.println("w:" + resAmmountWater + " c: " + resAmmountCoil + " s: "+ resAmmountSand );
 
-		rs.closeConnection();
-
-
-
-
-
+		//rs.closeConnection();
 
 	}
 /*	public byte[] getData () {
@@ -61,7 +91,15 @@ String name;
 	}
 	public int getRessourceAmmount() { return resAmmount; }
 */
+public void closeConnection () {
+	try {
+		getDatagramSocketSending().close();
+		getDatagramSocketReceiving().close();
+	} catch (SocketException e) {
+		e.printStackTrace();
+	}
 
+}
 	/***************************************************************************************
 	 * GET SPEED OF TRAIN
 	 ***************************************************************************************/

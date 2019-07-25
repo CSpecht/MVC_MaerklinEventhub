@@ -18,7 +18,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class Resource {
+public class Resource extends Thread {
     protected String ip;
     protected int port;
     protected Socket tcp_socket = null;
@@ -28,7 +28,7 @@ public class Resource {
     protected String resource = "water";
     protected String resultCSV = "";
     protected String resultJSON = "";
-    protected int RoundCount = 0;
+
 
     protected byte[] data = new byte[13];
     protected byte[] dataSand = new byte[13];
@@ -48,30 +48,16 @@ public class Resource {
     int ressourceAmmountIntSand;
 
     boolean listen = true;
-    static DatagramSocket ds;
-    static DatagramSocket dr;
+    DatagramSocket ds;
+    DatagramSocket dr;
 
-    public DatagramSocket getDatagramSocketSending () throws SocketException {
-        if (ds == null) {
-            ds = new DatagramSocket(Attribute.sendingPort);
-        }
-        return ds;
-    }
-    public DatagramSocket getDatagramSocketReceiving () throws SocketException {
-        if (dr == null) {
-            dr = new DatagramSocket(Attribute.receivePort);
-        }
-        return dr;
-    }
-
-
-
+    InetAddress ia;
+    InetAddress ib;
 
     //DatagramSocket sending;
     //DatagramSocket dsReceive;
 
-    InetAddress ia;
-    InetAddress ib;
+
     UdpConnectionResponse udpConnect;
 
 
@@ -87,27 +73,11 @@ public class Resource {
     }
 
 
-    public Resource() {
-        try {
-            ds = getDatagramSocketSending();
-            dr = getDatagramSocketReceiving();
-            ia = InetAddress.getByName(Attribute.sendingAddress);
-            ib = InetAddress.getByName(Attribute.receivingAddress);
-        } catch (SocketException e) {
-            e.printStackTrace();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            this.run();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public Resource(DatagramSocket sending, DatagramSocket receiving, InetAddress ia, InetAddress ib) {
+        this.ds = sending;
+        this.dr = receiving;
+        this.ia = ia;
+        this.ib = ib;
 
 
         /* try {
@@ -141,7 +111,7 @@ public class Resource {
     }
 
 
-    public void run() throws IOException, ParseException, InterruptedException {
+    public void run() {
 
 
 
@@ -151,7 +121,7 @@ public class Resource {
                 try {
                     long now = new Date().getTime();
 
-                    Thread.sleep(2000);
+                    Thread.sleep(10000);
                     long end = new Date().getTime() - now;
                     if (debug) {
                         System.out.println("now: " + now);
@@ -163,16 +133,40 @@ public class Resource {
                     e.printStackTrace();
                 }
 
-/*
-                dataWater = this.getResource("water");
-                newpayload.add(transformData2CSV(dataWater));
-                dataSand = this.getResource("sand");
-                newpayload.add(transformData2CSV(dataSand));
-                dataCoil = this.getResource("coil");
-                newpayload.add(transformData2CSV(dataCoil));
-*/
-                data = this.getResource("round");
 
+                try {
+                    dataWater = this.getResource("water");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                newpayload.add(transformData2CSV(dataWater));
+                try {
+                    dataSand = this.getResource("sand");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                newpayload.add(transformData2CSV(dataSand));
+                try {
+                    dataCoil = this.getResource("coil");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                newpayload.add(transformData2CSV(dataCoil));
+
+               /* try {
+                    data = this.getResource("round");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+*/
                 //sendToMSSQL(newpayload);
                 i++;
 
@@ -257,7 +251,7 @@ public class Resource {
 
 
 
-    public void closeConnection () {
+ /*   public void closeConnection () {
         try {
             getDatagramSocketSending().close();
             getDatagramSocketReceiving().close();
@@ -266,7 +260,7 @@ public class Resource {
         }
 
     }
-
+*/
     public void setResource()  {
 
     }
@@ -332,90 +326,15 @@ public class Resource {
                 data = GetSand();
                 return data;
                 //break;
-            case "round":
-                data = GetRound();
-                return data;
+//            case "round":
+//                data = GetRound();
+//                return data;
         }
         return null;
     }
 
-    public byte[] GetRound() throws IOException {
-        boolean result = false;
-        byte[] udpFrame = new byte[13];
-        //byte[] packatData;
-        //ds = new DatagramSocket(Attribute.sendingPort);
-        //dsReceive = new DatagramSocket(Attribute.receivePort);
-
-        //GET COIL
-        udpFrame = ConstructCANFrame.getRound();
-        DatagramPacket sendPacket= new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
-        ds.send(sendPacket);
 
 
-        boolean empfang = true;
-        long timestamp = new Date().getTime();
-
-        int i = 0;
-  /*      while (empfang) {
-            Date now = new Date();
-            long mills = now.getTime();
-            int pkNr = 1;
-
-            sendPacket = new DatagramPacket(new byte[13], 13, ib, Attribute.receivePort);
-            dr.receive(sendPacket);
-
-            //dsReceive.receive(sendPacket);
-            // Empfaenger auslesen
-            InetAddress address = sendPacket.getAddress();
-
-            int port = sendPacket.getPort();
-            int len = sendPacket.getLength();
-            data = sendPacket.getData();
-            setRessourceAmmountWater(data);
-            CanBefehlRaw canRaw = null;
-            UdpPackage udpP = new UdpPackage(sendPacket,pkNr,mills);
-            try {
-                canRaw = new CanBefehlRaw(udpP);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            if (canRaw.isResponse()) {
-                empfang = false;
-                //ds.close();
-                // dsReceive.close();
-            }
-
-            i++;
-        }
-
-        */
-
-        if (debug) {
-            MaskFormatter mfHEX = null;
-            String hexFormatted = "";
-            String hexNr = "";
-
-            //DEBUG UDP FRAME
-
-            System.out.println("GETROUND():");
-            for (int j = 0; j < udpFrame.length; j++) {
-                System.out.println("udpFrame[" + j + "]: " + udpFrame[j]);
-            }
-
-            try {
-                mfHEX = new MaskFormatter("[HHHHHHHH:HH][HH,HH,HH,HH,HH,HH,HH,HH]");
-                mfHEX.setValueContainsLiteralCharacters(false);
-                hexNr = hexEncode(udpFrame);
-                hexFormatted = mfHEX.valueToString(hexNr);
-                System.out.println("hexRound: " + hexFormatted);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return data;
-    }
 
     public synchronized byte[] GetWater() throws IOException {
 
