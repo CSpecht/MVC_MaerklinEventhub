@@ -1,9 +1,12 @@
 package specht.General;
 
 import specht.Ressources.Resource;
+import specht.Ressources.RoundCount;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GetCan implements Attribute{
@@ -12,15 +15,14 @@ public class GetCan implements Attribute{
 	byte[] dataWater = new byte[13];
 	byte[] dataCoil = new byte[13];
 	byte[] dataSand = new byte[13];
-	int resAmmountWater;
-	int resAmmountCoil;
-	int resAmmountSand;
+	int resAmmountWater, resAmmountCoil, resAmmountSand;
 	String name;
+	AtomicInteger RoundCount, SpeedAmount;
 
-	DatagramSocket ds;
-	DatagramSocket dr;
-	InetAddress ia;
-	InetAddress ib;
+	DatagramSocket ds, dr;
+
+	InetAddress ia, ib;
+
 
 	public DatagramSocket getDatagramSocketSending () throws SocketException {
 		if (ds == null) {
@@ -69,39 +71,48 @@ public class GetCan implements Attribute{
 
 
 	public void run() throws IOException, InterruptedException {
+		RoundCount rc = new RoundCount();
+		rc.start();
+		RoundCount = rc.getRoundCount();
+		SpeedAmount = rc.getSpeed();
 
-
-			System.out.println(this.name);
-
+		System.out.println(this.name);
+		int i = 0;
 			while (true) {
+				LinkedList<String> payload = new LinkedList<String>();
 				Resource rs = new Resource(getDatagramSocketSending(), getDatagramSocketReceiving(), ia, ib, "t1");
-				//Resource rsC = new Resource(getDatagramSocketSending(), getDatagramSocketReceiving(), ia, ib, "Coil");
-				//Resource rsS = new Resource(getDatagramSocketSending(), getDatagramSocketReceiving(), ia, ib, "Sand");
 
 				rs.start();
 				rs.sleep(1000);
-
-				//rsC.start();
-				//rsS.start();
 
 				AtomicInteger waterA = rs.getResourceAmountWater();
 				AtomicInteger coilA = rs.getResourceAmountCoil();
 				AtomicInteger sandA = rs.getResourceAmountSand();
 
-				//rs.sleep(5000);
 				rs.sleep(5000);
 
-				System.out.println("WATERA: " + waterA);
-				System.out.println("COILA: " + coilA);
-				System.out.println("SANDA: " + sandA);
+				Date d = new Date();
 
-				if(waterA.get() <= 10 || coilA.get() <= 10 || sandA.get() <= 10) {
+				payload.add(Long.toString(d.getTime()) + ";" + Attribute._STEAM_ID + ";"
+						+ "Water" + ";" + waterA.get() + ";" + RoundCount + ";" + SpeedAmount);
+				payload.add(Long.toString(d.getTime()) + ";" + Attribute._STEAM_ID + ";"
+						+ "Coil" + ";" + coilA.get() + ";" + RoundCount + ";" + SpeedAmount);
+				payload.add(Long.toString(d.getTime()) + ";" + Attribute._STEAM_ID + ";"
+						+ "Sand" + ";" + sandA.get() + ";" + RoundCount + ";" + SpeedAmount);
+
+
+				SendCan.sendToMSSQL(payload);
+				//System.out.println("SPEED: " + rs.getSpeedAmount().get());
+
+				if(waterA.get() <= 40 || coilA.get() <= 40 || sandA.get() <= 40) {
 					System.out.println("!!!!WARNING!!!!");
 
 					rs.setWater();
 					rs.setCoil();
 					rs.setSand();
+					rc.setRoundCount(0);
 				}
+
 
 
 				//				int waterInt = water.get();
@@ -179,7 +190,7 @@ public void closeConnection () {
 		InetAddress ia = InetAddress.getByName(Attribute.sendingAddress);
 		InetAddress ib = InetAddress.getByName(Attribute.receivingAddress);
 
-		udpFrame = ConstructCANFrame.getSpeed();
+		//udpFrame = ConstructCANFrame.getSpeed();
 		int i = 0;
 
 		//System.out.println("I: " + i);

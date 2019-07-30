@@ -35,9 +35,10 @@ public class SendCan extends Thread implements Attribute {
     private static final ExecutorService pool = Executors.newWorkStealingPool();
 
 
-    public SendCan (DatagramPacket packet) {
-        dmp = packet;
-    }
+ //   public SendCan (DatagramPacket packet) {
+  //      dmp = packet;
+   // }
+    public SendCan() {}
 
     public LinkedList<String> getCsvPayload() {
         return csvPayload;
@@ -156,7 +157,7 @@ public class SendCan extends Thread implements Attribute {
     }
 
     //----Send received Data from CAN to MS SQL----
-    public static void sendToMSSQL(Resource DForSQL) {
+    public static void sendToMSSQL(LinkedList payload) {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         } catch (ClassNotFoundException e) {
@@ -168,13 +169,13 @@ public class SendCan extends Thread implements Attribute {
         Date date = new Date();
 
         try (Connection con = DriverManager.getConnection(Attribute.dbUrl); Statement stmt = con.createStatement();) {
-            for (int i = 0; i < DForSQL.payload.size(); i++) {
+            for (int i = 0; i < payload.size(); i++) {
                 String SQL = "INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], "
                         + "[TIME_STAMP], [DATASET], [DELIMITER])"
                         + "VALUES ('" + Attribute.sqlDataType + "','"
                         + sdf.format(date).toString() + "','"
                         + sdf.format(date).toString() + "','"
-                        + DForSQL.payload.get(i)
+                        + payload.get(i)
                         + "', ';')";
                 System.out.println("SQL: " + SQL);
                 //ResultSet rs =
@@ -283,7 +284,7 @@ public class SendCan extends Thread implements Attribute {
             for (int i = 0; i < udpFrame.length; i++) {
                 System.out.println("udpFrame["+i+"]: " + udpFrame[i]);
             }
-            sendToMSSQL(DForSQL);
+            //sendToMSSQL(DForSQL);
             DForSQL.stopListener();
             Thread.sleep(1000 - millis % 1000);
         }

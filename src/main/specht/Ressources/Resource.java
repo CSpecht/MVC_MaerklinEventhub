@@ -9,10 +9,6 @@ import specht.connect.UdpConnectionResponse;
 import javax.swing.text.MaskFormatter;
 import java.io.IOException;
 import java.net.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,6 +31,7 @@ public class Resource extends Thread {
     protected byte[] dataSand = new byte[13];
     protected byte[] dataCoil = new byte[13];
     protected byte[] dataWater = new byte[13];
+    protected byte[] dataSpeed = new byte[13];
 
 
     protected static int coaches;
@@ -43,10 +40,13 @@ public class Resource extends Thread {
     protected ArrayList<String> SQLstment = new ArrayList<String>();
     public LinkedList<String> jsonPayload = new LinkedList<String>();
 
-    boolean debug = true;
+    boolean debugSpeed = true;
+    boolean debug = false;
+
     AtomicInteger ressourceAmmountIntWater = new AtomicInteger();
     AtomicInteger ressourceAmmountIntCoil = new AtomicInteger();
     AtomicInteger ressourceAmmountIntSand = new AtomicInteger();
+    AtomicInteger speedAmount = new AtomicInteger();
 
     boolean listen = true;
     DatagramSocket ds;
@@ -58,7 +58,6 @@ public class Resource extends Thread {
 
     //DatagramSocket sending;
     //DatagramSocket dsReceive;
-
 
     UdpConnectionResponse udpConnect;
 
@@ -145,6 +144,9 @@ public class Resource extends Thread {
                 dataCoil = this.getResource("coil");
                 Thread.sleep(1000);
                 dataSand = this.getResource("sand");
+                Thread.sleep(1000);
+                dataSpeed = this.getResource("speed");
+
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -212,47 +214,6 @@ public class Resource extends Thread {
         return csvFormatted;
     }
 
-    public void sendToMSSQL(LinkedList payload) {
-        try {
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        // create DateFormatter for the right format of date for SQLServer.
-        DateFormat sdf = new SimpleDateFormat(Attribute.DATEFORMAT);
-        Date date = new Date();
-
-        try (Connection con = DriverManager.getConnection(Attribute.dbUrl); Statement stmt = con.createStatement();) {
-            for (int i = 0; i < payload.size(); i++) {
-                String SQL = "INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], "
-                        + "[TIME_STAMP], [DATASET], [DELIMITER])"
-                        + "VALUES ('" + Attribute.sqlDataType + "','"
-                        + sdf.format(date).toString() + "','"
-                        + sdf.format(date).toString() + "','"
-                        + payload.get(i)
-                        + "', ';')";
-
-                if (debug) {
-                    System.out.println("SQL: " + SQL);
-                }
-
-                //ResultSet rs =
-                try {
-                    stmt.executeUpdate(SQL);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-        }
-        // Handle any errors that may have occurred.
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     /*   public void closeConnection () {
            try {
@@ -264,9 +225,6 @@ public class Resource extends Thread {
 
        }
    */
-    public void setResource() {
-
-    }
 
     protected static String hexEncode(byte[] buf) {
         return hexEncode(buf, new StringBuilder()).toString();
@@ -330,9 +288,9 @@ public class Resource extends Thread {
                 data = GetSand();
                 return data;
             //break;
-//            case "round":
-//                data = GetRound();
-//                return data;
+           case "speed":
+                data = GetSpeed();
+                return data;
         }
         return null;
     }
@@ -344,11 +302,23 @@ public class Resource extends Thread {
         //byte[] packatData;
         //ds = new DatagramSocket(Attribute.sendingPort);
         //dsReceive = new DatagramSocket(Attribute.receivePort);
+        udpFrame = ConstructCANFrame.setSpeed(Attribute._STEAM_ID,0);
+        DatagramPacket sendPacket = new DatagramPacket(udpFrame,udpFrame.length,ia,Attribute.sendingPort);
+        ds.send(sendPacket);
 
-        //GET COIL
+
+        udpFrame = ConstructCANFrame.resourceStart();
+        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        ds.send(sendPacket);
+
+        //SET COIL
         udpFrame = ConstructCANFrame.setWater(Attribute._STEAM_ID);
 
-        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        ds.send(sendPacket);
+
+        udpFrame = ConstructCANFrame.resourceStop();
+        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
         ds.send(sendPacket);
     }
 
@@ -358,11 +328,21 @@ public class Resource extends Thread {
         //byte[] packatData;
         //ds = new DatagramSocket(Attribute.sendingPort);
         //dsReceive = new DatagramSocket(Attribute.receivePort);
+        udpFrame = ConstructCANFrame.setSpeed(Attribute._STEAM_ID,0);
+        DatagramPacket sendPacket = new DatagramPacket(udpFrame,udpFrame.length,ia,Attribute.sendingPort);
+        ds.send(sendPacket);
 
-        //GET COIL
+        udpFrame = ConstructCANFrame.resourceStart();
+        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        ds.send(sendPacket);
+
+        //SET COIL
         udpFrame = ConstructCANFrame.setCoil(Attribute._STEAM_ID);
+        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        ds.send(sendPacket);
 
-        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        udpFrame = ConstructCANFrame.resourceStop();
+        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
         ds.send(sendPacket);
     }
 
@@ -373,10 +353,21 @@ public class Resource extends Thread {
         //ds = new DatagramSocket(Attribute.sendingPort);
         //dsReceive = new DatagramSocket(Attribute.receivePort);
 
-        //GET COIL
-        udpFrame = ConstructCANFrame.setSand(Attribute._STEAM_ID);
+        udpFrame = ConstructCANFrame.setSpeed(Attribute._STEAM_ID,0);
+        DatagramPacket sendPacket = new DatagramPacket(udpFrame,udpFrame.length,ia,Attribute.sendingPort);
+        ds.send(sendPacket);
 
-        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        udpFrame = ConstructCANFrame.resourceStart();
+        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        ds.send(sendPacket);
+
+        //SET SAND
+        udpFrame = ConstructCANFrame.setSand(Attribute._STEAM_ID);
+        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        ds.send(sendPacket);
+
+        udpFrame = ConstructCANFrame.resourceStop();
+        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
         ds.send(sendPacket);
     }
 
@@ -615,11 +606,155 @@ public class Resource extends Thread {
         return data;
     }
 
+    public byte[] GetSpeed() throws IOException {
+        boolean result = false;
+        byte[] udpFrame = new byte[13];
+        //byte[] packatData;
+        //ds = new DatagramSocket(Attribute.sendingPort);
+        //dsReceive = new DatagramSocket(Attribute.receivePort);
 
+        //GET SPEED
+        udpFrame = ConstructCANFrame.getSpeed(Attribute._STEAM_ID);
+
+        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        ds.send(sendPacket);
+
+        boolean empfang = true;
+        long timestamp = new Date().getTime();
+
+
+
+ /*       while (empfang) {
+            Date now = new Date();
+            long mills = now.getTime();
+            int pkNr = 1;
+
+            sendPacket = new DatagramPacket(new byte[13], 13, ib, Attribute.receivePort);
+            dr.receive(sendPacket);
+            // Empfaenger auslesen
+            InetAddress address = sendPacket.getAddress();
+
+            int port = sendPacket.getPort();
+            int len = sendPacket.getLength();
+            data = sendPacket.getData();
+
+
+
+
+
+
+
+
+            CanBefehlRaw canRaw = null;
+            UdpPackage udpP = new UdpPackage(sendPacket, pkNr, mills);
+            try {
+                canRaw = new CanBefehlRaw(udpP);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+
+
+
+            MaskFormatter mfHEX = null;
+            String hexFormatted = "";
+            String hexNr = "";
+
+            try {
+                mfHEX = new MaskFormatter("[HHHHHHHH:HH][HH,HH,HH,HH,HH,HH,HH,HH]");
+                mfHEX.setValueContainsLiteralCharacters(false);
+                hexNr = hexEncode(data);
+                hexFormatted = mfHEX.valueToString(hexNr);
+                System.out.println("hexSpeed: " + hexFormatted);
+                System.out.println("Thread: " + this.ThreadName + " : intAmountSpeed: " + getSpeedAmount()
+                );
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+
+
+
+ //           for (int j = 0; j < data.length; j++) {
+  //              System.out.println("s["+j+"]:"+data[j]);
+    //        }
+
+
+ //&& canRaw.getCanDlc() == 6
+
+            //System.out.println("SPEED CMD: "+ canRaw.getCmd());
+            if (canRaw.isResponse()  && data[1] == 9  && data[2] == -89 && data[3] == 6) { //&& data[7] == Attribute.firstByteOfSteamID && data[8] == Attribute.secondByteOfSteamID) {
+                MaskFormatter mfHEX = null;
+                String hexFormatted = "";
+                String hexNr = "";
+
+                try {
+                    mfHEX = new MaskFormatter("[HHHHHHHH:HH][HH,HH,HH,HH,HH,HH,HH,HH]");
+                    mfHEX.setValueContainsLiteralCharacters(false);
+                    hexNr = hexEncode(data);
+                    hexFormatted = mfHEX.valueToString(hexNr);
+                    System.out.println("hexSpeedMatch: " + hexFormatted);
+                    System.out.println("Thread: " + this.ThreadName + " : intAmountSpeed: " + getSpeedAmount()
+                    );
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                setSpeedAmount(data);
+                empfang = false;
+                //ds.close();
+                // dsReceive.close();
+
+                for (int j = 0; j < data.length; j++) {
+                    System.out.println("matched["+j+"]:"+data[j]);
+                }
+
+            }
+
+            i++;
+        }
+*/
+  /*      if (debugSpeed) {
+            MaskFormatter mfHEX = null;
+            String hexFormatted = "";
+            String hexNr = "";
+            //DEBUG UDP FRAME
+
+            //System.out.println("GETSand():");
+            //for (int j = 0; j < udpFrame.length; j++) {
+            //    System.out.println("udpFrame[" + j + "]: " + udpFrame[j]);
+            //}
+
+            try {
+                mfHEX = new MaskFormatter("[HHHHHHHH:HH][HH,HH,HH,HH,HH,HH,HH,HH]");
+                mfHEX.setValueContainsLiteralCharacters(false);
+                hexNr = hexEncode(data);
+                hexFormatted = mfHEX.valueToString(hexNr);
+                System.out.println("hexSpeed: " + hexFormatted);
+                System.out.println("Thread: " + this.ThreadName + " : intAmountSpeed: " + getSpeedAmount()
+                );
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+   */
+
+        return data;
+    }
+
+
+    public synchronized void setSpeedAmount (byte[]data) {
+        speedAmount.set(parseHex2IntSpeed(data));
+    }
+
+    public synchronized AtomicInteger getSpeedAmount() {
+        return speedAmount;
+    }
 
 
     public synchronized void setResourceAmountWater(byte[] data) {
-        ressourceAmmountIntWater.set(parseHex2Int(data));
+        ressourceAmmountIntWater.set(parseHex2IntRessource(data));
     }
 
     public synchronized AtomicInteger getResourceAmountWater() {
@@ -627,7 +762,7 @@ public class Resource extends Thread {
     }
 
     public synchronized void setResourceAmountCoil(byte[] data) {
-        ressourceAmmountIntCoil.set(parseHex2Int(data));
+        ressourceAmmountIntCoil.set(parseHex2IntRessource(data));
     }
 
     public synchronized AtomicInteger getResourceAmountCoil() {
@@ -635,7 +770,7 @@ public class Resource extends Thread {
     }
 
     public synchronized void setResourceAmountSand(byte[] data) {
-        ressourceAmmountIntSand.set(parseHex2Int(data));
+        ressourceAmmountIntSand.set(parseHex2IntRessource(data));
     }
 
     public synchronized AtomicInteger getResourceAmountSand() {
@@ -643,7 +778,7 @@ public class Resource extends Thread {
     }
 
 
-    public synchronized int parseHex2Int(byte[] data) {
+    public synchronized int parseHex2IntRessource (byte[] data) {
         byte b2 = -100;
         int r = 0;
         if (data.length != 13) {
@@ -652,6 +787,36 @@ public class Resource extends Thread {
         }
         r = (data[11] & 0xFF);
         return r;
+        //return data[i] Integer.parseInt(String.valueOf(data[11]));
+    }
+
+    public synchronized int parseHex2IntSpeed (byte[] data) {
+        byte b2 = -100;
+        byte[] speed = new byte[2];
+        String hexNr ="";
+
+        String r;
+        String r1;
+        if (data.length != 13) {
+            System.out.println("not a CAN Message!");
+            return 0;
+        }
+        speed[0] = data[9];
+        speed[1] = data[10];
+
+        hexNr = hexEncode(speed);
+        System.out.println("R: " + hexNr);
+        int erg = Integer.parseInt(hexNr,16);
+        System.out.println("ERG: " + erg);
+        return erg;
+        /*r = Byte.toString(data[4]) ;// + (data[5] & 0xFF) ;
+        r1 = Byte.toString(data[5]);
+        System.out.println("Sped-R:" +r);
+        System.out.println("Sped-R:" +r1);
+        int erg =0;
+        return erg;
+
+         */
         //return data[i] Integer.parseInt(String.valueOf(data[11]));
     }
 

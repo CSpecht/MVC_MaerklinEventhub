@@ -1,8 +1,6 @@
 package specht.General;//import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 
-import specht.Ressources.RoundCount;
-
 import java.io.IOException;
 
 public class CanMain implements Attribute{
@@ -26,9 +24,9 @@ public class CanMain implements Attribute{
 		//GetCan recWater = new GetCan("Fred_1");
 		//recWater.start();
 
-		RoundCount rc = new RoundCount();
-		rc.start();
-		int RoundCount = rc.getRoundCount();
+		//RoundCount rc = new RoundCount();
+	//	rc.start();
+	//	int RoundCount = rc.getRoundCount();
 		//System.out.println("MAINROUNDS: " + RoundCount);
 
 

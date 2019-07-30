@@ -11,11 +11,13 @@ import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 public class RoundCount extends Thread {
 
-    protected int RoundCount = 0;
+    protected AtomicInteger RoundCount = new AtomicInteger();
+    protected AtomicInteger speed = new AtomicInteger();
     protected boolean debug = true;
     protected boolean stop = false;
     protected String ip = "";
@@ -31,12 +33,20 @@ public class RoundCount extends Thread {
     }
 
 
-    public int getRoundCount() {
+    public AtomicInteger getRoundCount() {
         return RoundCount;
     }
 
     public void setRoundCount(int round) {
-        this.RoundCount = round;
+        this.RoundCount.set(round);
+    }
+
+    public AtomicInteger getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed.set(speed);
     }
 
     public void run() {
@@ -107,13 +117,28 @@ public class RoundCount extends Thread {
             }
 
 
-
+            //System.out.println("hexPattern: " + hexPattern);
+            //System.out.println(Attribute.SpeedPattern);
             if (Pattern.matches(Attribute.RoundCountPattern, hexPattern)) {
                 String lokId = hexPattern.substring(20 , 25).replace(",","");
-                setRoundCount(getRoundCount()+1);
+                setRoundCount(getRoundCount().incrementAndGet());
                 if (debug) {
                     System.out.println("MatchedPattern: " + hexPattern);
                     System.out.println("RoundCount:" + getRoundCount());
+                }
+                //System.out.println(rowCount + ";" + "\t\tRound:" + RoundCount);
+            }
+
+            if (Pattern.matches(Attribute.SpeedPattern, hexPattern)) {
+                //String lokId = hexPattern.substring(20 , 25).replace(",","");
+                System.out.println("");
+                String speedAm = hexPattern.substring(25,31).replace(",","");
+                setSpeed(Integer.parseInt(speedAm,16));
+
+                //setSpeed(getSpeed().get());
+                if (debug) {
+                    System.out.println("MatchedPatternSpeed: " + hexPattern);
+                    System.out.println("Speed:" + getSpeed());
                 }
                 //System.out.println(rowCount + ";" + "\t\tRound:" + RoundCount);
             }

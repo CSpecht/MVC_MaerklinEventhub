@@ -348,7 +348,7 @@ public class ConstructCANFrame extends Thread{
      * The MAX SPEEED 1023!!!
      * DLC HAS TO BE 6 to SET THE SPEED Otherwise you can't set the SPEED, defined by Maerklin
      */
-    public static byte[] setSpeed (int speed) {
+    public static byte[] setSpeed (int locID,int speed) {
 
         //dlc = 6 mandatory to set the speed!
         dlc = 6;
@@ -370,18 +370,25 @@ public class ConstructCANFrame extends Thread{
         for (int i = 0; i < data.length; i++) {
 
             if (i == 2) {
-                udpFrame[5+i] = (byte)getFirstByteOfId(steamId);
+                udpFrame[5+i] = (byte)getFirstByteOfId(locID);
             }
             if (i == 3) {
-                udpFrame[5+i] = (byte)getSecondByteOfId(steamId);
+                udpFrame[5+i] = (byte)getSecondByteOfId(locID);
             }
-            if (i == 4 && hexData.length == 2) {
+            if (i == 4) {
+                udpFrame[5+i] = (byte)getFirstByteOfId(speed);
+            }
+            if (i == 5) {
+                udpFrame[5+i] = (byte) getSecondByteOfId(speed);
+            }
+
+            /*           if (i == 4 && hexData.length == 2) {
                 udpFrame[5+i] = hexData[1];
             }
             if (i == 5) {
                 udpFrame[5+i] = hexData[0];
             }
-
+*/
         }
         return udpFrame;
     }
@@ -391,7 +398,7 @@ public class ConstructCANFrame extends Thread{
      * The MAX SPEEED 1023!!!
      * DLC HAS TO BE 4 to get THE SPEED Otherwise you can't set the SPEED, defined by Maerklin
      */
-    public static byte[] getSpeed() {
+    public static byte[] getSpeed(int locID) {
 
         //dlc = 4 mandatory to get the speed!
         dlc = 4;
@@ -412,10 +419,10 @@ public class ConstructCANFrame extends Thread{
         for (int i = 0; i < data.length; i++) {
 
             if (i == 2) {
-                udpFrame[5+i] = (byte)getFirstByteOfId(steamId);
+                udpFrame[5+i] = (byte)getFirstByteOfId(locID);
             }
             if (i == 3) {
-                udpFrame[5+i] = (byte)getSecondByteOfId(steamId);
+                udpFrame[5+i] = (byte)getSecondByteOfId(locID);
             }
 //			if (i == 4 && hexData.length == 2) {
 //				udpFrame[5+i] = hexData[1];
