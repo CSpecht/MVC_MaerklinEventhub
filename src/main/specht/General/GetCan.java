@@ -4,6 +4,7 @@ import specht.Ressources.Resource;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GetCan implements Attribute{
 
@@ -51,7 +52,13 @@ public class GetCan implements Attribute{
 		}
 
 		//System.out.println(resource);
-		this.run();
+		try {
+			this.run();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -61,26 +68,86 @@ public class GetCan implements Attribute{
 
 
 
-	public void run() throws SocketException {
+	public void run() throws IOException, InterruptedException {
 
 
 			System.out.println(this.name);
-			Resource rsW = new Resource(getDatagramSocketSending(), getDatagramSocketReceiving(), ia, ib);
-			rsW.start();
 
-			Resource rsC = new Resource(getDatagramSocketSending(), getDatagramSocketReceiving(), ia, ib);
-			rsC.start();
+			while (true) {
+				Resource rs = new Resource(getDatagramSocketSending(), getDatagramSocketReceiving(), ia, ib, "t1");
+				//Resource rsC = new Resource(getDatagramSocketSending(), getDatagramSocketReceiving(), ia, ib, "Coil");
+				//Resource rsS = new Resource(getDatagramSocketSending(), getDatagramSocketReceiving(), ia, ib, "Sand");
 
-			Resource rsS = new Resource(getDatagramSocketSending(), getDatagramSocketReceiving(), ia, ib);
-			rsS.start();
+				rs.start();
+				rs.sleep(1000);
 
-			dataWater = rsW.getDataWater();
-			dataCoil = rsC.getDataCoil();
-			dataSand = rsS.getDataSand();
-			resAmmountWater = rsW.getRessourceAmmountWater();
-			resAmmountCoil = rsC.getRessourceAmmountCoil();
-			resAmmountSand = rsS.getRessourceAmmountSand();
+				//rsC.start();
+				//rsS.start();
 
+				AtomicInteger waterA = rs.getResourceAmountWater();
+				AtomicInteger coilA = rs.getResourceAmountCoil();
+				AtomicInteger sandA = rs.getResourceAmountSand();
+
+				//rs.sleep(5000);
+				rs.sleep(5000);
+
+				System.out.println("WATERA: " + waterA);
+				System.out.println("COILA: " + coilA);
+				System.out.println("SANDA: " + sandA);
+
+				if(waterA.get() <= 10 || coilA.get() <= 10 || sandA.get() <= 10) {
+					System.out.println("!!!!WARNING!!!!");
+
+					rs.setWater();
+					rs.setCoil();
+					rs.setSand();
+				}
+
+
+				//				int waterInt = water.get();
+//				int coilInt = coil.get();
+//				int sandInt = sand.get();
+
+/*				if( waterInt <= 10)
+				{
+					System.out.println("!!!!!!!!!!!!!!!WAAAAARNING!!!!!!!!!!!!");
+					System.out.println("RS WATER: " + rs.getResourceAmountWater());
+
+				}
+				if( coilInt <= 10)
+				{
+					System.out.println("!!!!!!!!!!!!!!!WAAAAARNING!!!!!!!!!!!!");
+					System.out.println("RS COIL: " + rs.getResourceAmountCoil());
+				}
+				if( sandInt <= 10) {
+					System.out.println("!!!!!!!!!!!!!!!WAAAAARNING!!!!!!!!!!!!");
+					System.out.println("RS SAND: " + rs.getResourceAmountSand());
+				}*/
+				//rsC.sleep(1000);
+				//rsS.sleep(1000);
+				//dataWater = rsW.getDataWater();
+				//dataCoil = rsC.getDataCoil();
+				//dataSand = rsS.getDataSand();
+				//resAmmountWater = rs.getResourceAmountWater();
+				//rs.sleep(2000);
+				//resAmmountCoil = rs.getResourceAmountCoil();
+				//rs.sleep(2000);
+				//resAmmountSand = rs.getResourceAmountSand();
+
+				/*
+				System.out.println("GETCANWATER: " + resAmmountWater);
+				System.out.println("GETCANCOIL: " + resAmmountWater);
+				System.out.println("GETCANSAND: " + resAmmountWater);
+				*/
+
+
+			}
+
+
+
+
+
+			//System.out.println("GETCANAmWater: " + resAmmountWater);
 			//System.out.println("w:" + resAmmountWater + " c: " + resAmmountCoil + " s: "+ resAmmountSand );
 
 		//rs.closeConnection();

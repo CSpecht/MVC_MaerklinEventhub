@@ -36,6 +36,12 @@ public interface Attribute {
     public static final int _CARGO_ID = 0x4006;
     public static final int _STEAM_ID = 0x4007;
 
+    public static final int firstByteOfSteamID = ConstructCANFrame.getFirstByteOfId(_STEAM_ID);
+    public static final int secondByteOfSteamID = ConstructCANFrame.getSecondByteOfId(_STEAM_ID);
+
+    public static final int firstByteOfCargoID = ConstructCANFrame.getFirstByteOfId(_CARGO_ID);
+    public static final int secondByteOfCargoID = ConstructCANFrame.getSecondByteOfId(_CARGO_ID);
+
 
 
 }

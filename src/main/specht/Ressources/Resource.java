@@ -17,6 +17,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Resource extends Thread {
     protected String ip;
@@ -43,9 +44,9 @@ public class Resource extends Thread {
     public LinkedList<String> jsonPayload = new LinkedList<String>();
 
     boolean debug = true;
-    int ressourceAmmountIntWater;
-    int ressourceAmmountIntCoil;
-    int ressourceAmmountIntSand;
+    AtomicInteger ressourceAmmountIntWater = new AtomicInteger();
+    AtomicInteger ressourceAmmountIntCoil = new AtomicInteger();
+    AtomicInteger ressourceAmmountIntSand = new AtomicInteger();
 
     boolean listen = true;
     DatagramSocket ds;
@@ -53,6 +54,7 @@ public class Resource extends Thread {
 
     InetAddress ia;
     InetAddress ib;
+    String ThreadName = "";
 
     //DatagramSocket sending;
     //DatagramSocket dsReceive;
@@ -73,11 +75,12 @@ public class Resource extends Thread {
     }
 
 
-    public Resource(DatagramSocket sending, DatagramSocket receiving, InetAddress ia, InetAddress ib) {
+    public Resource(DatagramSocket sending, DatagramSocket receiving, InetAddress ia, InetAddress ib, String name) {
         this.ds = sending;
         this.dr = receiving;
         this.ia = ia;
         this.ib = ib;
+        this.ThreadName = name;
 
 
         /* try {
@@ -94,16 +97,33 @@ public class Resource extends Thread {
     }
 */
 
-    public synchronized byte[] getDataWater () {return dataWater;}
-    public synchronized byte[] getDataCoil () {return dataCoil;}
-    public synchronized byte[] getDataSand () {return dataSand;}
+    public byte[] getDataWater() {
+        return dataWater;
+    }
 
-    public void setDataWater (byte[] data) {this.dataWater = data;}
-    public void setDataCoil (byte[] data) {this.dataCoil = data;}
-    public void setDataSand(byte[] data) {this.dataSand = data;}
+    public byte[] getDataCoil() {
+        return dataCoil;
+    }
+
+    public byte[] getDataSand() {
+        return dataSand;
+    }
+
+    public void setDataWater(byte[] data) {
+        this.dataWater = data;
+    }
+
+    public void setDataCoil(byte[] data) {
+        this.dataCoil = data;
+    }
+
+    public void setDataSand(byte[] data) {
+        this.dataSand = data;
+    }
 
 
-    public Resource(String ip, int port, boolean stop) throws UnknownHostException {}
+    public Resource(String ip, int port, boolean stop) throws UnknownHostException {
+    }
 
     public Resource(String ip, int port) throws UnknownHostException {
         this.ip = ip;
@@ -114,50 +134,32 @@ public class Resource extends Thread {
     public void run() {
 
 
+        int i = 0;
+       // while (!ds.isClosed() && !dr.isClosed()) {
+            LinkedList<String> newpayload = new LinkedList<String>();
+            long now = new Date().getTime();
+            try {
+                Thread.sleep(1000);
+                dataWater = this.getResource("water");
+                Thread.sleep(1000);
+                dataCoil = this.getResource("coil");
+                Thread.sleep(1000);
+                dataSand = this.getResource("sand");
 
-            int i = 0;
-            while(!ds.isClosed() && !dr.isClosed()) {
-                LinkedList<String> newpayload = new LinkedList<String>();
-                try {
-                    long now = new Date().getTime();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-                    Thread.sleep(10000);
-                    long end = new Date().getTime() - now;
-                    if (debug) {
-                        System.out.println("now: " + now);
-                        System.out.println("end: " + end);
-                    }
-
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            long end = new Date().getTime() - now;
+            newpayload.add(transformData2CSV(dataWater));
+            newpayload.add(transformData2CSV(dataCoil));
+            newpayload.add(transformData2CSV(dataSand));
 
 
-                try {
-                    dataWater = this.getResource("water");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                newpayload.add(transformData2CSV(dataWater));
-                try {
-                    dataSand = this.getResource("sand");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                newpayload.add(transformData2CSV(dataSand));
-                try {
-                    dataCoil = this.getResource("coil");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                newpayload.add(transformData2CSV(dataCoil));
 
                /* try {
                     data = this.getResource("round");
@@ -167,19 +169,20 @@ public class Resource extends Thread {
                     e.printStackTrace();
                 }
 */
-                //sendToMSSQL(newpayload);
-                i++;
+            //sendToMSSQL(newpayload);
+            i++;
 
-                //Thread.sleep(2000);
-            }
+            //Thread.sleep(2000);
+        //
+        // }
 
 
     }
 
     public String transformData2CSV(byte[] df) {
-        String byteStream  = Base64.getEncoder().encodeToString(df);
-        System.out.println(byteStream);
-        String hexFormatted ="";
+        String byteStream = Base64.getEncoder().encodeToString(df);
+
+        String hexFormatted = "";
         String hexNr = "";
         String csvFormatted = "";
         MaskFormatter mfHEX = null;
@@ -187,7 +190,7 @@ public class Resource extends Thread {
         try {
             mfHEX = new MaskFormatter("[HHHHHHHH:HH][HH,HH,HH,HH,HH,HH,HH,HH]");
             mfHEX.setValueContainsLiteralCharacters(false);
-            hexNr =  hexEncode(df); //"00" +
+            hexNr = hexEncode(df); //"00" +
             hexFormatted = mfHEX.valueToString(hexNr);
 
             mfCSV = new MaskFormatter("HH;HH;HH;HH;HH;HH;HH;HH;HH;HH;HH;HH;HH");
@@ -198,17 +201,18 @@ public class Resource extends Thread {
             e.printStackTrace();
         }
 
-        if (debug) {
+/*        if (debug) {
             System.out.println("hexFo: " + hexFormatted);
             System.out.println("hexNr:  " + hexNr);
             System.out.println("heCSV:  " + csvFormatted);
+            System.out.println(byteStream);
         }
-
+*/
         //csvPayload.add(byteStream);
         return csvFormatted;
     }
 
-    public void sendToMSSQL(LinkedList payload ) {
+    public void sendToMSSQL(LinkedList payload) {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         } catch (ClassNotFoundException e) {
@@ -250,41 +254,41 @@ public class Resource extends Thread {
     }
 
 
+    /*   public void closeConnection () {
+           try {
+               getDatagramSocketSending().close();
+               getDatagramSocketReceiving().close();
+           } catch (SocketException e) {
+               e.printStackTrace();
+           }
 
- /*   public void closeConnection () {
-        try {
-            getDatagramSocketSending().close();
-            getDatagramSocketReceiving().close();
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
+       }
+   */
+    public void setResource() {
 
     }
-*/
-    public void setResource()  {
 
-    }
-
-    protected synchronized static String hexEncode(byte[] buf) {
+    protected static String hexEncode(byte[] buf) {
         return hexEncode(buf, new StringBuilder()).toString();
     }
 
     //Encoding byte[] into hexadecimal Number, RETURN STRINGBUILDER
-    public synchronized static StringBuilder hexEncode (byte[] buf, StringBuilder sb) {
+    public static StringBuilder hexEncode(byte[] buf, StringBuilder sb) {
         for (byte b : buf) {
-            sb.append(String.format("%02x",b));
+            sb.append(String.format("%02x", b));
         }
         return sb;
     }
 
-    protected HashMap<String,String> translateToHashMap (String hex) {
+    protected HashMap<String, String> translateToHashMap(String hex) {
         HashMap<String, String> map = new HashMap<String, String>();
-        String metaData = hex.substring(0,8);
-        String data = hex.substring(9,19);
+        String metaData = hex.substring(0, 8);
+        String data = hex.substring(9, 19);
         map.put(metaData, data);
         return map;
     }
-    public void closeConn () {
+
+    public void closeConn() {
 
         try {
             tcp_socket.shutdownInput();
@@ -304,28 +308,28 @@ public class Resource extends Thread {
     }
 
     //it stops conn()
-    public void stopListener(){
+    public void stopListener() {
 
         stop = true;
     }
 
-    public synchronized byte[] getResource (String i) throws IOException, ParseException {
+    public byte[] getResource(String i) throws IOException, ParseException {
 
         switch (i) {
             case "water":
                 data = GetWater();
                 return data;
-                //break;
+            //break;
             case "coil":
                 //ResourceCOIL c_resource = new ResourceCOIL();//c_resource.getCoil();
                 data = GetCoil();
                 return data;
-                //break;
+            //break;
             case "sand":
 //                ResourceSAND s_resource = new ResourceSAND();//s_resource.getSand();
                 data = GetSand();
                 return data;
-                //break;
+            //break;
 //            case "round":
 //                data = GetRound();
 //                return data;
@@ -334,9 +338,49 @@ public class Resource extends Thread {
     }
 
 
+    public void setWater() throws IOException {
+        boolean result = false;
+        byte[] udpFrame = new byte[13];
+        //byte[] packatData;
+        //ds = new DatagramSocket(Attribute.sendingPort);
+        //dsReceive = new DatagramSocket(Attribute.receivePort);
 
+        //GET COIL
+        udpFrame = ConstructCANFrame.setWater(Attribute._STEAM_ID);
 
-    public synchronized byte[] GetWater() throws IOException {
+        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        ds.send(sendPacket);
+    }
+
+    public void setCoil() throws IOException {
+        boolean result = false;
+        byte[] udpFrame = new byte[13];
+        //byte[] packatData;
+        //ds = new DatagramSocket(Attribute.sendingPort);
+        //dsReceive = new DatagramSocket(Attribute.receivePort);
+
+        //GET COIL
+        udpFrame = ConstructCANFrame.setCoil(Attribute._STEAM_ID);
+
+        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        ds.send(sendPacket);
+    }
+
+    public void setSand() throws IOException {
+        boolean result = false;
+        byte[] udpFrame = new byte[13];
+        //byte[] packatData;
+        //ds = new DatagramSocket(Attribute.sendingPort);
+        //dsReceive = new DatagramSocket(Attribute.receivePort);
+
+        //GET COIL
+        udpFrame = ConstructCANFrame.setSand(Attribute._STEAM_ID);
+
+        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        ds.send(sendPacket);
+    }
+
+    public byte[] GetWater() throws IOException {
 
         boolean result = false;
         byte[] udpFrame = new byte[13];
@@ -347,9 +391,6 @@ public class Resource extends Thread {
         //GET COIL
         udpFrame = ConstructCANFrame.getWater(Attribute._STEAM_ID);
 
-        if (debug) {
-
-        }
         DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
         ds.send(sendPacket);
 
@@ -372,17 +413,22 @@ public class Resource extends Thread {
             int port = sendPacket.getPort();
             int len = sendPacket.getLength();
             data = sendPacket.getData();
-            setRessourceAmmountWater(data);
+//            for (int j = 0; j < data.length; j++) {
+//                System.out.println("data[" + j + "]: " + data[j]);
+//            }
             CanBefehlRaw canRaw = null;
-            UdpPackage udpP = new UdpPackage(sendPacket,pkNr,mills);
+            UdpPackage udpP = new UdpPackage(sendPacket, pkNr, mills);
             try {
                 canRaw = new CanBefehlRaw(udpP);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            if (canRaw.isResponse()) {
+            if (canRaw.isResponse() && data[7] == Attribute.firstByteOfSteamID && data[8] == Attribute.secondByteOfSteamID
+                && data[9] == 4) {
+                setResourceAmountWater(data);
                 empfang = false;
+
                 //ds.close();
                 // dsReceive.close();
             }
@@ -408,7 +454,7 @@ public class Resource extends Thread {
                 hexNr = hexEncode(data);
                 hexFormatted = mfHEX.valueToString(hexNr);
                 System.out.println("hexWater: " + hexFormatted);
-                System.out.println("intAmmountWater: " + getRessourceAmmountWater());
+                System.out.println("Thread: " + this.ThreadName + " : intAmountWater: " + getResourceAmountWater());
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -416,9 +462,7 @@ public class Resource extends Thread {
 
         return data;
     }
-
-
-    public synchronized byte[] GetSand() throws IOException {
+    public byte[] GetCoil() throws IOException {
 
         boolean result = false;
         byte[] udpFrame = new byte[13];
@@ -427,11 +471,7 @@ public class Resource extends Thread {
         //dsReceive = new DatagramSocket(Attribute.receivePort);
 
         //GET COIL
-        udpFrame = ConstructCANFrame.getSand(Attribute._STEAM_ID);
-
-        if (debug) {
-
-        }
+        udpFrame = ConstructCANFrame.getCoil(Attribute._STEAM_ID);
         DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
         ds.send(sendPacket);
 
@@ -452,16 +492,95 @@ public class Resource extends Thread {
             int port = sendPacket.getPort();
             int len = sendPacket.getLength();
             data = sendPacket.getData();
-            setRessourceAmmountSand(data);
+
             CanBefehlRaw canRaw = null;
-            UdpPackage udpP = new UdpPackage(sendPacket,pkNr,mills);
+            UdpPackage udpP = new UdpPackage(sendPacket, pkNr, mills);
             try {
                 canRaw = new CanBefehlRaw(udpP);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            if (canRaw.isResponse()) {
+            if (canRaw.isResponse() && data[7] == Attribute.firstByteOfSteamID && data[8] == Attribute.secondByteOfSteamID
+                    && data[9] == 8) {
+                setResourceAmountCoil(data);
+                empfang = false;
+
+                //ds.close();
+                // dsReceive.close();
+            }
+
+            i++;
+        }
+
+        if (debug) {
+            MaskFormatter mfHEX = null;
+            String hexFormatted = "";
+            String hexNr = "";
+            //UDP FRAME for GETCoil
+            //System.out.println("GETCOIL():");
+            //for (int j = 0; j < udpFrame.length; j++) {
+            //System.out.println("udpFrame[" + j + "]: " + udpFrame[j]);
+            //}
+
+            try {
+                mfHEX = new MaskFormatter("[HHHHHHHH:HH][HH,HH,HH,HH,HH,HH,HH,HH]");
+                mfHEX.setValueContainsLiteralCharacters(false);
+                hexNr = hexEncode(data);
+                hexFormatted = mfHEX.valueToString(hexNr);
+                System.out.println("hexCoil: " + hexFormatted);
+                System.out.println("Thread: " + this.ThreadName + " : intAmountCoil: " + getResourceAmountCoil());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return data;
+    }
+
+    public byte[] GetSand() throws IOException {
+
+        boolean result = false;
+        byte[] udpFrame = new byte[13];
+        //byte[] packatData;
+        //ds = new DatagramSocket(Attribute.sendingPort);
+        //dsReceive = new DatagramSocket(Attribute.receivePort);
+
+        //GET COIL
+        udpFrame = ConstructCANFrame.getSand(Attribute._STEAM_ID);
+
+        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        ds.send(sendPacket);
+
+        boolean empfang = true;
+        long timestamp = new Date().getTime();
+
+        int i = 0;
+        while (empfang) {
+            Date now = new Date();
+            long mills = now.getTime();
+            int pkNr = 1;
+
+            sendPacket = new DatagramPacket(new byte[13], 13, ib, Attribute.receivePort);
+            dr.receive(sendPacket);
+            // Empfaenger auslesen
+            InetAddress address = sendPacket.getAddress();
+
+            int port = sendPacket.getPort();
+            int len = sendPacket.getLength();
+            data = sendPacket.getData();
+
+            CanBefehlRaw canRaw = null;
+            UdpPackage udpP = new UdpPackage(sendPacket, pkNr, mills);
+            try {
+                canRaw = new CanBefehlRaw(udpP);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (canRaw.isResponse() && data[7] == Attribute.firstByteOfSteamID && data[8] == Attribute.secondByteOfSteamID
+                    && data[9] == 12) {
+                setResourceAmountSand(data);
                 empfang = false;
                 //ds.close();
                 // dsReceive.close();
@@ -487,7 +606,7 @@ public class Resource extends Thread {
                 hexNr = hexEncode(data);
                 hexFormatted = mfHEX.valueToString(hexNr);
                 System.out.println("hexSand: " + hexFormatted);
-                System.out.println("intAmmountSand: " + getRessourceAmmountSand());
+                System.out.println("Thread: " + this.ThreadName + " : intAmountSand: " + getResourceAmountSand());
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -497,116 +616,41 @@ public class Resource extends Thread {
     }
 
 
-    public synchronized byte[] GetCoil() throws IOException {
 
-        boolean result = false;
-        byte[] udpFrame = new byte[13];
-        //byte[] packatData;
-        //ds = new DatagramSocket(Attribute.sendingPort);
-        //dsReceive = new DatagramSocket(Attribute.receivePort);
 
-        //GET COIL
-        udpFrame = ConstructCANFrame.getCoil(Attribute._STEAM_ID);
-
-        if (debug) {
-
-        }
-        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
-        ds.send(sendPacket);
-
-        boolean empfang = true;
-        long timestamp = new Date().getTime();
-
-        int i = 0;
-        while (empfang) {
-            Date now = new Date();
-            long mills = now.getTime();
-            int pkNr = 1;
-
-            sendPacket = new DatagramPacket(new byte[13], 13, ib, Attribute.receivePort);
-            dr.receive(sendPacket);
-            // Empfaenger auslesen
-            InetAddress address = sendPacket.getAddress();
-
-            int port = sendPacket.getPort();
-            int len = sendPacket.getLength();
-            data = sendPacket.getData();
-            setRessourceAmmountCoil(data);
-            CanBefehlRaw canRaw = null;
-            UdpPackage udpP = new UdpPackage(sendPacket,pkNr,mills);
-            try {
-                canRaw = new CanBefehlRaw(udpP);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            if (canRaw.isResponse()) {
-                empfang = false;
-                //ds.close();
-               // dsReceive.close();
-            }
-
-            i++;
-        }
-
-        if (debug) {
-            MaskFormatter mfHEX = null;
-            String hexFormatted = "";
-            String hexNr = "";
-            //UDP FRAME for GETCoil
-            //System.out.println("GETCOIL():");
-            //for (int j = 0; j < udpFrame.length; j++) {
-            //System.out.println("udpFrame[" + j + "]: " + udpFrame[j]);
-            //}
-
-            try {
-                mfHEX = new MaskFormatter("[HHHHHHHH:HH][HH,HH,HH,HH,HH,HH,HH,HH]");
-                mfHEX.setValueContainsLiteralCharacters(false);
-                hexNr = hexEncode(data);
-                hexFormatted = mfHEX.valueToString(hexNr);
-                System.out.println("hexCoil: " + hexFormatted);
-                System.out.println("intAmmountCoil: " + getRessourceAmmountCoil());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return data;
+    public synchronized void setResourceAmountWater(byte[] data) {
+        ressourceAmmountIntWater.set(parseHex2Int(data));
     }
 
-    public synchronized void setRessourceAmmountWater(byte[] data) {
-        ressourceAmmountIntWater = parseHex2Int(data);
-    }
-
-    public synchronized int getRessourceAmmountWater () {
+    public synchronized AtomicInteger getResourceAmountWater() {
         return ressourceAmmountIntWater;
     }
 
-    public synchronized void setRessourceAmmountCoil(byte[] data) {
-        ressourceAmmountIntCoil = parseHex2Int(data);
+    public synchronized void setResourceAmountCoil(byte[] data) {
+        ressourceAmmountIntCoil.set(parseHex2Int(data));
     }
 
-    public synchronized int getRessourceAmmountCoil () {
+    public synchronized AtomicInteger getResourceAmountCoil() {
         return ressourceAmmountIntCoil;
     }
-    public synchronized void setRessourceAmmountSand(byte[] data) {
-        ressourceAmmountIntSand = parseHex2Int(data);
+
+    public synchronized void setResourceAmountSand(byte[] data) {
+        ressourceAmmountIntSand.set(parseHex2Int(data));
     }
 
-    public synchronized int getRessourceAmmountSand () {
+    public synchronized AtomicInteger getResourceAmountSand() {
         return ressourceAmmountIntSand;
     }
 
 
-    public synchronized int parseHex2Int (byte[] data ) {
+    public synchronized int parseHex2Int(byte[] data) {
         byte b2 = -100;
-        int r;
+        int r = 0;
         if (data.length != 13) {
             System.out.println("not a CAN Message!");
             return 0;
         }
         r = (data[11] & 0xFF);
-
         return r;
         //return data[i] Integer.parseInt(String.valueOf(data[11]));
     }
