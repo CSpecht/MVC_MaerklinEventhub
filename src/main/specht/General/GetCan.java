@@ -11,33 +11,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class GetCan implements Attribute{
 
-	String resource = "";
+
 	byte[] dataWater = new byte[13];
 	byte[] dataCoil = new byte[13];
 	byte[] dataSand = new byte[13];
 	int resAmmountWater, resAmmountCoil, resAmmountSand;
-	String name;
+
+	String resource, name;
 	AtomicInteger RoundCount, SpeedAmount;
-
 	DatagramSocket ds, dr;
-
 	InetAddress ia, ib;
 
 
-	public DatagramSocket getDatagramSocketSending () throws SocketException {
-		if (ds == null) {
-			ds = new DatagramSocket(Attribute.sendingPort);
-		}
-		return ds;
-	}
-	public DatagramSocket getDatagramSocketReceiving () throws SocketException {
-		if (dr == null) {
-			dr = new DatagramSocket(Attribute.receivePort);
-		}
-		return dr;
-	}
+	GetCan() {
 
-
+	}
 
 	GetCan (String name) throws SocketException {
 		this.name = name;
@@ -53,7 +41,6 @@ public class GetCan implements Attribute{
 			e.printStackTrace();
 		}
 
-		//System.out.println(resource);
 		try {
 			this.run();
 		} catch (InterruptedException e) {
@@ -64,10 +51,19 @@ public class GetCan implements Attribute{
 
 	}
 
-	GetCan() {
-
+	public DatagramSocket getDatagramSocketSending () throws SocketException {
+		if (ds == null) {
+			ds = new DatagramSocket(Attribute.sendingPort);
+		}
+		return ds;
 	}
 
+	public DatagramSocket getDatagramSocketReceiving () throws SocketException {
+		if (dr == null) {
+			dr = new DatagramSocket(Attribute.receivePort);
+		}
+		return dr;
+	}
 
 
 	public void run() throws IOException, InterruptedException {
@@ -78,91 +74,74 @@ public class GetCan implements Attribute{
 
 		System.out.println(this.name);
 		int i = 0;
-			while (true) {
-				LinkedList<String> payload = new LinkedList<String>();
-				Resource rs = new Resource(getDatagramSocketSending(), getDatagramSocketReceiving(), ia, ib, "t1");
+		while (true) {
 
-				rs.start();
+			LinkedList<String> payload = new LinkedList<String>();
+			Resource rs = new Resource(getDatagramSocketSending(), getDatagramSocketReceiving(), ia, ib, "t1");
+
+			rs.start();
+			rs.sleep(5000);
+
+			AtomicInteger waterA = rs.getResourceAmountWater();
+			AtomicInteger coilA = rs.getResourceAmountCoil();
+			AtomicInteger sandA = rs.getResourceAmountSand();
+
+			rs.sleep(5000);
+
+			Date d = new Date();
+
+			payload.add(Long.toString(d.getTime()) + ";" + Attribute._STEAM_ID + ";"
+					+ "Water" + ";" + waterA + ";" + RoundCount + ";" + SpeedAmount);
+			payload.add(Long.toString(d.getTime()) + ";" + Attribute._STEAM_ID + ";"
+					+ "Coil" + ";" + coilA + ";" + RoundCount + ";" + SpeedAmount);
+			payload.add(Long.toString(d.getTime()) + ";" + Attribute._STEAM_ID + ";"
+					+ "Sand" + ";" + sandA + ";" + RoundCount + ";" + SpeedAmount);
+
+
+			SendCan.sendToMSSQL(payload);
+			//System.out.println("SPEED: " + rs.getSpeedAmount().get());
+
+			if (waterA.get() <= 75 || coilA.get() <= 75 || sandA.get() <= 75) {
 				rs.sleep(1000);
+				
+				System.out.println("!!!!WARNING!!!!");
 
-				AtomicInteger waterA = rs.getResourceAmountWater();
-				AtomicInteger coilA = rs.getResourceAmountCoil();
-				AtomicInteger sandA = rs.getResourceAmountSand();
+				System.out.println("WARN WATER: "+ waterA.get());
+				System.out.println("WARN COIL: "+ coilA.get());
+				System.out.println("WARN SAND: "+ sandA.get());
 
-				rs.sleep(5000);
-
-				Date d = new Date();
-
-				payload.add(Long.toString(d.getTime()) + ";" + Attribute._STEAM_ID + ";"
-						+ "Water" + ";" + waterA.get() + ";" + RoundCount + ";" + SpeedAmount);
-				payload.add(Long.toString(d.getTime()) + ";" + Attribute._STEAM_ID + ";"
-						+ "Coil" + ";" + coilA.get() + ";" + RoundCount + ";" + SpeedAmount);
-				payload.add(Long.toString(d.getTime()) + ";" + Attribute._STEAM_ID + ";"
-						+ "Sand" + ";" + sandA.get() + ";" + RoundCount + ";" + SpeedAmount);
+				rs.setWater();
+				rs.sleep(1000);
+				waterA = rs.getResourceAmountWater();
 
 
-				SendCan.sendToMSSQL(payload);
-				//System.out.println("SPEED: " + rs.getSpeedAmount().get());
+				byte[] udpFrame = ConstructCANFrame.setSpeed(Attribute._STEAM_ID, 0);
+				DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
+				this.getDatagramSocketSending().send(sendPacket);
 
-				if(waterA.get() <= 40 || coilA.get() <= 40 || sandA.get() <= 40) {
-					System.out.println("!!!!WARNING!!!!");
+				rs.setCoil();
+				rs.sleep(1000);
+				coilA = rs.getResourceAmountCoil();
+				rs.setSand();
+				rs.sleep(1000);
+				sandA = rs.getResourceAmountSand();
+				rc.setRoundCount(0);
+				rs.sleep(10000);
 
-					rs.setWater();
-					rs.setCoil();
-					rs.setSand();
-					rc.setRoundCount(0);
-				}
+				udpFrame = ConstructCANFrame.go();
+				sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+				ds.send(sendPacket);
 
-
-
-				//				int waterInt = water.get();
-//				int coilInt = coil.get();
-//				int sandInt = sand.get();
-
-/*				if( waterInt <= 10)
-				{
-					System.out.println("!!!!!!!!!!!!!!!WAAAAARNING!!!!!!!!!!!!");
-					System.out.println("RS WATER: " + rs.getResourceAmountWater());
-
-				}
-				if( coilInt <= 10)
-				{
-					System.out.println("!!!!!!!!!!!!!!!WAAAAARNING!!!!!!!!!!!!");
-					System.out.println("RS COIL: " + rs.getResourceAmountCoil());
-				}
-				if( sandInt <= 10) {
-					System.out.println("!!!!!!!!!!!!!!!WAAAAARNING!!!!!!!!!!!!");
-					System.out.println("RS SAND: " + rs.getResourceAmountSand());
-				}*/
-				//rsC.sleep(1000);
-				//rsS.sleep(1000);
-				//dataWater = rsW.getDataWater();
-				//dataCoil = rsC.getDataCoil();
-				//dataSand = rsS.getDataSand();
-				//resAmmountWater = rs.getResourceAmountWater();
-				//rs.sleep(2000);
-				//resAmmountCoil = rs.getResourceAmountCoil();
-				//rs.sleep(2000);
-				//resAmmountSand = rs.getResourceAmountSand();
-
-				/*
-				System.out.println("GETCANWATER: " + resAmmountWater);
-				System.out.println("GETCANCOIL: " + resAmmountWater);
-				System.out.println("GETCANSAND: " + resAmmountWater);
-				*/
+				udpFrame = ConstructCANFrame.setSpeed(Attribute._STEAM_ID, 1000);
+				sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+				ds.send(sendPacket);
 
 
 			}
 
 
-
-
-
-			//System.out.println("GETCANAmWater: " + resAmmountWater);
-			//System.out.println("w:" + resAmmountWater + " c: " + resAmmountCoil + " s: "+ resAmmountSand );
-
-		//rs.closeConnection();
-
+		}
+		//closeConnection();
 	}
 /*	public byte[] getData () {
 		return data;
@@ -185,28 +164,20 @@ public void closeConnection () {
 		boolean result = false;
 		byte[] udpFrame = new byte[13];
 		byte[] packatData;
-		DatagramSocket ds = new DatagramSocket(Attribute.sendingPort);
-		DatagramSocket dsReceive = new DatagramSocket(Attribute.receivePort);
-		InetAddress ia = InetAddress.getByName(Attribute.sendingAddress);
-		InetAddress ib = InetAddress.getByName(Attribute.receivingAddress);
 
-		//udpFrame = ConstructCANFrame.getSpeed();
-		int i = 0;
+		ds = getDatagramSocketSending();
+		dr = getDatagramSocketReceiving();
 
-		//System.out.println("I: " + i);
+		ia = InetAddress.getByName(Attribute.sendingAddress);
+		ib = InetAddress.getByName(Attribute.receivingAddress);
+
 		DatagramPacket sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia, Attribute.sendingPort);
-		//System.out.println("1");
 		ds.send( sendPacket );
-		//System.out.println("2");
-		// Auf Anfrage warten
 		sendPacket = new DatagramPacket( new byte[13], 13, ib, Attribute.receivePort );
-		dsReceive.receive( sendPacket );
-		//System.out.println("3");
-		//comment
+		dr.receive( sendPacket );
 
-		// Empf�nger auslesen
+		// Receive Data
 		InetAddress address = sendPacket.getAddress();
-		//System.out.println("4");
 		int         port2    = sendPacket.getPort();
 		int         len     = sendPacket.getLength();
 		byte[]      data    = sendPacket.getData();

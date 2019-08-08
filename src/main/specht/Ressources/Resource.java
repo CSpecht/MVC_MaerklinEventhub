@@ -16,15 +16,15 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Resource extends Thread {
-    protected String ip;
-    protected int port;
-    protected Socket tcp_socket = null;
+//    protected String ip;
+//    protected int port;
+//    protected Socket tcp_socket = null;
     protected boolean stop = false;
-    protected Date startTime = null;
-    protected String dataset = "";
-    protected String resource = "water";
-    protected String resultCSV = "";
-    protected String resultJSON = "";
+//    protected Date startTime = null;
+//    protected String dataset = "";
+//    protected String resource = "water";
+//    protected String resultCSV = "";
+//    protected String resultJSON = "";
 
 
     protected byte[] data = new byte[13];
@@ -35,9 +35,9 @@ public class Resource extends Thread {
 
 
     protected static int coaches;
-    protected static final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    protected static final DateFormat sdf = new SimpleDateFormat(Attribute.DATEFORMAT);
     public LinkedList<String> payload = new LinkedList<String>();
-    protected ArrayList<String> SQLstment = new ArrayList<String>();
+    //protected ArrayList<String> SQLstment = new ArrayList<String>();
     public LinkedList<String> jsonPayload = new LinkedList<String>();
 
     boolean debugSpeed = true;
@@ -49,11 +49,9 @@ public class Resource extends Thread {
     AtomicInteger speedAmount = new AtomicInteger();
 
     boolean listen = true;
-    DatagramSocket ds;
-    DatagramSocket dr;
+    DatagramSocket ds, dr;
+    InetAddress ia, ib;
 
-    InetAddress ia;
-    InetAddress ib;
     String ThreadName = "";
 
     //DatagramSocket sending;
@@ -120,7 +118,7 @@ public class Resource extends Thread {
         this.dataSand = data;
     }
 
-
+/*
     public Resource(String ip, int port, boolean stop) throws UnknownHostException {
     }
 
@@ -128,14 +126,14 @@ public class Resource extends Thread {
         this.ip = ip;
         this.port = port;
     }
-
+*/
 
     public void run() {
 
 
         int i = 0;
        // while (!ds.isClosed() && !dr.isClosed()) {
-            LinkedList<String> newpayload = new LinkedList<String>();
+           //LinkedList<String> newpayload = new LinkedList<String>();
             long now = new Date().getTime();
             try {
                 Thread.sleep(1000);
@@ -156,75 +154,14 @@ public class Resource extends Thread {
                 e.printStackTrace();
             }
 
-            long end = new Date().getTime() - now;
+          /*  long end = new Date().getTime() - now;
             newpayload.add(transformData2CSV(dataWater));
             newpayload.add(transformData2CSV(dataCoil));
             newpayload.add(transformData2CSV(dataSand));
-
-
-
-               /* try {
-                    data = this.getResource("round");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-*/
-            //sendToMSSQL(newpayload);
-            i++;
-
-            //Thread.sleep(2000);
-        //
-        // }
-
+        */
 
     }
 
-    public String transformData2CSV(byte[] df) {
-        String byteStream = Base64.getEncoder().encodeToString(df);
-
-        String hexFormatted = "";
-        String hexNr = "";
-        String csvFormatted = "";
-        MaskFormatter mfHEX = null;
-        MaskFormatter mfCSV = null;
-        try {
-            mfHEX = new MaskFormatter("[HHHHHHHH:HH][HH,HH,HH,HH,HH,HH,HH,HH]");
-            mfHEX.setValueContainsLiteralCharacters(false);
-            hexNr = hexEncode(df); //"00" +
-            hexFormatted = mfHEX.valueToString(hexNr);
-
-            mfCSV = new MaskFormatter("HH;HH;HH;HH;HH;HH;HH;HH;HH;HH;HH;HH;HH");
-            mfCSV.setValueContainsLiteralCharacters(false);
-            csvFormatted = mfCSV.valueToString(hexNr);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-/*        if (debug) {
-            System.out.println("hexFo: " + hexFormatted);
-            System.out.println("hexNr:  " + hexNr);
-            System.out.println("heCSV:  " + csvFormatted);
-            System.out.println(byteStream);
-        }
-*/
-        //csvPayload.add(byteStream);
-        return csvFormatted;
-    }
-
-
-    /*   public void closeConnection () {
-           try {
-               getDatagramSocketSending().close();
-               getDatagramSocketReceiving().close();
-           } catch (SocketException e) {
-               e.printStackTrace();
-           }
-
-       }
-   */
 
     protected static String hexEncode(byte[] buf) {
         return hexEncode(buf, new StringBuilder()).toString();
@@ -237,7 +174,7 @@ public class Resource extends Thread {
         }
         return sb;
     }
-
+/*
     protected HashMap<String, String> translateToHashMap(String hex) {
         HashMap<String, String> map = new HashMap<String, String>();
         String metaData = hex.substring(0, 8);
@@ -245,8 +182,8 @@ public class Resource extends Thread {
         map.put(metaData, data);
         return map;
     }
-
-    public void closeConn() {
+*/
+/*    public void closeConn() {
 
         try {
             tcp_socket.shutdownInput();
@@ -270,7 +207,7 @@ public class Resource extends Thread {
 
         stop = true;
     }
-
+*/
     public byte[] getResource(String i) throws IOException, ParseException {
 
         switch (i) {
@@ -296,88 +233,109 @@ public class Resource extends Thread {
     }
 
 
-    public void setWater() throws IOException {
+    public void setWater() throws IOException, InterruptedException {
         boolean result = false;
         byte[] udpFrame = new byte[13];
-        //byte[] packatData;
-        //ds = new DatagramSocket(Attribute.sendingPort);
-        //dsReceive = new DatagramSocket(Attribute.receivePort);
-        udpFrame = ConstructCANFrame.setSpeed(Attribute._STEAM_ID,0);
-        DatagramPacket sendPacket = new DatagramPacket(udpFrame,udpFrame.length,ia,Attribute.sendingPort);
-        ds.send(sendPacket);
 
+        //Say system that the refill will start()
+//        udpFrame = ConstructCANFrame.resourceStart();
+//        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+//        ds.send(sendPacket);
 
-        udpFrame = ConstructCANFrame.resourceStart();
-        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
-        ds.send(sendPacket);
-
-        //SET COIL
+        //SET WATER
         udpFrame = ConstructCANFrame.setWater(Attribute._STEAM_ID);
-
-        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
         ds.send(sendPacket);
 
-        udpFrame = ConstructCANFrame.resourceStop();
-        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
-        ds.send(sendPacket);
+        //GET WATER for Verification
+//        GetWater();
+
+        //Say system that the refill will stop()
+//        udpFrame = ConstructCANFrame.resourceStop();
+//        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+//        ds.send(sendPacket);
+
+//        Thread.sleep(5000);
+
+//        udpFrame = ConstructCANFrame.setSpeed(Attribute._STEAM_ID, 1000);
+//        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+//        ds.send(sendPacket);
+//
+//        udpFrame = ConstructCANFrame.go();
+//        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+//        ds.send(sendPacket);
     }
 
-    public void setCoil() throws IOException {
+    public void setCoil() throws IOException, InterruptedException {
         boolean result = false;
         byte[] udpFrame = new byte[13];
-        //byte[] packatData;
-        //ds = new DatagramSocket(Attribute.sendingPort);
-        //dsReceive = new DatagramSocket(Attribute.receivePort);
-        udpFrame = ConstructCANFrame.setSpeed(Attribute._STEAM_ID,0);
-        DatagramPacket sendPacket = new DatagramPacket(udpFrame,udpFrame.length,ia,Attribute.sendingPort);
-        ds.send(sendPacket);
 
-        udpFrame = ConstructCANFrame.resourceStart();
-        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
-        ds.send(sendPacket);
+        //Say system that the refill will start()
+//        udpFrame = ConstructCANFrame.resourceStart();
+//        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+//        ds.send(sendPacket);
 
         //SET COIL
         udpFrame = ConstructCANFrame.setCoil(Attribute._STEAM_ID);
-        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
         ds.send(sendPacket);
 
-        udpFrame = ConstructCANFrame.resourceStop();
-        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
-        ds.send(sendPacket);
+        //GET COIL for Verification
+//        GetCoil();
+
+        //Say system that the refill will stop()
+//        udpFrame = ConstructCANFrame.resourceStop();
+//        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+//        ds.send(sendPacket);
+
+//        Thread.sleep(5000);
+
+//        udpFrame = ConstructCANFrame.setSpeed(Attribute._STEAM_ID, 1000);
+//        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+//        ds.send(sendPacket);
+//
+//        udpFrame = ConstructCANFrame.go();
+//        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+//        ds.send(sendPacket);
     }
 
-    public void setSand() throws IOException {
+    public void setSand() throws IOException, InterruptedException {
         boolean result = false;
         byte[] udpFrame = new byte[13];
-        //byte[] packatData;
-        //ds = new DatagramSocket(Attribute.sendingPort);
-        //dsReceive = new DatagramSocket(Attribute.receivePort);
 
-        udpFrame = ConstructCANFrame.setSpeed(Attribute._STEAM_ID,0);
-        DatagramPacket sendPacket = new DatagramPacket(udpFrame,udpFrame.length,ia,Attribute.sendingPort);
-        ds.send(sendPacket);
-
-        udpFrame = ConstructCANFrame.resourceStart();
-        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
-        ds.send(sendPacket);
+        //Say system that the refill will start()
+//        udpFrame = ConstructCANFrame.resourceStart();
+//        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+//        ds.send(sendPacket);
 
         //SET SAND
         udpFrame = ConstructCANFrame.setSand(Attribute._STEAM_ID);
-        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
         ds.send(sendPacket);
 
-        udpFrame = ConstructCANFrame.resourceStop();
-        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
-        ds.send(sendPacket);
+        //GET SAND for Verification
+//        GetSand();
+
+        //Say system that the refill will stop()
+//        udpFrame = ConstructCANFrame.resourceStop();
+//        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+//        ds.send(sendPacket);
+
+//        Thread.sleep(5000);
+
+//        udpFrame = ConstructCANFrame.setSpeed(Attribute._STEAM_ID, 1000);
+//        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+//        ds.send(sendPacket);
+
+//        udpFrame = ConstructCANFrame.go();
+//        sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+//        ds.send(sendPacket);
     }
 
     public byte[] GetWater() throws IOException {
 
         boolean result = false;
         byte[] udpFrame = new byte[13];
-        //byte[] packatData;
-        //ds = new DatagramSocket(Attribute.sendingPort);
-        //dsReceive = new DatagramSocket(Attribute.receivePort);
 
         //GET COIL
         udpFrame = ConstructCANFrame.getWater(Attribute._STEAM_ID);
@@ -397,18 +355,10 @@ public class Resource extends Thread {
             sendPacket = new DatagramPacket(new byte[13], 13, ib, Attribute.receivePort);
             dr.receive(sendPacket);
 
-            //dsReceive.receive(sendPacket);
-            // Empfaenger auslesen
-            InetAddress address = sendPacket.getAddress();
-
-            int port = sendPacket.getPort();
-            int len = sendPacket.getLength();
             data = sendPacket.getData();
-//            for (int j = 0; j < data.length; j++) {
-//                System.out.println("data[" + j + "]: " + data[j]);
-//            }
             CanBefehlRaw canRaw = null;
             UdpPackage udpP = new UdpPackage(sendPacket, pkNr, mills);
+
             try {
                 canRaw = new CanBefehlRaw(udpP);
             } catch (Exception e) {
@@ -419,36 +369,14 @@ public class Resource extends Thread {
                 && data[9] == 4) {
                 setResourceAmountWater(data);
                 empfang = false;
-
-                //ds.close();
-                // dsReceive.close();
             }
 
             i++;
         }
 
         if (debug) {
-            MaskFormatter mfHEX = null;
-            String hexFormatted = "";
-            String hexNr = "";
-
-            //DEBUG UDP FRAME
-            /*
-            System.out.println("GETWATER():");
-            for (int j = 0; j < udpFrame.length; j++) {
-                System.out.println("udpFrame[" + j + "]: " + udpFrame[j]);
-            }
-            */
-            try {
-                mfHEX = new MaskFormatter("[HHHHHHHH:HH][HH,HH,HH,HH,HH,HH,HH,HH]");
-                mfHEX.setValueContainsLiteralCharacters(false);
-                hexNr = hexEncode(data);
-                hexFormatted = mfHEX.valueToString(hexNr);
-                System.out.println("hexWater: " + hexFormatted);
-                System.out.println("Thread: " + this.ThreadName + " : intAmountWater: " + getResourceAmountWater());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            String hexOutput = convertByte2String(data);
+            System.out.println(hexOutput);
         }
 
         return data;
@@ -505,25 +433,8 @@ public class Resource extends Thread {
         }
 
         if (debug) {
-            MaskFormatter mfHEX = null;
-            String hexFormatted = "";
-            String hexNr = "";
-            //UDP FRAME for GETCoil
-            //System.out.println("GETCOIL():");
-            //for (int j = 0; j < udpFrame.length; j++) {
-            //System.out.println("udpFrame[" + j + "]: " + udpFrame[j]);
-            //}
-
-            try {
-                mfHEX = new MaskFormatter("[HHHHHHHH:HH][HH,HH,HH,HH,HH,HH,HH,HH]");
-                mfHEX.setValueContainsLiteralCharacters(false);
-                hexNr = hexEncode(data);
-                hexFormatted = mfHEX.valueToString(hexNr);
-                System.out.println("hexCoil: " + hexFormatted);
-                System.out.println("Thread: " + this.ThreadName + " : intAmountCoil: " + getResourceAmountCoil());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            String hexOutput = convertByte2String(data);
+            System.out.println(hexOutput);
         }
 
         return data;
@@ -581,26 +492,8 @@ public class Resource extends Thread {
         }
 
         if (debug) {
-            MaskFormatter mfHEX = null;
-            String hexFormatted = "";
-            String hexNr = "";
-            //DEBUG UDP FRAME
-            /*
-            System.out.println("GETSand():");
-            for (int j = 0; j < udpFrame.length; j++) {
-                System.out.println("udpFrame[" + j + "]: " + udpFrame[j]);
-            }
-            */
-            try {
-                mfHEX = new MaskFormatter("[HHHHHHHH:HH][HH,HH,HH,HH,HH,HH,HH,HH]");
-                mfHEX.setValueContainsLiteralCharacters(false);
-                hexNr = hexEncode(data);
-                hexFormatted = mfHEX.valueToString(hexNr);
-                System.out.println("hexSand: " + hexFormatted);
-                System.out.println("Thread: " + this.ThreadName + " : intAmountSand: " + getResourceAmountSand());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            String hexOutput = convertByte2String(data);
+            System.out.println(hexOutput);
         }
 
         return data;
@@ -743,6 +636,26 @@ public class Resource extends Thread {
         return data;
     }
 
+    public String convertByte2String (byte[] data) {
+        MaskFormatter mfHEX = null;
+        String hexFormatted = "";
+        String hexNr = "";
+
+        try {
+            mfHEX = new MaskFormatter("[HHHHHHHH:HH][HH,HH,HH,HH,HH,HH,HH,HH]");
+            mfHEX.setValueContainsLiteralCharacters(false);
+            hexNr = hexEncode(data);
+            hexFormatted = mfHEX.valueToString(hexNr);
+            //System.out.println("hexSpeed: " + hexFormatted);
+            //System.out.println("Thread: " + this.ThreadName + " : intAmountSpeed: " + getSpeedAmount());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+        return hexFormatted;
+    }
+
 
     public synchronized void setSpeedAmount (byte[]data) {
         speedAmount.set(parseHex2IntSpeed(data));
@@ -820,7 +733,7 @@ public class Resource extends Thread {
         //return data[i] Integer.parseInt(String.valueOf(data[11]));
     }
 
-    public String getIp() {
+/*    public String getIp() {
         return ip;
     }
 
@@ -835,5 +748,5 @@ public class Resource extends Thread {
     public void setPort(int port) {
         this.port = port;
     }
-
+*/
 }

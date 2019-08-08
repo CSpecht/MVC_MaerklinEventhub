@@ -241,7 +241,7 @@ public class SendCan extends Thread implements Attribute {
 
         //If the variable is setted up as -1, Max Limit = 500
         //if(iterations == -1) iterations = 500;
-        Resource DForSQL = new Resource(Attribute.sendingAddress,Attribute.sendingPort);
+       // Resource DForSQL = new Resource(Attribute.sendingAddress,Attribute.sendingPort);
         //TODO: IMPLEMENT THREADS!!!!
         //DForSQL.start();
 
@@ -259,7 +259,7 @@ public class SendCan extends Thread implements Attribute {
 
         while (GC.trainRunning()) {
             long millis = System.currentTimeMillis();
-            DForSQL.startListener();
+     //       DForSQL.startListener();
 
             //ask status of water
             udpFrame = ConstructCANFrame.getWater(Attribute._STEAM_ID);
@@ -285,7 +285,7 @@ public class SendCan extends Thread implements Attribute {
                 System.out.println("udpFrame["+i+"]: " + udpFrame[i]);
             }
             //sendToMSSQL(DForSQL);
-            DForSQL.stopListener();
+         //   DForSQL.stopListener();
             Thread.sleep(1000 - millis % 1000);
         }
     }
