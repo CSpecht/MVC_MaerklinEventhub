@@ -45,8 +45,6 @@ public class SzenarioTwoTimer extends TimerTask {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     public void MSSQL () {
