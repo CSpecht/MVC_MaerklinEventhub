@@ -31,9 +31,12 @@ public class CanMain implements Attribute{
 
 
 
+		//RUN DAMPFLOK
+		//GetCan rec = new GetCan("Fred_1");
 
-		GetCan rec = new GetCan("Fred_1");
 
+		SzenarioTwo sz2 = new SzenarioTwo();
+		sz2.run();
 
 
 

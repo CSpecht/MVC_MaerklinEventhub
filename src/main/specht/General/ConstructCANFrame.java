@@ -21,6 +21,7 @@ public class ConstructCANFrame extends Thread{
     private static char hash = 0;
     private static int cargoId = 0x4006;
     private static int steamId = 0x4007;
+    private static boolean debug = false;
 
 
 
@@ -102,12 +103,16 @@ public class ConstructCANFrame extends Thread{
                 udpFrame[5+i] = 0;
             }
             if (i == 2) {
-                System.out.println("id: " + getFirstByteOfId(id));
+                if (debug) {
+                    System.out.println("id: " + getFirstByteOfId(id));
+                }
                 udpFrame[5+i] = (byte) getFirstByteOfId(id);
             }
 
             if (i == 3) {
-                System.out.println("id2: " + getSecondByteOfId(id));
+                if (debug) {
+                    System.out.println("id2: " + getSecondByteOfId(id));
+                }
                 udpFrame[5+i] = (byte) getSecondByteOfId(id);
             }
 
@@ -161,12 +166,16 @@ public class ConstructCANFrame extends Thread{
         for (int i = 0; i < data.length; i++) {
             udpFrame[5+i] = (byte)data[i];
             if (i == 2) {
-                System.out.println("id: " + getFirstByteOfId(id));
+                if (debug) {
+                    System.out.println("id: " + getFirstByteOfId(id));
+                }
                 udpFrame[5+i] = (byte) getFirstByteOfId(id);
             }
 
             if (i == 3) {
-                System.out.println("id2: " + getSecondByteOfId(id));
+                if (debug) {
+                    System.out.println("id2: " + getSecondByteOfId(id));
+                }
                 udpFrame[5+i] = (byte) getSecondByteOfId(id);
             }
 
@@ -199,12 +208,16 @@ public class ConstructCANFrame extends Thread{
         for (int i = 0; i < data.length; i++) {
             udpFrame[5+i] = (byte)data[i];
             if (i == 2) {
-                System.out.println("id: " + getFirstByteOfId(id));
+                if (debug) {
+                    System.out.println("id: " + getFirstByteOfId(id));
+                }
                 udpFrame[5+i] = (byte) getFirstByteOfId(id);
             }
 
             if (i == 3) {
-                System.out.println("id2: " + getSecondByteOfId(id));
+                if (debug) {
+                    System.out.println("id2: " + getSecondByteOfId(id));
+                }
                 udpFrame[5+i] = (byte) getSecondByteOfId(id);
             }
 
@@ -236,12 +249,16 @@ public class ConstructCANFrame extends Thread{
         for (int i = 0; i < data.length; i++) {
             udpFrame[5+i] = (byte)data[i];
             if (i == 2) {
-                System.out.println("id: " + getFirstByteOfId(id));
+                if (debug) {
+                    System.out.println("id: " + getFirstByteOfId(id));
+                }
                 udpFrame[5+i] = (byte) getFirstByteOfId(id);
             }
 
             if (i == 3) {
-                System.out.println("id2: " + getSecondByteOfId(id));
+                if (debug) {
+                    System.out.println("id2: " + getSecondByteOfId(id));
+                }
                 udpFrame[5+i] = (byte) getSecondByteOfId(id);
             }
 
@@ -273,12 +290,16 @@ public class ConstructCANFrame extends Thread{
         for (int i = 0; i < data.length; i++) {
             udpFrame[5+i] = (byte)data[i];
             if (i == 2) {
-                System.out.println("id: " + getFirstByteOfId(id));
+                if (debug) {
+                    System.out.println("id: " + getFirstByteOfId(id));
+                }
                 udpFrame[5+i] = (byte) getFirstByteOfId(id);
             }
 
             if (i == 3) {
-                System.out.println("id2: " + getSecondByteOfId(id));
+                if (debug) {
+                    System.out.println("id2: " + getSecondByteOfId(id));
+                }
                 udpFrame[5+i] = (byte) getSecondByteOfId(id);
             }
 
@@ -360,7 +381,9 @@ public class ConstructCANFrame extends Thread{
         udpFrame[4] = (byte) dlc;
 
         String s = intToHex(speed);
-        System.out.println("hexString :" + s);
+        if (debug) {
+            System.out.println("hexString :" + s);
+        }
         byte[] hexData = hexStringToByteArray(s);
 
         for (int i = 0; i < data.length; i++) {
@@ -675,7 +698,9 @@ public class ConstructCANFrame extends Thread{
         udpFrame[4] = (byte) dlc;
 
         String s = intToHex(255);
-        System.out.println("hexString :" + s);
+        if (debug) {
+            System.out.println("hexString :" + s);
+        }
         byte[] hexData = hexStringToByteArray(s);
 
         for (int i = 0; i < data.length; i++) {
@@ -728,7 +753,9 @@ public class ConstructCANFrame extends Thread{
         udpFrame[4] = (byte) dlc;
 
         String s = intToHex(255);
-        System.out.println("hexString :" + s);
+        if (debug) {
+            System.out.println("hexString :" + s);
+        }
         byte[] hexData = hexStringToByteArray(s);
 
         for (int i = 0; i < data.length; i++) {
@@ -781,7 +808,9 @@ public class ConstructCANFrame extends Thread{
         udpFrame[4] = (byte) dlc;
 
         String s = intToHex(255);
-        System.out.println("hexString :" + s);
+        if (debug) {
+            System.out.println("hexString :" + s);
+        }
         byte[] hexData = hexStringToByteArray(s);
 
         for (int i = 0; i < data.length; i++) {
@@ -1026,7 +1055,7 @@ public class ConstructCANFrame extends Thread{
             hex = zero + hex.substring(0);
         }
         //String hex = Integer.toHexString(i);
-        System.out.println("Test: " + hex);
+        //System.out.println("Test: " + hex);
         return hex;
     }
 
