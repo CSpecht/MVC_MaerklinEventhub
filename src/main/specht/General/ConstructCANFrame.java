@@ -893,7 +893,7 @@ public class ConstructCANFrame extends Thread{
      * DLC HAS TO BE 8
      * switch the position of the Switch
      */
-    public static byte [] setSwitchRedOn () {
+    public static byte [] setSwitchRWSidingRedOn () {
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -931,7 +931,7 @@ public class ConstructCANFrame extends Thread{
      * switch the position of the Switch
      */
 
-    public static byte [] setSwitchRedOff () {
+    public static byte [] setSwitchRWSidingRedOff () {
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -968,7 +968,7 @@ public class ConstructCANFrame extends Thread{
      * switch the position of the Switch
      */
 
-    public static byte [] setSwitchGreenOff () {
+    public static byte [] setSwitchRWSidingGreenOff () {
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -1006,7 +1006,7 @@ public class ConstructCANFrame extends Thread{
      * switch the position of the Switch
      */
 
-    public static byte [] setSwitchGreenOn () {
+    public static byte [] setSwitchRWSidingGreenOn () {
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -1037,6 +1037,286 @@ public class ConstructCANFrame extends Thread{
         }
         return udpFrame;
     }
+
+    /**
+     * @return udpFrame
+     * DLC HAS TO BE 8
+     * switch the position of the Switch
+     */
+    public static byte [] setSwitchRWRedOn () {
+        //dlc = 6 mandatory to set the speed!
+        dlc = 8;
+        data = new char[dlc];
+        udpFrame[0] = (byte) prio ;
+        udpFrame[1] = (byte) 22; //16
+        udpFrame[2] = (byte) 15; //15// >> 8;//(uid >> 8);
+        udpFrame[3] = (byte) 114;
+        udpFrame[4] = (byte) dlc;
+
+
+        for (int i = 0; i < data.length; i++) {
+            udpFrame[5+i] = (byte)data[i];
+        }
+
+        for (int i = 0; i < data.length; i++) {
+            if (i == 2) {
+                udpFrame[5+i] = (byte)56;
+            }
+            if (i == 3) {
+                udpFrame[5+i] = (byte)1;
+            }
+            if (i == 4) {
+                udpFrame[5+i] = (byte)0;
+            }
+            if (i == 5) {
+                udpFrame[5+i] = (byte)1;
+            }
+        }
+        return udpFrame;
+    }
+
+    /**
+     * @return udpFrame
+     * DLC HAS TO BE 8
+     * switch the position of the Switch
+     */
+
+    public static byte [] setSwitchRWRedOff () {
+        //dlc = 6 mandatory to set the speed!
+        dlc = 8;
+        data = new char[dlc];
+        udpFrame[0] = (byte) prio ;
+        udpFrame[1] = (byte) 22; //16
+        udpFrame[2] = (byte) 15; //15// >> 8;//(uid >> 8);
+        udpFrame[3] = (byte) 114;
+        udpFrame[4] = (byte) dlc;
+
+
+        for (int i = 0; i < data.length; i++) {
+            udpFrame[5+i] = (byte)data[i];
+        }
+
+        for (int i = 0; i < data.length; i++) {
+            if (i == 2) {
+                udpFrame[5+i] = (byte)56;
+            }
+            if (i == 3) {
+                udpFrame[5+i] = (byte)1;
+            }
+            if (i == 4) {
+                udpFrame[5+i] = (byte)0;
+            }
+            if (i == 5) {
+                udpFrame[5+i] = (byte)0;
+            }
+        }
+        return udpFrame;
+    }
+    /**
+     * @return udpFrame
+     * DLC HAS TO BE 8
+     * switch the position of the Switch
+     */
+
+    public static byte [] setSwitchRWGreenOff () {
+        //dlc = 6 mandatory to set the speed!
+        dlc = 8;
+        data = new char[dlc];
+        udpFrame[0] = (byte) prio ;
+        udpFrame[1] = (byte) 22; //16
+        udpFrame[2] = (byte) 15; //15// >> 8;//(uid >> 8);
+        udpFrame[3] = (byte) 114;
+        udpFrame[4] = (byte) dlc;
+
+
+        for (int i = 0; i < data.length; i++) {
+            udpFrame[5+i] = (byte)data[i];
+        }
+
+        for (int i = 0; i < data.length; i++) {
+            if (i == 2) {
+                udpFrame[5+i] = (byte)56;
+            }
+            if (i == 3) {
+                udpFrame[5+i] = (byte)1;
+            }
+            if (i == 4) {
+                udpFrame[5+i] = (byte)1;
+            }
+            if (i == 5) {
+                udpFrame[5+i] = (byte)0;
+            }
+        }
+        return udpFrame;
+    }
+
+    /**
+     * @return udpFrame
+     * DLC HAS TO BE 8
+     * switch the position of the Switch
+     */
+
+    public static byte [] setSwitchRWGreenOn () {
+        //dlc = 6 mandatory to set the speed!
+        dlc = 8;
+        data = new char[dlc];
+        udpFrame[0] = (byte) prio ;
+        udpFrame[1] = (byte) 22; //16
+        udpFrame[2] = (byte) 15; //15// >> 8;//(uid >> 8);
+        udpFrame[3] = (byte) 114;
+        udpFrame[4] = (byte) dlc;
+
+
+        for (int i = 0; i < data.length; i++) {
+            udpFrame[5+i] = (byte)data[i];
+        }
+
+        for (int i = 0; i < data.length; i++) {
+            if (i == 2) {
+                udpFrame[5+i] = (byte)56;
+            }
+            if (i == 3) {
+                udpFrame[5+i] = (byte)1;
+            }
+            if (i == 4) {
+                udpFrame[5+i] = (byte)1;
+            }
+            if (i == 5) {
+                udpFrame[5+i] = (byte)1;
+            }
+        }
+        return udpFrame;
+    }
+
+
+    public static byte [] setLightSignalRedOn () {
+        //dlc = 6 mandatory to set the Signal!
+        dlc = 6;
+        data = new char[dlc];
+        udpFrame[0] = (byte) prio ;
+        udpFrame[1] = (byte) 22; //16
+        udpFrame[2] = (byte) 15; //15// >> 8;//(uid >> 8);
+        udpFrame[3] = (byte) 114;
+        udpFrame[4] = (byte) dlc;
+
+
+        for (int i = 0; i < data.length; i++) {
+            udpFrame[5+i] = (byte)data[i];
+        }
+
+        for (int i = 0; i < data.length; i++) {
+            if (i == 2) {
+                udpFrame[5+i] = (byte)56;
+            }
+            if (i == 3) {
+                udpFrame[5+i] = (byte)0;
+            }
+            if (i == 4) {
+                udpFrame[5+i] = (byte)0;
+            }
+            if (i == 5) {
+                udpFrame[5+i] = (byte)1;
+            }
+        }
+        return udpFrame;
+    }
+
+    public static byte [] setLightSignalRedOff () {
+        //dlc = 6 mandatory to set the speed!
+        dlc = 8;
+        data = new char[dlc];
+        udpFrame[0] = (byte) prio ;
+        udpFrame[1] = (byte) 22; //16
+        udpFrame[2] = (byte) 15; //15// >> 8;//(uid >> 8);
+        udpFrame[3] = (byte) 114;
+        udpFrame[4] = (byte) dlc;
+
+
+        for (int i = 0; i < data.length; i++) {
+            udpFrame[5+i] = (byte)data[i];
+        }
+
+        for (int i = 0; i < data.length; i++) {
+            if (i == 2) {
+                udpFrame[5+i] = (byte)56;
+            }
+            if (i == 3) {
+                udpFrame[5+i] = (byte)0;
+            }
+            if (i == 4) {
+                udpFrame[5+i] = (byte)0;
+            }
+            if (i == 5) {
+                udpFrame[5+i] = (byte)0;
+            }
+        }
+        return udpFrame;
+    }
+
+    public static byte [] setLightSignalGreenOn () {
+        //dlc = 6 mandatory to set the speed!
+        dlc = 8;
+        data = new char[dlc];
+        udpFrame[0] = (byte) prio ;
+        udpFrame[1] = (byte) 22; //16
+        udpFrame[2] = (byte) 15; //15// >> 8;//(uid >> 8);
+        udpFrame[3] = (byte) 114;
+        udpFrame[4] = (byte) dlc;
+
+
+        for (int i = 0; i < data.length; i++) {
+            udpFrame[5+i] = (byte)data[i];
+        }
+
+        for (int i = 0; i < data.length; i++) {
+            if (i == 2) {
+                udpFrame[5+i] = (byte)56;
+            }
+            if (i == 3) {
+                udpFrame[5+i] = (byte)0;
+            }
+            if (i == 4) {
+                udpFrame[5+i] = (byte)1;
+            }
+            if (i == 5) {
+                udpFrame[5+i] = (byte)1;
+            }
+        }
+        return udpFrame;
+    }
+
+    public static byte [] setLightSignalGreenOff () {
+        //dlc = 6 mandatory to set the speed!
+        dlc = 8;
+        data = new char[dlc];
+        udpFrame[0] = (byte) prio ;
+        udpFrame[1] = (byte) 22; //16
+        udpFrame[2] = (byte) 15; //15// >> 8;//(uid >> 8);
+        udpFrame[3] = (byte) 114;
+        udpFrame[4] = (byte) dlc;
+
+
+        for (int i = 0; i < data.length; i++) {
+            udpFrame[5+i] = (byte)data[i];
+        }
+
+        for (int i = 0; i < data.length; i++) {
+            if (i == 2) {
+                udpFrame[5+i] = (byte)56;
+            }
+            if (i == 3) {
+                udpFrame[5+i] = (byte)0;
+            }
+            if (i == 4) {
+                udpFrame[5+i] = (byte)1;
+            }
+            if (i == 5) {
+                udpFrame[5+i] = (byte)0;
+            }
+        }
+        return udpFrame;
+    }
+
 
 
     /**

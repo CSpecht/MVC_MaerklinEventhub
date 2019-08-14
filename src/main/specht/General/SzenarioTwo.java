@@ -1,9 +1,7 @@
 package specht.General;
 
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.io.IOException;
+import java.net.*;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -51,9 +49,82 @@ public class SzenarioTwo extends Thread {
         Second = second;
     }
     public void run() {
+
+        byte[] udpFrame = new byte[13];
+        udpFrame = ConstructCANFrame.setLightSignalGreenOn();
+        DatagramPacket packet = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
+        try {
+            ds.send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
         Timer t = new Timer();
         t.scheduleAtFixedRate(new TimerTask(){
             public void run(){
+                if (Second.get() == 5 ) {
+
+                    System.out.println("HELLO 5 SECONDS");
+                    byte[] udpFrame = new byte[13];
+                    //udpFrame = ConstructCANFrame.setLightSignalGreenOn();
+                    udpFrame = ConstructCANFrame.setSwitchRWRedOff();
+                    DatagramPacket packet = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
+                    try {
+                        ds.send(packet);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    udpFrame = ConstructCANFrame.setSwitchRWGreenOn();
+                    packet = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
+                    try {
+                        ds.send(packet);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    udpFrame = ConstructCANFrame.setLightSignalRedOn();
+                    packet = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
+                    try {
+                        ds.send(packet);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+                if (Second.get() >= 90 ) {
+                    byte[] udpFrame = new byte[13];
+                    //udpFrame = ConstructCANFrame.setLightSignalGreenOn();
+                    udpFrame = ConstructCANFrame.setSpeed(Attribute._CARGO_ID,200);
+
+                    DatagramPacket packet = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
+                    try {
+                        ds.send(packet);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    udpFrame = ConstructCANFrame.setSwitchRWGreenOff();
+                    packet = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
+                    try {
+                        ds.send(packet);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    udpFrame = ConstructCANFrame.setSwitchRWRedOn();
+                    packet = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
+                    try {
+                        ds.send(packet);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
                 //elapsed time
                 Second.incrementAndGet();
                 if (debug) {
@@ -64,7 +135,7 @@ public class SzenarioTwo extends Thread {
 
         }, 0, 1000);
         try {
-            t.schedule(new SzenarioTwoTimer(GameID, this.getSecond(), getDatagramSocketSending(),ia), 0, 5000);
+            t.schedule(new SzenarioTwoTimer(GameID, this.getSecond(), getDatagramSocketSending(),ia), 0, 1000);
         } catch (SocketException e) {
             e.printStackTrace();
         }
