@@ -69,12 +69,19 @@ public class SzenarioTwoTimer extends TimerTask {
                }
 
            }
+
            SQL = "EXECUTE dbo.upd_can_done_yn @myGAME_ID=" + GameID + ", @myMINUTE=" + Second;
+           stmt = con.createStatement();
+           rs = stmt.executeQuery(SQL);
+           while (rs.next()) {
+                if (debug) {
+                    System.out.println(rs.toString());
+                }
+           }
+
            if (debug) {
                System.out.println("SQL (can_done_yn): " + SQL);
            }
-
-           stmt.executeQuery(SQL);
 
         } catch (SQLException e) {
             e.printStackTrace();
