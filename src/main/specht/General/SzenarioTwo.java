@@ -58,9 +58,7 @@ public class SzenarioTwo extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-
+        
         Timer t = new Timer();
         t.scheduleAtFixedRate(new TimerTask(){
             public void run(){
