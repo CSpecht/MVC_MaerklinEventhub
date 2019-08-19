@@ -25,6 +25,8 @@ public class SzenarioTwoTimer extends TimerTask {
         this.speed = speed;
     }
 
+
+
     int speed;
 
 
@@ -38,7 +40,7 @@ public class SzenarioTwoTimer extends TimerTask {
 
     public void run() {
         MSSQL();
-        byte[] udpFrame = ConstructCANFrame.setSpeed(Attribute._CARGO_ID, getSpeed()*20);
+        byte[] udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, getSpeed()*20);
         DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
         try {
             this.ds.send(sendPacket);
@@ -46,6 +48,8 @@ public class SzenarioTwoTimer extends TimerTask {
             e.printStackTrace();
         }
     }
+
+
 
     public void MSSQL () {
         try {
