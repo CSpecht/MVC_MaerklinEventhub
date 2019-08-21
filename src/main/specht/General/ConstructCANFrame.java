@@ -397,12 +397,14 @@ public class ConstructCANFrame extends Thread{
             }
             if (i == 3) {
                 udpFrame[5+i] = (byte)getSecondByteOfId(locID);
+                //System.out.println("LOOOOOOOOOOCID: " + (byte)getSecondByteOfId(locID));
             }
             if (i == 4) {
-                udpFrame[5+i] = (byte)getFirstByteOfId(speed);
+                udpFrame[5+i] = (byte)getFirstByteOfSpeed(speed);
             }
             if (i == 5) {
-                udpFrame[5+i] = (byte) getSecondByteOfId(speed);
+                udpFrame[5+i] = (byte) getSecondByteOfSpeed(speed);
+
             }
 
             /*           if (i == 4 && hexData.length == 2) {
@@ -1373,7 +1375,29 @@ public class ConstructCANFrame extends Thread{
      */
     public static int getSecondByteOfId (int id) {
         //Shift the bits to the left and then shift it to the right to get the last 4 bit
-        int res = ((id << 28)>> 28);
+        int res = ((id << 27)>> 27);
+        //System.out.println("SecondByte: " + res);
+        return res;
+    }
+
+    /**
+     * @param speed
+     *
+     * @return result
+     */
+    public static int getFirstByteOfSpeed (int speed) {
+        int res = (speed >>> 8);
+        //System.out.println("FirstByte: " + res);
+        return res;
+    }
+
+    /**
+     * @param speed
+     * @return result
+     */
+    public static int getSecondByteOfSpeed (int speed) {
+        //Shift the bits to the left and then shift it to the right to get the last 4 bit
+        int res = ((speed << 28)>> 28);
         //System.out.println("SecondByte: " + res);
         return res;
     }

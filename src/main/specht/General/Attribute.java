@@ -44,6 +44,9 @@ public interface Attribute {
     public static final int firstByteOfCargoID = ConstructCANFrame.getFirstByteOfId(_CARGO_ID);
     public static final int secondByteOfCargoID = ConstructCANFrame.getSecondByteOfId(_CARGO_ID);
 
+    public static final int firstByteOfSMLSteamID = ConstructCANFrame.getFirstByteOfId(_SMLSTEAM_ID);
+    public static final int secondByteOfSMLSteamID = ConstructCANFrame.getSecondByteOfId(_SMLSTEAM_ID);
+
 
 
 }
