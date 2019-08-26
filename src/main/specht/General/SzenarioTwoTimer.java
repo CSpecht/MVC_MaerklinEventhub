@@ -39,7 +39,7 @@ public class SzenarioTwoTimer extends TimerTask {
     }
 
     public void run() {
-        MSSQL();
+        GetSpeedfromSQL();
         byte[] udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, getSpeed()*20);
         DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
         try {
@@ -47,11 +47,13 @@ public class SzenarioTwoTimer extends TimerTask {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        setYinCADDoneInSQL();
     }
 
 
 
-    public void MSSQL () {
+    public void GetSpeedfromSQL() {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         } catch (ClassNotFoundException e) {
@@ -71,34 +73,39 @@ public class SzenarioTwoTimer extends TimerTask {
                if (debug) {
                    System.out.println("speed: " + rs.getInt("rs"));
                }
-
            }
-           CallableStatement cs = null;
-           cs = con.prepareCall("EXECUTE dbo.upd_can_done_yn @myGAME_ID=?, @myMINUTE=?");
-           cs.setInt(1,GameID);
-            System.out.println("GAMEID_SQL:"+GameID);
-           cs.setInt(2,Second.get());
-            System.out.println("GAMEMINUTE_SQL:"+Second.get());
-           cs.execute();
-            System.out.println(cs.toString());
-           //cs = con.prepareCall(SQL);
-           //cs.executeQuery(SQL);
-           //stmt = con.createStatement();
-           //rs = stmt.executeQuery(SQL);
-/*           while (rs.next()) {
-                if (debug) {
-                    System.out.println(rs.toString());
-                }
-           }
-*/
-           if (debug) {
-               System.out.println("SQL (can_done_yn): " + SQL);
-           }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
+    }
+
+    public void setYinCADDoneInSQL () {
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        Connection con = null;
+        try {
+            if (Second.get() != 0) {
+                con = DriverManager.getConnection(Attribute.dbUrl);
+                CallableStatement cs = con.prepareCall("EXECUTE dbo.upd_can_done_yn @myGAME_ID=?, @myMINUTE=?");
+                cs.setEscapeProcessing(true);
+                cs.setQueryTimeout(10);
+                cs.setInt(1,GameID);
+                System.out.println("GAMEID_SQL:"+GameID);
+                cs.setInt(2,Second.get());
+                System.out.println("GAMEMINUTE_SQL:"+Second.get());
+                cs.execute();
+                System.out.println(cs.toString());
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 
