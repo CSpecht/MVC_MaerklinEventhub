@@ -40,7 +40,13 @@ public class SzenarioTwoTimer extends TimerTask {
 
     public void run() {
         GetSpeedfromSQL();
-        byte[] udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, getSpeed()*20);
+        byte[] udpFrame;
+        if (getSpeed() == 1) {
+            udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, getSpeed()-1);
+        } else {
+
+            udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, getSpeed());
+        }
         DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
         try {
             this.ds.send(sendPacket);
@@ -48,7 +54,7 @@ public class SzenarioTwoTimer extends TimerTask {
             e.printStackTrace();
         }
 
-        setYinCADDoneInSQL();
+        //setYinCADDoneInSQL();
     }
 
 
@@ -64,14 +70,14 @@ public class SzenarioTwoTimer extends TimerTask {
         try {
             con = DriverManager.getConnection(Attribute.dbUrl);
             Statement stmt = con.createStatement();
-            String SQL = "SELECT dbo.get_train_speed("
-            + GameID + "," + Second +") as 'rs'";
+            String SQL = "select TOP 1 VAL8_SPEED from D_GAME_RESOURCES WHERE GAME_ID = 16 AND RESTAPI_DONE_YN = 1 AND CAN_DONE_YN = 0 ORDER BY ROWID DESC";
+            //String SQL = "SELECT dbo.get_train_speed(" + GameID + "," + Second +") as 'rs'";
             System.out.println(SQL);
            ResultSet rs = stmt.executeQuery(SQL);
            while (rs.next()) {
-               setSpeed(rs.getInt("rs"));
+               setSpeed(rs.getInt("VAL8_SPEED"));
                if (debug) {
-                   System.out.println("speed: " + rs.getInt("rs"));
+                   System.out.println("speed: " + rs.getInt("VAL8_SPEED"));
                }
            }
         } catch (SQLException e) {

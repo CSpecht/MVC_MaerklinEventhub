@@ -9,7 +9,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SzenarioTwo extends Thread {
 
-    int GameID;
+    //for test cases equal 16 otherwise delete = 16!
+    int GameID = 16;
     AtomicInteger Second = new AtomicInteger(0);
     int SecondInt = 0;
     boolean debug = true;
@@ -109,7 +110,14 @@ public class SzenarioTwo extends Thread {
         while (true && getStartRun() == false) {
             getGameIDfromSQL();
         }
-        if (startRun) {
+        Timer t = new Timer();
+        try {
+            t.schedule(new SzenarioTwoTimer(GameID, this.getSecond(), getDatagramSocketSending(), ia), 0, 1000);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+        //THIS WAS THE FIRST SOLUTION!!!!
+        /*       if (startRun) {
             GameID = getGameID();
 
             if (GameID == 0) {
@@ -219,6 +227,8 @@ public class SzenarioTwo extends Thread {
             }
 
         }
+
+        */
     }
 
 
