@@ -45,7 +45,7 @@ public class SzenarioTwoTimer extends TimerTask {
             udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, getSpeed()-1);
         } else {
 
-            udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, getSpeed());
+            udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, getSpeed()); //getSpeed()
         }
         DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
         try {

@@ -1,5 +1,6 @@
 package specht.General;
 
+
 /**
  * @author Cornelius Specht
  *
@@ -380,11 +381,7 @@ public class ConstructCANFrame extends Thread{
         udpFrame[3] = (byte) 114;
         udpFrame[4] = (byte) dlc;
 
-        String s = intToHex(speed);
-        if (debug) {
-            System.out.println("hexString :" + s);
-        }
-        byte[] hexData = hexStringToByteArray(s);
+        byte[] speedArr = toByteArray(speed);
 
         for (int i = 0; i < data.length; i++) {
             udpFrame[5+i] = (byte)data[i];
@@ -400,10 +397,10 @@ public class ConstructCANFrame extends Thread{
                 //System.out.println("LOOOOOOOOOOCID: " + (byte)getSecondByteOfId(locID));
             }
             if (i == 4) {
-                udpFrame[5+i] = (byte)getFirstByteOfSpeed(speed);
+                udpFrame[5+i] = speedArr[2];//(byte)getFirstByteOfSpeed(speed);
             }
             if (i == 5) {
-                udpFrame[5+i] = (byte) getSecondByteOfSpeed(speed);
+                udpFrame[5+i] = speedArr[3];//(byte) getSecondByteOfSpeed(newerGetByteOfSecondID(speed));
 
             }
 
@@ -1380,26 +1377,12 @@ public class ConstructCANFrame extends Thread{
         return res;
     }
 
-    /**
-     * @param speed
-     *
-     * @return result
-     */
-    public static int getFirstByteOfSpeed (int speed) {
-        int res = (speed >>> 8);
-        //System.out.println("FirstByte: " + res);
-        return res;
-    }
-
-    /**
-     * @param speed
-     * @return result
-     */
-    public static int getSecondByteOfSpeed (int speed) {
-        //Shift the bits to the left and then shift it to the right to get the last 4 bit
-        int res = ((speed << 28)>> 28);
-        //System.out.println("SecondByte: " + res);
-        return res;
+    public static byte[] toByteArray(int value) {
+        return new byte[] {
+                (byte)(value >> 24),
+                (byte)(value >> 16),
+                (byte)(value >> 8),
+                (byte)value};
     }
 
     @Override
