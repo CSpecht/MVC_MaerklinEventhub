@@ -70,7 +70,7 @@ public class SzenarioTwoTimer extends TimerTask {
         try {
             con = DriverManager.getConnection(Attribute.dbUrl);
             Statement stmt = con.createStatement();
-            String SQL = "select TOP 1 VAL8_SPEED from D_GAME_RESOURCES WHERE GAME_ID = 16 AND RESTAPI_DONE_YN = 1 AND CAN_DONE_YN = 0 ORDER BY ROWID DESC";
+            String SQL = "select TOP 1 VAL8_SPEED from D_GAME_RESOURCES WHERE GAME_ID = " + GameID + " AND RESTAPI_DONE_YN = 1 AND CAN_DONE_YN = 0 ORDER BY ROWID DESC";
             //String SQL = "SELECT dbo.get_train_speed(" + GameID + "," + Second +") as 'rs'";
             System.out.println(SQL);
            ResultSet rs = stmt.executeQuery(SQL);
