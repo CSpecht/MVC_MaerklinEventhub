@@ -9,8 +9,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SzenarioTwo extends Thread {
 
-    //for test cases equal 16 otherwise delete = 16!
-    int GameID = 16;
     AtomicInteger Second = new AtomicInteger(0);
     int SecondInt = 0;
     boolean debug = true;
@@ -30,18 +28,6 @@ public class SzenarioTwo extends Thread {
             e.printStackTrace();
         }
     }
-
-    public void setStartRun(boolean start) {
-        this.startRun = start;
-    }
-
-    public boolean getStartRun() {
-        return startRun;
-    }
-
-
-
-
 
     public DatagramSocket getDatagramSocketSending() throws SocketException {
         if (ds == null) {
@@ -75,9 +61,6 @@ public class SzenarioTwo extends Thread {
 
     public void run() {
 
-
-
-
         Timer t = new Timer();
         try {
                 t.schedule(new SzenarioTwoTimer(this.getSecond(), getDatagramSocketSending(), ia), 0, 1000);
@@ -85,9 +68,6 @@ public class SzenarioTwo extends Thread {
                 e.printStackTrace();
         }
 
-
     }
-
-
 }
 

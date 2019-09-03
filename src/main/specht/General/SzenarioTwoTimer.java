@@ -16,29 +16,17 @@ public class SzenarioTwoTimer extends TimerTask {
     boolean debug = true;
     DatagramSocket ds;
     InetAddress ia;
-
-    public int getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(int speed) {
-        this.speed = speed;
-    }
-
-
-
     int speed;
 
-
-
     public SzenarioTwoTimer( AtomicInteger Second, DatagramSocket ds, InetAddress ia) {
-        //this.GameID = GameID;
+
         this.Second = Second;
         this.ds = ds;
         this.ia = ia;
     }
 
     public void run() {
+
         getGameIDfromSQL();
         if (getGameID() != 0) {
             GetSpeedfromSQL();
@@ -47,7 +35,7 @@ public class SzenarioTwoTimer extends TimerTask {
                 udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, getSpeed()-1);
             } else {
 
-                udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, getSpeed()); //getSpeed()
+                udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, getSpeed());
             }
             DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
             try {
@@ -65,10 +53,15 @@ public class SzenarioTwoTimer extends TimerTask {
                 e.printStackTrace();
             }
         }
-
-
-
         //setYinCADDoneInSQL();
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 
     public int getGameID() {
@@ -80,6 +73,7 @@ public class SzenarioTwoTimer extends TimerTask {
     }
 
     public void getGameIDfromSQL() {
+
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         } catch (ClassNotFoundException e) {
@@ -90,8 +84,8 @@ public class SzenarioTwoTimer extends TimerTask {
             con = DriverManager.getConnection(Attribute.dbUrl);
             Statement stmt = con.createStatement();
             String SQL = "SELECT GAME_ID FROM " + Attribute.DBNAME + ".dbo.T_GAME_INFO WHERE RUN_YN = 1 ";
-
             ResultSet rs = stmt.executeQuery(SQL);
+
             while (rs.next()) {
                 setGameID(rs.getInt("GAME_ID"));
                 //setStartRun(true);
@@ -99,7 +93,6 @@ public class SzenarioTwoTimer extends TimerTask {
 
                     System.out.println("GAME_ID: " + rs.getInt("GAME_ID"));
                 }
-
             }
 
             if (rs.next() == false && debug) {
@@ -113,6 +106,7 @@ public class SzenarioTwoTimer extends TimerTask {
     }
 
     public void GetSpeedfromSQL() {
+
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         } catch (ClassNotFoundException e) {
@@ -120,14 +114,16 @@ public class SzenarioTwoTimer extends TimerTask {
         }
 
         Connection con = null;
+
         try {
             con = DriverManager.getConnection(Attribute.dbUrl);
             Statement stmt = con.createStatement();
             String SQL = "select TOP 1 VAL8_SPEED from D_GAME_RESOURCES WHERE GAME_ID = " + GameID + " AND RESTAPI_DONE_YN = 1 AND CAN_DONE_YN = 0 ORDER BY ROWID DESC";
             //String SQL = "SELECT dbo.get_train_speed(" + GameID + "," + Second +") as 'rs'";
             System.out.println(SQL);
-           ResultSet rs = stmt.executeQuery(SQL);
-           while (rs.next()) {
+            ResultSet rs = stmt.executeQuery(SQL);
+
+            while (rs.next()) {
                setSpeed(rs.getInt("VAL8_SPEED"));
                if (debug) {
                    System.out.println("speed: " + rs.getInt("VAL8_SPEED"));
@@ -140,6 +136,7 @@ public class SzenarioTwoTimer extends TimerTask {
     }
 
     public void setYinCADDoneInSQL () {
+
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         } catch (ClassNotFoundException e) {
@@ -147,7 +144,9 @@ public class SzenarioTwoTimer extends TimerTask {
         }
 
         Connection con = null;
+
         try {
+
             if (Second.get() != 0) {
                 con = DriverManager.getConnection(Attribute.dbUrl);
                 CallableStatement cs = con.prepareCall("EXECUTE dbo.upd_can_done_yn @myGAME_ID=?, @myMINUTE=?");
@@ -160,8 +159,6 @@ public class SzenarioTwoTimer extends TimerTask {
                 cs.execute();
                 System.out.println(cs.toString());
             }
-
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
