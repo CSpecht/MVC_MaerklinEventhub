@@ -31,14 +31,15 @@ public class SzenarioTwoTimer extends TimerTask {
 
 
 
-    public SzenarioTwoTimer(int GameID, AtomicInteger Second, DatagramSocket ds, InetAddress ia) {
-        this.GameID = GameID;
+    public SzenarioTwoTimer( AtomicInteger Second, DatagramSocket ds, InetAddress ia) {
+        //this.GameID = GameID;
         this.Second = Second;
         this.ds = ds;
         this.ia = ia;
     }
 
     public void run() {
+        getGameIDfromSQL();
         GetSpeedfromSQL();
         byte[] udpFrame;
         if (getSpeed() == 1) {
@@ -57,7 +58,41 @@ public class SzenarioTwoTimer extends TimerTask {
         //setYinCADDoneInSQL();
     }
 
+    public int getGameID() {
+        return GameID;
+    }
 
+    public void setGameID(int GameID) {
+        this.GameID = GameID;
+    }
+
+    public void getGameIDfromSQL() {
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection(Attribute.dbUrl);
+            Statement stmt = con.createStatement();
+            String SQL = "SELECT GAME_ID FROM " + Attribute.DBNAME + ".dbo.T_GAME_INFO WHERE RUN_YN = 1 ";
+            System.out.println(SQL);
+            ResultSet rs = stmt.executeQuery(SQL);
+            while (rs.next()) {
+                setGameID(rs.getInt("GAME_ID"));
+                //setStartRun(true);
+                if (debug) {
+                    System.out.println("GAME_ID: " + rs.getInt("GAME_ID"));
+                }
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     public void GetSpeedfromSQL() {
         try {

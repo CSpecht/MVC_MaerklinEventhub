@@ -4,7 +4,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.sql.*;
 import java.util.Timer;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -40,41 +39,9 @@ public class SzenarioTwo extends Thread {
         return startRun;
     }
 
-    public int getGameID() {
-        return GameID;
-    }
 
-    public void setGameID(int GameID) {
-        this.GameID = GameID;
-    }
 
-    public void getGameIDfromSQL() {
-        try {
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        Connection con = null;
-        try {
-            con = DriverManager.getConnection(Attribute.dbUrl);
-            Statement stmt = con.createStatement();
-            String SQL = "SELECT GAME_ID FROM " + Attribute.DBNAME + ".dbo.T_GAME_INFO WHERE RUN_YN = 1 ";
-            System.out.println(SQL);
-            ResultSet rs = stmt.executeQuery(SQL);
-            while (rs.next()) {
-                setGameID(rs.getInt("GAME_ID"));
-                setStartRun(true);
-                if (debug) {
-                    System.out.println("GAME_ID: " + rs.getInt("GAME_ID"));
-                }
 
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     public DatagramSocket getDatagramSocketSending() throws SocketException {
         if (ds == null) {
@@ -108,15 +75,17 @@ public class SzenarioTwo extends Thread {
 
     public void run() {
 
-        while (true && getStartRun() == false) {
-            getGameIDfromSQL();
-        }
+
+
+
         Timer t = new Timer();
         try {
-            t.schedule(new SzenarioTwoTimer(GameID, this.getSecond(), getDatagramSocketSending(), ia), 0, 1000);
+                t.schedule(new SzenarioTwoTimer(this.getSecond(), getDatagramSocketSending(), ia), 0, 1000);
         } catch (SocketException e) {
-            e.printStackTrace();
+                e.printStackTrace();
         }
+
+
         //THIS WAS THE FIRST SOLUTION!!!!
         /*       if (startRun) {
             GameID = getGameID();
