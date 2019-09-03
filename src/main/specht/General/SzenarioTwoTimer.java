@@ -40,20 +40,33 @@ public class SzenarioTwoTimer extends TimerTask {
 
     public void run() {
         getGameIDfromSQL();
-        GetSpeedfromSQL();
-        byte[] udpFrame;
-        if (getSpeed() == 1) {
-            udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, getSpeed()-1);
-        } else {
+        if (getGameID() != 0) {
+            GetSpeedfromSQL();
+            byte[] udpFrame;
+            if (getSpeed() == 1) {
+                udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, getSpeed()-1);
+            } else {
 
-            udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, getSpeed()); //getSpeed()
+                udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, getSpeed()); //getSpeed()
+            }
+            DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
+            try {
+                this.ds.send(sendPacket);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            byte[] udpFrame;
+            udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, 0);
+            DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
+            try {
+                this.ds.send(sendPacket);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
-        try {
-            this.ds.send(sendPacket);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+
 
         //setYinCADDoneInSQL();
     }
@@ -77,15 +90,20 @@ public class SzenarioTwoTimer extends TimerTask {
             con = DriverManager.getConnection(Attribute.dbUrl);
             Statement stmt = con.createStatement();
             String SQL = "SELECT GAME_ID FROM " + Attribute.DBNAME + ".dbo.T_GAME_INFO WHERE RUN_YN = 1 ";
-            System.out.println(SQL);
+
             ResultSet rs = stmt.executeQuery(SQL);
             while (rs.next()) {
                 setGameID(rs.getInt("GAME_ID"));
                 //setStartRun(true);
                 if (debug) {
+
                     System.out.println("GAME_ID: " + rs.getInt("GAME_ID"));
                 }
 
+            }
+
+            if (rs.next() == false && debug) {
+                System.out.println("NO GAME ID FOUND");
             }
 
         } catch (SQLException e) {
