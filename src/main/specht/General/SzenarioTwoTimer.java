@@ -86,17 +86,18 @@ public class SzenarioTwoTimer extends TimerTask {
             String SQL = "SELECT GAME_ID FROM " + Attribute.DBNAME + ".dbo.T_GAME_INFO WHERE RUN_YN = 1 ";
             ResultSet rs = stmt.executeQuery(SQL);
 
-            while (rs.next()) {
-                setGameID(rs.getInt("GAME_ID"));
-                //setStartRun(true);
-                if (debug) {
-
-                    System.out.println("GAME_ID: " + rs.getInt("GAME_ID"));
-                }
-            }
-
             if (rs.next() == false && debug) {
                 System.out.println("NO GAME ID FOUND");
+            } else {
+                do {
+                    setGameID(rs.getInt("GAME_ID"));
+                    if (debug) {
+                        System.out.println("GAME_ID: " + rs.getInt("GAME_ID"));
+                    }
+                } while (rs.next());
+
+                //setStartRun(true);
+
             }
 
         } catch (SQLException e) {
