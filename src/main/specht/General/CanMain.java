@@ -2,15 +2,31 @@ package specht.General;//import javax.xml.bind.annotation.adapters.HexBinaryAdap
 
 
 import java.io.IOException;
+import java.sql.*;
 
 public class CanMain implements Attribute{
 
 
 	protected static int coaches;
+	protected static boolean debug = true;
+	protected static String GAMEMODE;
+
 
 
 
 	public static void main(String[] args) throws IOException {
+
+		getGameModeFromSQL();
+
+		switch (GAMEMODE) {
+			case "Szenario1":
+				GetCan rec = new GetCan("Fred_1");
+				break;
+			case "Szenario2":
+				SzenarioTwo sz2 = new SzenarioTwo();
+				sz2.run();
+				break;
+		}
 
 		//General.ConstructCANFrame frame = new General.ConstructCANFrame();
 
@@ -35,8 +51,8 @@ public class CanMain implements Attribute{
 		//GetCan rec = new GetCan("Fred_1");
 
 
-		SzenarioTwo sz2 = new SzenarioTwo();
-		sz2.run();
+		//SzenarioTwo sz2 = new SzenarioTwo();
+		//sz2.run();
 
 
 
@@ -146,7 +162,47 @@ public class CanMain implements Attribute{
 	}
 
 
+	public static void getGameModeFromSQL () {
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 
+		Connection con = null;
+
+		try {
+			con = DriverManager.getConnection(Attribute.dbUrl);
+			Statement stmt = con.createStatement();
+			String SQL = "select TOP 1 GAMEMODE from T_CONFIGURATION WHERE RUN_YN = 1";
+			//String SQL = "SELECT dbo.get_train_speed(" + GameID + "," + Second +") as 'rs'";
+			System.out.println(SQL);
+			ResultSet rs = stmt.executeQuery(SQL);
+
+			if (rs.next() == false && debug) {
+				System.out.println("NO GAME MODE FOUND");
+			} else {
+				do {
+					setGameMode(rs.getString("GAMEMODE"));
+					if (debug) {
+						System.out.println("GAMEMODE: " + rs.getString("GAMEMODE"));
+					}
+				} while (rs.next());
+			}
+
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	protected static String getGameMode () {
+		return GAMEMODE;
+	}
+
+	protected static void setGameMode (String GameMode) {
+		GAMEMODE = GameMode;
+	}
 
 
 
