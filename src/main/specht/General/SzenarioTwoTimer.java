@@ -95,9 +95,6 @@ public class SzenarioTwoTimer extends TimerTask {
                         System.out.println("GAME_ID: " + rs.getInt("GAME_ID"));
                     }
                 } while (rs.next());
-
-                //setStartRun(true);
-
             }
 
         } catch (SQLException e) {
