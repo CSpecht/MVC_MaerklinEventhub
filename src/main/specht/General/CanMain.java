@@ -16,8 +16,8 @@ public class CanMain implements Attribute{
 
 	public static void main(String[] args) throws IOException {
 
-		getGameModeFromSQL();
 
+		getGameModeFromSQL();
 		switch (GAMEMODE) {
 			case "Szenario1":
 				GetCan rec = new GetCan("Fred_1");
@@ -27,6 +27,9 @@ public class CanMain implements Attribute{
 				sz2.run();
 				break;
 		}
+	
+
+
 
 		//General.ConstructCANFrame frame = new General.ConstructCANFrame();
 

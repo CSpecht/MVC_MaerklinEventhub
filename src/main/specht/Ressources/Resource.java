@@ -41,7 +41,7 @@ public class Resource extends Thread {
     public LinkedList<String> jsonPayload = new LinkedList<String>();
 
     boolean debugSpeed = true;
-    boolean debug = false;
+    boolean debug = true;
 
     AtomicInteger ressourceAmmountIntWater = new AtomicInteger();
     AtomicInteger ressourceAmmountIntCoil = new AtomicInteger();
@@ -128,7 +128,7 @@ public class Resource extends Thread {
     }
 */
 
-    public void run() {
+    public synchronized void run() {
 
 
         int i = 0;
@@ -136,18 +136,18 @@ public class Resource extends Thread {
            //LinkedList<String> newpayload = new LinkedList<String>();
             long now = new Date().getTime();
             try {
-                Thread.sleep(1000);
+                //Thread.sleep(1000);
                 dataWater = this.getResource("water");
-                Thread.sleep(1000);
+                //Thread.sleep(1000);
                 dataCoil = this.getResource("coil");
-                Thread.sleep(1000);
+                //Thread.sleep(1000);
                 dataSand = this.getResource("sand");
-                Thread.sleep(1000);
+                //Thread.sleep(1000);
                 dataSpeed = this.getResource("speed");
 
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+           // } catch (InterruptedException e) {
+            //    e.printStackTrace();
             } catch (ParseException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -163,12 +163,12 @@ public class Resource extends Thread {
     }
 
 
-    protected static String hexEncode(byte[] buf) {
+    protected synchronized static String hexEncode(byte[] buf) {
         return hexEncode(buf, new StringBuilder()).toString();
     }
 
     //Encoding byte[] into hexadecimal Number, RETURN STRINGBUILDER
-    public static StringBuilder hexEncode(byte[] buf, StringBuilder sb) {
+    public synchronized static StringBuilder hexEncode(byte[] buf, StringBuilder sb) {
         for (byte b : buf) {
             sb.append(String.format("%02x", b));
         }
@@ -208,7 +208,7 @@ public class Resource extends Thread {
         stop = true;
     }
 */
-    public byte[] getResource(String i) throws IOException, ParseException {
+    public synchronized byte[] getResource(String i) throws IOException, ParseException {
 
         switch (i) {
             case "water":
@@ -233,7 +233,7 @@ public class Resource extends Thread {
     }
 
 
-    public void setWater() throws IOException, InterruptedException {
+    public synchronized void setWater() throws IOException, InterruptedException {
         boolean result = false;
         byte[] udpFrame = new byte[13];
 
@@ -299,7 +299,7 @@ public class Resource extends Thread {
 //        ds.send(sendPacket);
     }
 
-    public void setSand() throws IOException, InterruptedException {
+    public synchronized void setSand() throws IOException, InterruptedException {
         boolean result = false;
         byte[] udpFrame = new byte[13];
 
@@ -332,7 +332,7 @@ public class Resource extends Thread {
 //        ds.send(sendPacket);
     }
 
-    public byte[] GetWater() throws IOException {
+    public synchronized byte[] GetWater() throws IOException {
 
         boolean result = false;
         byte[] udpFrame = new byte[13];
@@ -440,7 +440,7 @@ public class Resource extends Thread {
         return data;
     }
 
-    public byte[] GetSand() throws IOException {
+    public synchronized byte[] GetSand() throws IOException {
 
         boolean result = false;
         byte[] udpFrame = new byte[13];
@@ -636,7 +636,7 @@ public class Resource extends Thread {
         return data;
     }
 
-    public String convertByte2String (byte[] data) {
+    public synchronized String convertByte2String (byte[] data) {
         MaskFormatter mfHEX = null;
         String hexFormatted = "";
         String hexNr = "";
@@ -699,6 +699,13 @@ public class Resource extends Thread {
             return 0;
         }
         r = (data[11] & 0xFF);
+        //r = data[11];
+        if (debug) {
+            System.out.println("resourceNotparsed:  " + data[11]);
+            System.out.println("resourceIntparsed: " + r);
+        }
+
+
         return r;
         //return data[i] Integer.parseInt(String.valueOf(data[11]));
     }

@@ -17,6 +17,8 @@ public class GetCan implements Attribute{
 	byte[] dataSand = new byte[13];
 	int resAmmountWater, resAmmountCoil, resAmmountSand;
 
+	boolean debug = true;
+
 	String resource, name;
 	AtomicInteger RoundCount, SpeedAmount;
 	DatagramSocket ds, dr;
@@ -80,27 +82,36 @@ public class GetCan implements Attribute{
 			Resource rs = new Resource(getDatagramSocketSending(), getDatagramSocketReceiving(), ia, ib, "t1");
 
 			rs.start();
-			rs.sleep(5000);
+			rs.sleep(1000);
 
 			AtomicInteger waterA = rs.getResourceAmountWater();
 			AtomicInteger coilA = rs.getResourceAmountCoil();
 			AtomicInteger sandA = rs.getResourceAmountSand();
 
-			rs.sleep(5000);
+			//rs.sleep(1000);
 
 			Date d = new Date();
 
 			payload.add(Long.toString(d.getTime()) + ";" + Attribute._STEAM_ID + ";"
-					+ "Water" + ";" + waterA + ";" + RoundCount + ";" + SpeedAmount);
+					+ "Water" + ";" + waterA.get() + ";" + RoundCount + ";" + SpeedAmount);
 			payload.add(Long.toString(d.getTime()) + ";" + Attribute._STEAM_ID + ";"
 					+ "Coil" + ";" + coilA + ";" + RoundCount + ";" + SpeedAmount);
 			payload.add(Long.toString(d.getTime()) + ";" + Attribute._STEAM_ID + ";"
 					+ "Sand" + ";" + sandA + ";" + RoundCount + ";" + SpeedAmount);
 
+			if (debug) {
+				System.out.println("Water: " + waterA);
+				System.out.println("Coil:  " + coilA);
+				System.out.println("Sand:  " + sandA);
 
+			}
+
+			/*********SEND PAYLOAD TO MSSQL SERVER
 			SendCan.sendToMSSQL(payload);
-			//System.out.println("SPEED: " + rs.getSpeedAmount().get());
+			 ********/
 
+			//System.out.println("SPEED: " + rs.getSpeedAmount().get());
+/* < 75 RESSOURCE AMMOUNT HANDLING
 			if (waterA.get() <= 75 || coilA.get() <= 75 || sandA.get() <= 75) {
 				rs.sleep(1000);
 				
@@ -138,7 +149,7 @@ public class GetCan implements Attribute{
 
 
 			}
-
+*/
 
 		}
 		//closeConnection();
