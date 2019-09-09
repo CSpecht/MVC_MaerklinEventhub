@@ -41,7 +41,7 @@ public class Resource extends Thread {
     public LinkedList<String> jsonPayload = new LinkedList<String>();
 
     boolean debugSpeed = true;
-    boolean debug = true;
+    boolean debug = false;
 
     AtomicInteger ressourceAmmountIntWater = new AtomicInteger();
     AtomicInteger ressourceAmmountIntCoil = new AtomicInteger();

@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
-public class RoundCount extends Thread {
+public class PatternListener extends Thread {
 
     protected AtomicInteger RoundCount = new AtomicInteger();
     protected AtomicInteger speed = new AtomicInteger();
@@ -23,8 +23,9 @@ public class RoundCount extends Thread {
     protected String ip = "";
     protected int port = 0;
     private Socket tcp_socket = null;
+    protected String direction = null;
 
-    public RoundCount() throws IOException {
+    public PatternListener() throws IOException {
         this.ip = Attribute.sendingAddress;
         this.port = Attribute.sendingPort;
         InetSocketAddress endpoint = new InetSocketAddress(this.ip,this.port);
@@ -48,6 +49,10 @@ public class RoundCount extends Thread {
     public void setSpeed(int speed) {
         this.speed.set(speed);
     }
+
+    public void setDirection (String direct) {this.direction = direct; }
+
+    public String getDirection () {return direction;}
 
     public void run() {
         boolean result = false;
@@ -122,11 +127,8 @@ public class RoundCount extends Thread {
             if (Pattern.matches(Attribute.RoundCountPattern, hexPattern)) {
                 String lokId = hexPattern.substring(20 , 25).replace(",","");
                 setRoundCount(getRoundCount().incrementAndGet());
-                if (debug) {
-                    System.out.println("MatchedPattern: " + hexPattern);
-                    System.out.println("RoundCount:" + getRoundCount());
-                }
-                //System.out.println(rowCount + ";" + "\t\tRound:" + RoundCount);
+                if (debug) {debugMethod(hexPattern, getRoundCount().toString(),"PatternRoundCount");}
+
             }
 
             if (Pattern.matches(Attribute.SpeedPattern, hexPattern)) {
@@ -134,15 +136,20 @@ public class RoundCount extends Thread {
                 System.out.println("");
                 String speedAm = hexPattern.substring(25,31).replace(",","");
                 setSpeed(Integer.parseInt(speedAm,16));
+                if (debug) {debugMethod(hexPattern, getSpeed().toString(), "PatternSpeed");}
 
-                //setSpeed(getSpeed().get());
-                if (debug) {
-                    System.out.println("MatchedPatternSpeed: " + hexPattern);
-                    System.out.println("Speed:" + getSpeed());
-                }
-                //System.out.println(rowCount + ";" + "\t\tRound:" + RoundCount);
             }
 
+            if (Pattern.matches(Attribute.DirectionPatternFw, hexPattern)) {
+                setDirection("Forward");
+                if (debug) {debugMethod(hexPattern, getDirection(),"PatternFw");}
+
+            }
+
+            if (Pattern.matches(Attribute.DirectionPatternBw, hexPattern)) {
+                setDirection("Backward");
+                if (debug) {debugMethod(hexPattern, getDirection(), "PatternBw");}
+            }
         }
         //GET COIL
        // udpFrame = ConstructCANFrame.getRound();
@@ -179,6 +186,12 @@ public class RoundCount extends Thread {
 */
     }
 
+
+    public void debugMethod (String hexPattern, String value, String Desc) {
+
+        System.out.println(Desc + " : " + hexPattern + " : " + value);
+
+    }
 
 
 

@@ -1,7 +1,7 @@
 package specht.General;
 
+import specht.Ressources.PatternListener;
 import specht.Ressources.Resource;
-import specht.Ressources.RoundCount;
 
 import java.io.IOException;
 import java.net.*;
@@ -17,12 +17,14 @@ public class GetCan implements Attribute{
 	byte[] dataSand = new byte[13];
 	int resAmmountWater, resAmmountCoil, resAmmountSand;
 
-	boolean debug = true;
+	boolean debug = false;
 
 	String resource, name;
 	AtomicInteger RoundCount, SpeedAmount;
 	DatagramSocket ds, dr;
 	InetAddress ia, ib;
+	String direction;
+
 
 
 	GetCan() {
@@ -69,10 +71,12 @@ public class GetCan implements Attribute{
 
 
 	public void run() throws IOException, InterruptedException {
-		RoundCount rc = new RoundCount();
-		rc.start();
-		RoundCount = rc.getRoundCount();
-		SpeedAmount = rc.getSpeed();
+		PatternListener pl = new PatternListener();
+		pl.start();
+		RoundCount = pl.getRoundCount();
+		SpeedAmount = pl.getSpeed();
+		direction = pl.getDirection();
+
 
 		System.out.println(this.name);
 		int i = 0;
@@ -91,7 +95,7 @@ public class GetCan implements Attribute{
 			//rs.sleep(1000);
 
 			Date d = new Date();
-
+			//!!!!!!!!!!!!!!!!!!!!!!ADD DIRECTION TO PAYLOAD TO UPLOAD DATA INTO DB!!!!!!!!!!!!!!!!!!!!!!!
 			payload.add(Long.toString(d.getTime()) + ";" + Attribute._STEAM_ID + ";"
 					+ "Water" + ";" + waterA.get() + ";" + RoundCount + ";" + SpeedAmount);
 			payload.add(Long.toString(d.getTime()) + ";" + Attribute._STEAM_ID + ";"

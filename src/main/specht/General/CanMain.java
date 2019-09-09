@@ -27,7 +27,7 @@ public class CanMain implements Attribute{
 				sz2.run();
 				break;
 		}
-	
+
 
 
 
@@ -43,10 +43,10 @@ public class CanMain implements Attribute{
 		//GetCan recWater = new GetCan("Fred_1");
 		//recWater.start();
 
-		//RoundCount rc = new RoundCount();
+		//PatternListener rc = new PatternListener();
 	//	rc.start();
-	//	int RoundCount = rc.getRoundCount();
-		//System.out.println("MAINROUNDS: " + RoundCount);
+	//	int PatternListener = rc.getRoundCount();
+		//System.out.println("MAINROUNDS: " + PatternListener);
 
 
 
