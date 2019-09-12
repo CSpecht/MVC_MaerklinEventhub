@@ -17,7 +17,7 @@ public class GetCan implements Attribute{
 	byte[] dataSand = new byte[13];
 	int resAmmountWater, resAmmountCoil, resAmmountSand;
 
-	boolean debug = false;
+	boolean debug = true;
 
 	String resource, name;
 	AtomicInteger RoundCount, SpeedAmount;
@@ -110,9 +110,9 @@ public class GetCan implements Attribute{
 
 			}
 
-			/*********SEND PAYLOAD TO MSSQL SERVER
+			/*********SEND PAYLOAD TO MSSQL SERVER********/
 			SendCan.sendToMSSQL(payload);
-			 ********/
+
 
 			//System.out.println("SPEED: " + rs.getSpeedAmount().get());
 /* < 75 RESSOURCE AMMOUNT HANDLING
