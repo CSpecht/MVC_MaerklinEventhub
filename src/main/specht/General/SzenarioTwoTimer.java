@@ -12,11 +12,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SzenarioTwoTimer extends TimerTask {
 
     int GameID;
+    int GameIDOld = 0;
     AtomicInteger Second;
     boolean debug = true;
     DatagramSocket ds;
     InetAddress ia;
     int speed;
+    boolean newGame = false;
 
     public SzenarioTwoTimer( AtomicInteger Second, DatagramSocket ds, InetAddress ia) {
 
@@ -28,8 +30,73 @@ public class SzenarioTwoTimer extends TimerTask {
     public void run() {
 
         getGameIDfromSQL();
+
+        if(getGameID() != getGameIDOld()) {
+            newGame = true;
+        }
+
+        if (newGame) {
+            byte[] udpFrame;
+
+
+            if (getGameID() % 2 == 0) {
+                udpFrame = ConstructCANFrame.setSwitchRWGreenOff();
+                DatagramPacket packet = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+                try {
+                    ds.send(packet);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                udpFrame = ConstructCANFrame.setSwitchRWRedOn();
+                packet = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+                try {
+                    ds.send(packet);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                udpFrame = ConstructCANFrame.setSwitchRWRedOff();
+                DatagramPacket packet = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+                try {
+                    ds.send(packet);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                udpFrame = ConstructCANFrame.setSwitchRWGreenOn();
+                packet = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+                try {
+                    ds.send(packet);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+/*            udpFrame = ConstructCANFrame.setSwitchRWGreenOff();
+            packet = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+            try {
+                ds.send(packet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            udpFrame = ConstructCANFrame.setSwitchRWRedOn();
+            packet = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+            try {
+                ds.send(packet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
+
+
+
+        }
+
         if (getGameID() != 0) {
             GetSpeedfromSQL();
+            setGameIDOld(getGameID());
             byte[] udpFrame;
             if (getSpeed() == 1) {
                 udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, getSpeed()-1);
@@ -53,7 +120,8 @@ public class SzenarioTwoTimer extends TimerTask {
                 e.printStackTrace();
             }
         }
-        //setYinCADDoneInSQL();
+        setYinCADDoneInSQL();
+        newGame = false;
     }
 
     public int getSpeed() {
@@ -71,6 +139,10 @@ public class SzenarioTwoTimer extends TimerTask {
     public void setGameID(int GameID) {
         this.GameID = GameID;
     }
+
+    public int getGameIDOld() { return GameIDOld; }
+
+    public void setGameIDOld(int gameIDOld) { GameIDOld = gameIDOld; }
 
     public void getGameIDfromSQL() {
 
@@ -93,6 +165,7 @@ public class SzenarioTwoTimer extends TimerTask {
                     setGameID(rs.getInt("GAME_ID"));
                     if (debug) {
                         System.out.println("GAME_ID: " + rs.getInt("GAME_ID"));
+                        System.out.println("OLD_GAME: " + getGameIDOld() );
                     }
                 } while (rs.next());
             }

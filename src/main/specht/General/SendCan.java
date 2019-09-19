@@ -170,13 +170,20 @@ public class SendCan extends Thread implements Attribute {
 
         try (Connection con = DriverManager.getConnection(Attribute.dbUrl); Statement stmt = con.createStatement();) {
             for (int i = 0; i < payload.size(); i++) {
-                String SQL = "INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], "
-                        + "[TIME_STAMP], [DATASET], [DELIMITER])"
+                String SQL = "INSERT INTO [dbo].[T_STREAMING_DATA] ([DATATYPE], [RECORDING_START_TIME], "
+                        + "[TIME_STAMP], [DATASET], [DELIMITER],[INS_DATE],[DQS],[DQS_DATE],[GAME_ID],[CAN_DONE_YN],[RESTAPI_DONE_YN])"
                         + "VALUES ('" + Attribute.sqlDataType + "','"
                         + sdf.format(date).toString() + "','"
                         + sdf.format(date).toString() + "','"
                         + payload.get(i)
-                        + "', ';')";
+                        + "', ';" + "','"
+                        + sdf.format(date).toString() + "',"
+                        + "NULL" + ","
+                        + "NULL" + ","
+                        + "NULL" + ","
+                        + 0 + ","
+                        + "NULL"
+                        + ")";
                 System.out.println("SQL: " + SQL);
                 //ResultSet rs =
                 try {

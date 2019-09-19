@@ -92,7 +92,7 @@ public class GetCan implements Attribute{
 			AtomicInteger coilA = rs.getResourceAmountCoil();
 			AtomicInteger sandA = rs.getResourceAmountSand();
 
-			//rs.sleep(1000);
+			rs.sleep(2000);
 
 			Date d = new Date();
 			//!!!!!!!!!!!!!!!!!!!!!!ADD DIRECTION TO PAYLOAD TO UPLOAD DATA INTO DB!!!!!!!!!!!!!!!!!!!!!!!
@@ -103,6 +103,7 @@ public class GetCan implements Attribute{
 			payload.add(Long.toString(d.getTime()) + ";" + Attribute._STEAM_ID + ";"
 					+ "Sand" + ";" + sandA + ";" + RoundCount + ";" + SpeedAmount);
 
+			System.out.println("payload(0): " + payload.get(0));
 			if (debug) {
 				System.out.println("Water: " + waterA);
 				System.out.println("Coil:  " + coilA);
