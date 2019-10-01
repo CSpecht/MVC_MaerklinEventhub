@@ -23,7 +23,7 @@ public class PatternListener extends Thread {
     protected String ip = "";
     protected int port = 0;
     private Socket tcp_socket = null;
-    protected String direction = null;
+    protected AtomicInteger direction = new AtomicInteger();
 
     public PatternListener() throws IOException {
         this.ip = Attribute.sendingAddress;
@@ -50,9 +50,9 @@ public class PatternListener extends Thread {
         this.speed.set(speed);
     }
 
-    public void setDirection (String direct) {this.direction = direct; }
+    public void setDirection (int direct) {this.direction.set(direct); }
 
-    public String getDirection () {return direction;}
+    public AtomicInteger getDirection () {return direction;}
 
     public void run() {
         boolean result = false;
@@ -141,14 +141,14 @@ public class PatternListener extends Thread {
             }
 
             if (Pattern.matches(Attribute.DirectionPatternFw, hexPattern)) {
-                setDirection("Forward");
-                if (debug) {debugMethod(hexPattern, getDirection(),"PatternFw");}
+                setDirection(0);
+                if (debug) {debugMethod(hexPattern, getDirection().toString(),"PatternFw");}
 
             }
 
             if (Pattern.matches(Attribute.DirectionPatternBw, hexPattern)) {
-                setDirection("Backward");
-                if (debug) {debugMethod(hexPattern, getDirection(), "PatternBw");}
+                setDirection(1);
+                if (debug) {debugMethod(hexPattern, getDirection().toString(), "PatternBw");}
             }
         }
         //GET COIL

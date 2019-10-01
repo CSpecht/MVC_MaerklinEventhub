@@ -375,14 +375,19 @@ public class ConstructCANFrame extends Thread{
         //dlc = 6 mandatory to set the speed!
         dlc = 6;
         data = new char[dlc];
-        udpFrame[0] = (byte) prio ;
+        udpFrame[0] = (byte) prio;
         udpFrame[1] = (byte) 8;
         udpFrame[2] = (byte) 15; // >> 8;//(uid >> 8);
         udpFrame[3] = (byte) 114;
         udpFrame[4] = (byte) dlc;
 
-        byte[] speedArr = toByteArray(speed);
+        byte[] speedArr = toByteArray(speed );
 
+        if (debug) {
+            for (int i = 0; i < speedArr.length; i++) {
+                System.out.println("speedArr[" + i + "]: " + speedArr[i]);
+            }
+        }
         for (int i = 0; i < data.length; i++) {
             udpFrame[5+i] = (byte)data[i];
         }
