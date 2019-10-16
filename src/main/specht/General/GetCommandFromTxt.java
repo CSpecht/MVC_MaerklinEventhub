@@ -137,22 +137,24 @@ public class GetCommandFromTxt {
         }
 
     }
-
+    /************************* ADD RIGHT CAN FRAME *************************/
     public byte[] translateSwitch (int switchID, int switchPosition) {
         udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, 0);
         return udpFrame;
     }
 
+    /************************* ADD RIGHT CAN FRAME *************************/
     public byte[] translateLok(int lokID, int speed, int time) {
         udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, 0);
         return udpFrame;
     }
 
+    /************************* ADD RIGHT CAN FRAME *************************/
     public byte[] translateLok(int lokID, int go) {
         udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, 0);
         return udpFrame;
     }
-
+    /************************* ADD RIGHT CAN FRAME *************************/
     public byte[] translateSignal(int signalID, int light) {
         udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, 0);
         return udpFrame;
