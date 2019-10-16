@@ -14,7 +14,7 @@ public class GetCommandFromTxt {
     byte[] udpFrame = new byte[13];
 
     public void getFileString() throws IOException {
-        String fileName = "C:\\Scripts\\lok_commands.txt";
+        String fileName = Attribute.cmdFilePath;
         File file = new File(fileName);
         FileInputStream fs = null;
         String line = "";

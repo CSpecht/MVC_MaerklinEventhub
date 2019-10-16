@@ -49,6 +49,8 @@ public interface Attribute {
     public static final int firstByteOfSMLSteamID = ConstructCANFrame.getFirstByteOfId(_SMLSTEAM_ID);
     public static final int secondByteOfSMLSteamID = ConstructCANFrame.getSecondByteOfId(_SMLSTEAM_ID);
 
+    public static final String cmdFilePath = "C:\\Scripts\\lok_commands.txt";
+
 
 
 }
