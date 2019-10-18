@@ -17,8 +17,6 @@ public class CanMain implements Attribute{
 
 
 	public static void main(String[] args) throws IOException {
-
-
 		getGameModeFromSQL();
 		switch (GAMEMODE) {
 			case "Szenario1":

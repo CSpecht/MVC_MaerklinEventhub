@@ -49,7 +49,7 @@ public class SzenarioThree extends Thread {
 
     public void run () {
         try {
-            System.out.println("SAY HELLO");
+            //System.out.println("SAY HELLO");
             GetCommandFromTxt gcft = new GetCommandFromTxt(cmdQueue);
             gcft.processFile();
             cmdQueue = gcft.getCommandQueue();
@@ -64,12 +64,9 @@ public class SzenarioThree extends Thread {
                     for (int i = 0; i < element.length; i++) {
                         System.out.println("element["+j+"]["+ i + "]: " + element[i]);
                     }
-
                     j++;
                     //System.out.println("element: " + element);
                 }
-
-
             }
         } catch (IOException e) {
             e.printStackTrace();
