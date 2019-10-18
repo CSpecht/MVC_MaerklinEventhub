@@ -1,19 +1,26 @@
-package specht.General;
+package specht.Szenario3;
+
+import specht.General.Attribute;
+import specht.General.ConstructCANFrame;
 
 import java.io.*;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
 
 public class GetCommandFromTxt {
 
-    Queue<byte[]> commandQueue = new LinkedList<>();
+    Queue<byte[]> commandQueue;
+    Queue<String> testQueue = new LinkedList();
     boolean debug = false;
 
     byte[] udpFrame = new byte[13];
 
-    public void getFileString() throws IOException {
+    public GetCommandFromTxt(Queue<byte[]> cmdQueue) throws IOException {
+        this.commandQueue = cmdQueue;
+    }
+
+    public void processFile() throws IOException {
         String fileName = Attribute.cmdFilePath;
         File file = new File(fileName);
         FileInputStream fs = null;
@@ -31,21 +38,15 @@ public class GetCommandFromTxt {
 
 
         while ((line = br.readLine()) != null) {
-            //System.out.println(line);
             for (int j = 0; j < 4; j++) {
                 tmp = line.split("\\s+");
+
             }
-            //processCommandLine(tmp,lineCount);
+            //System.out.println(line);
+            processCommandLine(tmp,lineCount);
             lineCount++;
         }
 
-        if (debug) {
-            Iterator iterator = commandQueue.iterator();
-            while(iterator.hasNext()){
-                String element = (String) iterator.next();
-                System.out.println("element: " + element);
-            }
-        }
     }
 
     public void processCommandLine(String[] commandArgs, int lineNumber) {
@@ -82,13 +83,11 @@ public class GetCommandFromTxt {
             if (command.trim().equalsIgnoreCase("rechts")) {
                 position = 0;
                 commandQueue.add(translateSwitch(id, position));
-                //s = component.trim().toUpperCase()+ " " + id + " " +  command.trim().toUpperCase();
-                //commandQueue.add(s);
             } else if (command.trim().equalsIgnoreCase("links")) {
                 position = 1;
                 commandQueue.add(translateSwitch(id, position));
-                //s = component.trim().toUpperCase()+ " " + id + " " +  command.trim().toUpperCase();
-                //commandQueue.add(s);
+                //System.out.println("WEICHE LINKS");
+                testQueue.add("WEICHE LINKS");
             }
         }
 
@@ -99,18 +98,14 @@ public class GetCommandFromTxt {
             if (isInteger(command.trim())) {
                 speed = Integer.parseInt(command);
                 commandQueue.add(translateLok(id, go));
-                //s = component.trim().toUpperCase() + " " + id + " " + speed + " " + durr;
-                //commandQueue.add(s);
+
             } else if (command.trim().equalsIgnoreCase("start")) {
                 go = 1;
                 commandQueue.add(translateLok(id, go));
-                //s = component.trim().toUpperCase()+ " " + id + " " + command.trim().toUpperCase();
-                //commandQueue.add(s);
             } else if (command.trim().equalsIgnoreCase("stopp")) {
                 go = 0;
                 commandQueue.add(translateLok(id, go));
                 s = component.trim().toUpperCase()+ " " + id + " " +  command.trim().toUpperCase();
-                //commandQueue.add(s);
             }
         }
 
@@ -120,13 +115,9 @@ public class GetCommandFromTxt {
             if (command.trim().equalsIgnoreCase("rot")) {
                 signal = 0;
                 commandQueue.add(translateSignal(id, signal));
-                //s = component.trim().toUpperCase() + " " + id + " " + command.trim().toUpperCase();
-                //commandQueue.add(s);
             } else if (command.trim().equalsIgnoreCase("gruen")) {
-                signal = 0;
+                signal = 1;
                 commandQueue.add(translateSignal(id, signal));
-                //s = component.trim().toUpperCase() + " " + id + " " + command.trim().toUpperCase();
-                //commandQueue.add(s);
             }
         }
 
@@ -137,26 +128,54 @@ public class GetCommandFromTxt {
         }
 
     }
-    /************************* ADD RIGHT CAN FRAME *************************/
-    public byte[] translateSwitch (int switchID, int switchPosition) {
-        udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, 0);
+    /*FIXME: test switch Position, and add ID FOR communicating with the right switch! */
+    /************************* ADD RIGHT CAN FRAME AND *************************/
+    public byte[] translateSwitch (int id, int switchPosition) {
+        //switch right
+        if (switchPosition == 0) {
+            commandQueue.add(ConstructCANFrame.setSwitchRWRedOff());
+            udpFrame = ConstructCANFrame.setSwitchRWGreenOn();
+
+        } else {
+            commandQueue.add(ConstructCANFrame.setSwitchRWGreenOff());
+            udpFrame = ConstructCANFrame.setSwitchRWRedOn();
+        }
         return udpFrame;
     }
 
+    /*FIXME how to add durration to BYTE[] for QUEUE!!!! */
     /************************* ADD RIGHT CAN FRAME *************************/
     public byte[] translateLok(int lokID, int speed, int time) {
         udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, 0);
+        for (int i = 0; i < udpFrame.length; i++) {
+            System.out.println("udpFrame ["+i+"]: " + udpFrame[i]);
+        }
+        return udpFrame;
+    }
+
+    /*FIXME TEST if it's working */
+    /************************* TRANSLATE STOP / GO COMMAND INTO CAN MESSAGE *************************/
+    public byte[] translateLok(int lokID, int go) {
+        if (go == 0) {
+            udpFrame = ConstructCANFrame.stopTrain();
+        } else {
+            udpFrame = ConstructCANFrame.go();
+        }
+
         return udpFrame;
     }
 
     /************************* ADD RIGHT CAN FRAME *************************/
-    public byte[] translateLok(int lokID, int go) {
-        udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, 0);
-        return udpFrame;
-    }
-    /************************* ADD RIGHT CAN FRAME *************************/
-    public byte[] translateSignal(int signalID, int light) {
-        udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, 0);
+    public byte[] translateSignal(int signalID, int signal) {
+        if (signal == 0) {
+            commandQueue.add(ConstructCANFrame.setLightSignalRedOff());
+            udpFrame = ConstructCANFrame.setLightSignalGreenOn();
+        }
+        else {
+            commandQueue.add(ConstructCANFrame.setLightSignalGreenOff());
+            udpFrame = ConstructCANFrame.setLightSignalRedOn();
+        }
+
         return udpFrame;
     }
 
@@ -171,5 +190,9 @@ public class GetCommandFromTxt {
 
     public Queue<byte[]> getCommandQueue() {
         return commandQueue;
+    }
+
+    public Queue<String> getTestQueue() {
+        return testQueue;
     }
 }

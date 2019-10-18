@@ -1,6 +1,8 @@
 package specht.General;//import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 
+import specht.Szenario3.SzenarioThree;
+
 import java.io.IOException;
 import java.sql.*;
 
@@ -25,6 +27,10 @@ public class CanMain implements Attribute{
 			case "Szenario2":
 				SzenarioTwo sz2 = new SzenarioTwo();
 				sz2.run();
+				break;
+			case "Szenario3":
+				SzenarioThree sz3 = new SzenarioThree();
+				sz3.run();
 				break;
 		}
 
