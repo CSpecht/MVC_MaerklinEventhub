@@ -89,13 +89,12 @@ public class GetCommandFromTxt {
                 position = 0;
                 commandQueue.add(translateSwitch(id, position));
                 durrQueue.add(durr);
-                testQueue.add(new String(translateSwitch(id, position).toString()));
+                testQueue.add(translateByteInStr(translateSwitch(id, position)));
             } else if (command.trim().equalsIgnoreCase("links")) {
                 position = 1;
                 commandQueue.add(translateSwitch(id, position));
-                //System.out.println("WEICHE LINKS");
-                testQueue.add(new String(translateSwitch(id, position).toString()));
                 durrQueue.add(durr);
+                testQueue.add(translateByteInStr(translateSwitch(id, position)));
             }
         }
 
@@ -107,19 +106,19 @@ public class GetCommandFromTxt {
                 speed = Integer.parseInt(command);
                 commandQueue.add(translateLok(id, go));
                 durrQueue.add(durr);
-                testQueue.add(new String(translateLok(id,go).toString()));
+                testQueue.add(translateByteInStr(translateLok(id,go)));
 
             } else if (command.trim().equalsIgnoreCase("start")) {
                 go = 1;
                 commandQueue.add(translateLok(id, go));
                 durrQueue.add(durr);
-                testQueue.add(new String(translateLok(id,go).toString()));
+                testQueue.add(translateByteInStr(translateLok(id,go)));
             } else if (command.trim().equalsIgnoreCase("stopp")) {
                 go = 0;
                 commandQueue.add(translateLok(id, go));
                 //s = component.trim().toUpperCase()+ " " + id + " " +  command.trim().toUpperCase();
                 durrQueue.add(durr);
-                testQueue.add(new String(translateLok(id,go).toString()));
+                testQueue.add(translateByteInStr(translateLok(id,go)));
             }
         }
 
@@ -130,12 +129,12 @@ public class GetCommandFromTxt {
                 signal = 0;
                 commandQueue.add(translateSignal(id, signal));
                 durrQueue.add(durr);
-                testQueue.add(new String(translateSignal(id,signal).toString()));
+                testQueue.add(translateByteInStr(translateSignal(id,signal)));
             } else if (command.trim().equalsIgnoreCase("gruen")) {
                 signal = 1;
                 commandQueue.add(translateSignal(id, signal));
                 durrQueue.add(durr);
-                testQueue.add(new String(translateSignal(id,signal).toString()));
+                testQueue.add(translateByteInStr(translateSignal(id,signal)));
             }
         }
 
@@ -151,10 +150,12 @@ public class GetCommandFromTxt {
     public byte[] translateSwitch (int id, int switchPosition) {
         //switch right
         if (switchPosition == 0) {
+            testQueue.add(translateByteInStr(ConstructCANFrame.setSwitchRWRedOff()));
             commandQueue.add(ConstructCANFrame.setSwitchRWRedOff());
             udpFrame = ConstructCANFrame.setSwitchRWGreenOn();
 
         } else {
+            testQueue.add(translateByteInStr(ConstructCANFrame.setSwitchRWGreenOff()));
             commandQueue.add(ConstructCANFrame.setSwitchRWGreenOff());
             udpFrame = ConstructCANFrame.setSwitchRWRedOn();
         }
@@ -186,10 +187,12 @@ public class GetCommandFromTxt {
     /************************* ADD RIGHT CAN FRAME *************************/
     public byte[] translateSignal(int signalID, int signal) {
         if (signal == 0) {
+            testQueue.add(translateByteInStr(ConstructCANFrame.setLightSignalRedOff()));
             commandQueue.add(ConstructCANFrame.setLightSignalRedOff());
             udpFrame = ConstructCANFrame.setLightSignalGreenOn();
         }
         else {
+            testQueue.add(translateByteInStr(ConstructCANFrame.setLightSignalGreenOff()));
             commandQueue.add(ConstructCANFrame.setLightSignalGreenOff());
             udpFrame = ConstructCANFrame.setLightSignalRedOn();
         }
@@ -217,6 +220,24 @@ public class GetCommandFromTxt {
     public Queue<String> getTestQueue() {
         return testQueue;
     }
+
+    public String translateByteInStr (byte[] array) {
+        String s = "";
+        for (int i = 0; i < array.length ; i++) {
+            if (i%2 == 0) {
+                s+="  " + (String.valueOf(array[i])) + "  ";
+            } else {
+                s += (String.valueOf(array[i]));
+            }
+
+
+        }
+
+        return s;
+    }
+
+
+
 
     public void showTestQueue () {
         Iterator it = testQueue.iterator();

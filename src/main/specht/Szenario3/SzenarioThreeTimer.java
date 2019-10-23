@@ -14,44 +14,52 @@ public class SzenarioThreeTimer extends TimerTask {
     DatagramSocket ds,dr;
     InetAddress ia, ib;
 
-    SzenarioThreeTimer(int s, Iterator cmdIterator, DatagramSocket ds, InetAddress ia) {
+    Object lock;
+
+    SzenarioThreeTimer(int s, Iterator cmdIterator, DatagramSocket ds, InetAddress ia, Object lock) {
         this.finalS = s;
         this.cmdIterator = cmdIterator;
         this.ds = ds;
         this.ia = ia;
+        this.lock = lock;
     }
 
 
     @Override
     public void run() {
-        sss++;
+        synchronized (lock) {
+            lock.notifyAll();
 
-        System.out.println("s: " + finalS);
-        System.out.println("sss: " + sss);
 
-        if (sss <= finalS) {
-            if (sss == 1 && cmdIterator.hasNext()) {
-                element = (byte[]) cmdIterator.next();
+
+            sss++;
+
+            System.out.println("s: " + finalS);
+            System.out.println("sss: " + sss);
+
+            if (sss <= finalS) {
+                if (sss == 1 && cmdIterator.hasNext()) {
+                    element = (byte[]) cmdIterator.next();
+                }
+                //if (cmdIterator.hasNext()) {
+
+                for (int i = 0; i < element.length; i++) {
+                    System.out.println("element[" + i + "]: " + element[i]);
+                }
+
+                DatagramPacket packet = new DatagramPacket(element, element.length, ia, Attribute.sendingPort);
+
+                try {
+                    ds.send(packet);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //  }
+            } else {
+
+                //this.cancel();
             }
-            //if (cmdIterator.hasNext()) {
-
-            for (int i = 0; i < element.length; i++) {
-                System.out.println("element["+i+"]: " + element[i] );
-            }
-
-            DatagramPacket packet = new DatagramPacket(element, element.length, ia, Attribute.sendingPort);
-
-            try {
-                ds.send(packet);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //  }
-        } else {
-            cmdIterator.remove();
-            this.cancel();
         }
     }
-
-
 }
+
