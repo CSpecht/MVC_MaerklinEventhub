@@ -4,6 +4,7 @@ import specht.General.Attribute;
 import specht.General.ConstructCANFrame;
 
 import java.io.*;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -12,6 +13,7 @@ public class GetCommandFromTxt {
 
     Queue<byte[]> commandQueue;
     Queue<String> testQueue = new LinkedList();
+    Queue<Integer> durrQueue = new LinkedList();
     boolean debug = false;
 
     byte[] udpFrame = new byte[13];
@@ -70,6 +72,9 @@ public class GetCommandFromTxt {
             if (isInteger(commandArgs[3].trim())) {
                 durr = Integer.parseInt(commandArgs[3]);
             }
+            else {
+                System.out.println("No Integer for Duration");
+            }
         }
 
         if (isInteger(identicator.trim())) {
@@ -83,11 +88,14 @@ public class GetCommandFromTxt {
             if (command.trim().equalsIgnoreCase("rechts")) {
                 position = 0;
                 commandQueue.add(translateSwitch(id, position));
+                durrQueue.add(durr);
+                testQueue.add(new String(translateSwitch(id, position).toString()));
             } else if (command.trim().equalsIgnoreCase("links")) {
                 position = 1;
                 commandQueue.add(translateSwitch(id, position));
                 //System.out.println("WEICHE LINKS");
-                testQueue.add("WEICHE LINKS");
+                testQueue.add(new String(translateSwitch(id, position).toString()));
+                durrQueue.add(durr);
             }
         }
 
@@ -98,14 +106,20 @@ public class GetCommandFromTxt {
             if (isInteger(command.trim())) {
                 speed = Integer.parseInt(command);
                 commandQueue.add(translateLok(id, go));
+                durrQueue.add(durr);
+                testQueue.add(new String(translateLok(id,go).toString()));
 
             } else if (command.trim().equalsIgnoreCase("start")) {
                 go = 1;
                 commandQueue.add(translateLok(id, go));
+                durrQueue.add(durr);
+                testQueue.add(new String(translateLok(id,go).toString()));
             } else if (command.trim().equalsIgnoreCase("stopp")) {
                 go = 0;
                 commandQueue.add(translateLok(id, go));
-                s = component.trim().toUpperCase()+ " " + id + " " +  command.trim().toUpperCase();
+                //s = component.trim().toUpperCase()+ " " + id + " " +  command.trim().toUpperCase();
+                durrQueue.add(durr);
+                testQueue.add(new String(translateLok(id,go).toString()));
             }
         }
 
@@ -115,9 +129,13 @@ public class GetCommandFromTxt {
             if (command.trim().equalsIgnoreCase("rot")) {
                 signal = 0;
                 commandQueue.add(translateSignal(id, signal));
+                durrQueue.add(durr);
+                testQueue.add(new String(translateSignal(id,signal).toString()));
             } else if (command.trim().equalsIgnoreCase("gruen")) {
                 signal = 1;
                 commandQueue.add(translateSignal(id, signal));
+                durrQueue.add(durr);
+                testQueue.add(new String(translateSignal(id,signal).toString()));
             }
         }
 
@@ -192,7 +210,19 @@ public class GetCommandFromTxt {
         return commandQueue;
     }
 
+    public Queue<Integer> getDurrQueue() {
+        return durrQueue;
+    }
+
     public Queue<String> getTestQueue() {
         return testQueue;
+    }
+
+    public void showTestQueue () {
+        Iterator it = testQueue.iterator();
+        while (it.hasNext()) {
+            String s = (String) it.next();
+            System.out.println(s);
+        }
     }
 }

@@ -1,4 +1,7 @@
-package specht.General;
+package specht.Szenario2;
+
+import specht.General.Attribute;
+import specht.General.ConstructCANFrame;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

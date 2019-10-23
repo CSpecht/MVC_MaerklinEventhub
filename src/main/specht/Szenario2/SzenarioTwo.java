@@ -1,4 +1,6 @@
-package specht.General;
+package specht.Szenario2;
+
+import specht.General.Attribute;
 
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -16,7 +18,7 @@ public class SzenarioTwo extends Thread {
     DatagramSocket ds, dr;
     InetAddress ia, ib;
 
-    SzenarioTwo() {
+    public SzenarioTwo() {
         try {
             ds = getDatagramSocketSending();
             dr = getDatagramSocketReceiving();
