@@ -204,6 +204,32 @@ public class CanMain implements Attribute{
 		}
 	}
 
+	public static void getGameResourceConfig () {
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		Connection con = null;
+
+		try {
+			con = DriverManager.getConnection(Attribute.dbUrl);
+			Statement stmt = con.createStatement();
+			String SQL = "SELECT * FROM T_RESSOURCE_CONFIGURATION";
+			System.out.println(SQL);
+			ResultSet rs = stmt.executeQuery(SQL);
+			do {
+
+			} while(rs.next());
+
+
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	protected static String getGameMode () {
 		return GAMEMODE;
 	}

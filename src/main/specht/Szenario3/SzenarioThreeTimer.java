@@ -36,7 +36,7 @@ public class SzenarioThreeTimer extends TimerTask {
             if (actualSecond == 1 && cmdIterator.hasNext()) {
                 element = (byte[]) cmdIterator.next();
             }
-            //if (cmdIterator.hasNext()) {
+            //if (element == new BigInteger("")) {
 
             for (int i = 0; i < element.length; i++) {
                 System.out.print("[" + i + "]: " + element[i] + " ");
