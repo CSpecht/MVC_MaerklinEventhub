@@ -10,9 +10,9 @@ import java.util.LinkedList;
 import java.util.Timer;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class GetCan implements Attribute{
+public class GetCan {
 
-
+	Attribute attribute = null;
 	byte[] dataWater = new byte[13];
 	byte[] dataCoil = new byte[13];
 	byte[] dataSand = new byte[13];
@@ -33,12 +33,12 @@ public class GetCan implements Attribute{
 
 	GetCan (String name) throws SocketException {
 		this.name = name;
-
+		this.attribute = new Attribute();
 		try {
 			ds = getDatagramSocketSending();
 			dr = getDatagramSocketReceiving();
-			ia = InetAddress.getByName(Attribute.sendingAddress);
-			ib = InetAddress.getByName(Attribute.receivingAddress);
+			ia = InetAddress.getByName(attribute.getSendingAddress());
+			ib = InetAddress.getByName(attribute.getReceivingAddress());
 		} catch (SocketException e) {
 			e.printStackTrace();
 		} catch (UnknownHostException e) {
@@ -57,14 +57,14 @@ public class GetCan implements Attribute{
 
 	public DatagramSocket getDatagramSocketSending () throws SocketException {
 		if (ds == null) {
-			ds = new DatagramSocket(Attribute.sendingPort);
+			ds = new DatagramSocket(attribute.getSendingPort());
 		}
 		return ds;
 	}
 
 	public DatagramSocket getDatagramSocketReceiving () throws SocketException {
 		if (dr == null) {
-			dr = new DatagramSocket(Attribute.receivePort);
+			dr = new DatagramSocket(attribute.getReceivePort());
 		}
 		return dr;
 	}
@@ -202,12 +202,12 @@ public void closeConnection () {
 		ds = getDatagramSocketSending();
 		dr = getDatagramSocketReceiving();
 
-		ia = InetAddress.getByName(Attribute.sendingAddress);
-		ib = InetAddress.getByName(Attribute.receivingAddress);
+		ia = InetAddress.getByName(attribute.getSendingAddress());
+		ib = InetAddress.getByName(attribute.getReceivingAddress());
 
-		DatagramPacket sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+		DatagramPacket sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia, attribute.getSendingPort());
 		ds.send( sendPacket );
-		sendPacket = new DatagramPacket( new byte[13], 13, ib, Attribute.receivePort );
+		sendPacket = new DatagramPacket( new byte[13], 13, ib, attribute.getReceivePort());
 		dr.receive( sendPacket );
 
 		// Receive Data

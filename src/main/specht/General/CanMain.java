@@ -1,23 +1,22 @@
 package specht.General;//import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 
-import specht.Szenario2.SzenarioTwo;
-import specht.Szenario3.SzenarioThree;
-
 import java.io.IOException;
 import java.sql.*;
 
-public class CanMain implements Attribute{
+public class CanMain {
 
 
 	protected static int coaches;
 	protected static boolean debug = true;
 	protected static String GAMEMODE;
 
-
-
-
 	public static void main(String[] args) throws IOException {
+		GetPropertyValue properties = new GetPropertyValue();
+		properties.getPropValues();
+
+/*
+
 		getGameModeFromSQL();
 		switch (GAMEMODE) {
 			case "Szenario1":
@@ -33,7 +32,7 @@ public class CanMain implements Attribute{
 				break;
 		}
 
-
+*/
 
 
 		//General.ConstructCANFrame frame = new General.ConstructCANFrame();
@@ -180,7 +179,8 @@ public class CanMain implements Attribute{
 		Connection con = null;
 
 		try {
-			con = DriverManager.getConnection(Attribute.dbUrl);
+			Attribute attribute = new Attribute();
+			con = DriverManager.getConnection(attribute.getDbUrl());
 			Statement stmt = con.createStatement();
 			String SQL = "select TOP 1 GAMEMODE from T_CONFIGURATION WHERE RUN_YN = 1";
 			//String SQL = "SELECT dbo.get_train_speed(" + GameID + "," + Second +") as 'rs'";
@@ -214,7 +214,8 @@ public class CanMain implements Attribute{
 		Connection con = null;
 
 		try {
-			con = DriverManager.getConnection(Attribute.dbUrl);
+			Attribute attribute = new Attribute();
+			con = DriverManager.getConnection(attribute.getDbUrl());
 			Statement stmt = con.createStatement();
 			String SQL = "SELECT * FROM T_RESSOURCE_CONFIGURATION";
 			System.out.println(SQL);
