@@ -12,11 +12,18 @@ import java.util.regex.Pattern;
 public class GetPropertyValue {
     String result = "";
     InputStream is;
+    private Attribute attribute = null;
 
+    GetPropertyValue () {
+        if (attribute == null) {
+            attribute = new Attribute();
+        }
+    }
 
     public String getPropValues() throws IOException {
 
         try {
+
             Properties prop = new Properties();
             String propFileName = "config.properties";
 
@@ -30,21 +37,30 @@ public class GetPropertyValue {
 
             Date time = new Date(System.currentTimeMillis());
             String user = prop.getProperty("user");
-            String cs3Port = prop.getProperty("CS3Port");
-            String pcPort = prop.getProperty("PCPort");
-            String cs3IpAdresse = prop.getProperty("CS3IP");
-            String pcIpAdresse = prop.getProperty("PCIP");
+            String cs3Port = prop.getProperty("cs3Port");
+            String pcPort = prop.getProperty("pcPort");
+            String cs3IpAdresse = prop.getProperty("cs3IP");
+            String pcIpAdresse = prop.getProperty("pcIP");
+            String dbName = prop.getProperty("dbName");
+            String dbUser = prop.getProperty("dbUser");
+            String dbPw = prop.getProperty("dbPw");
+
             if (!checkPropIpAdresse(cs3IpAdresse)) {
                 throw new InputMismatchException("IP Adress of CS3 is not valid!");
-            }
-            if (!checkPropIpAdresse(pcIpAdresse)) {
+            } else if (!checkPropIpAdresse(pcIpAdresse)) {
                 throw new InputMismatchException("IP Adress of PC is not valid!");
-            }
-            if (!checkPropPort(Integer.parseInt(cs3Port))) {
+            } else if (!checkPropPort(Integer.parseInt(cs3Port))) {
                 throw new InputMismatchException("CS3 Port Adress is not valid!");
-            }
-            if (!checkPropPort(Integer.parseInt(pcPort))) {
+            } else if(!checkPropPort(Integer.parseInt(pcPort))) {
                 throw new InputMismatchException("PC Port Adress is not valid!");
+            } else {
+                attribute.setReceivingAddress(cs3IpAdresse);
+                attribute.setSendingAddress(pcIpAdresse);
+                attribute.setReceivePort(Integer.parseInt(cs3Port));
+                attribute.setSendingPort(Integer.parseInt(pcPort));
+                attribute.setDBNAME(dbName);
+                attribute.setDBUSER(dbUser);
+                attribute.setDBPW(dbPw);
             }
 
             result = cs3Port + " " + pcPort + " " +  cs3IpAdresse + " " + pcIpAdresse ;

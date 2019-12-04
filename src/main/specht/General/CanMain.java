@@ -10,12 +10,18 @@ public class CanMain {
 	protected static int coaches;
 	protected static boolean debug = true;
 	protected static String GAMEMODE;
+	private Attribute attribute = null;
 
 	public static void main(String[] args) throws IOException {
+		Attribute attribute = new Attribute();
+
 		GetPropertyValue properties = new GetPropertyValue();
 		properties.getPropValues();
 
-/*
+		System.out.println("receiving Port " + attribute.getReceivePort());
+		System.out.println("sending Port " + attribute.getSendingPort());
+
+/* MAIIIIIIIN APP!!!!!
 
 		getGameModeFromSQL();
 		switch (GAMEMODE) {
@@ -32,7 +38,7 @@ public class CanMain {
 				break;
 		}
 
-*/
+MAAAAAAIN APP ENDS!!!!! */
 
 
 		//General.ConstructCANFrame frame = new General.ConstructCANFrame();

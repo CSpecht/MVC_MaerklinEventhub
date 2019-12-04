@@ -3,27 +3,28 @@ package specht.General;
 import com.microsoft.azure.eventhubs.ConnectionStringBuilder;
 
 public class Attribute {
-    int receivePort = 15730;
-    int sendingPort = 15731;
-    String sendingAddress = "192.168.0.2";
-    String receivingAddress = "192.168.0.104";
-    double waterRatio = 31.3725;
-    double oilRatio = 11.7647;
-    double sandRatio = 0.9803;
+    public static int receivePort;
+    public static int sendingPort;
+    public static String sendingAddress = "192.168.0.2";
+    public static String receivingAddress = "192.168.0.104";
+    public static double waterRatio = 31.3725;
+    public static double oilRatio = 11.7647;
+    public static double sandRatio = 0.9803;
 
-    String RoundCountPattern = "(.[A-F0-9]{8}.[0-9]{2}..00,01,00,02,00,01,[A-F0-9]{2},[A-F0-9]{2}.)";
-    String SpeedPattern = "(.0009A706.[0-9]{2}..00,00,40,07,[A-F0-9]{2},[A-F0-9]{2},00,00.)";
-    String DirectionPatternFw = "(.000A0F72.[0-9]{2}..00,00,40,07,01,00,00,00.)";
-    String DirectionPatternBw = "(.000A0F72.[0-9]{2}..00,00,40,07,02,00,00,00.)";
+    public static String RoundCountPattern = "(.[A-F0-9]{8}.[0-9]{2}..00,01,00,02,00,01,[A-F0-9]{2},[A-F0-9]{2}.)";
+    public static String SpeedPattern = "(.0009A706.[0-9]{2}..00,00,40,07,[A-F0-9]{2},[A-F0-9]{2},00,00.)";
+    public static String DirectionPatternFw = "(.000A0F72.[0-9]{2}..00,00,40,07,01,00,00,00.)";
+    public static String DirectionPatternBw = "(.000A0F72.[0-9]{2}..00,00,40,07,02,00,00,00.)";
 
-    final String DATEFORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
-    final String DBNAME = "TRAIN_IOTHUB";
-    final String DBUSER = "TRAIN_DBA";
-    final String DBPW = "Stuttgart01$";
-    String dbUrl = "jdbc:sqlserver://dev.hdm-server.eu;databaseName="+DBNAME+";user="+DBUSER+";password="+DBPW;
-    String SQLStatementHeader = "INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], "
+    public static String DATEFORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
+    public static String DBNAME = "TRAIN_IOTHUB";
+    public static String DBUSER = "TRAIN_DBA";
+    public static String DBPW = "Stuttgart01$";
+
+    public static String dbUrl = "jdbc:sqlserver://dev.hdm-server.eu;databaseName="+DBNAME+";user="+DBUSER+";password="+DBPW;
+    public static String SQLStatementHeader = "INSERT INTO [dbo].[T_RESOURCES_USAGE_DATASET] ([DATATYPE], [RECORDING_START_TIME], "
             + "[TIME_STAMP], [DATASET], [DELIMITER]) VALUES ('";
-    String sqlDataType = "STEAMDATA";
+    public static  String sqlDataType = "STEAMDATA";
 
 
 
@@ -145,6 +146,22 @@ public class Attribute {
 
     public String getDBPW() {
         return DBPW;
+    }
+
+    public void setDATEFORMAT(String DATEFORMAT) {
+        this.DATEFORMAT = DATEFORMAT;
+    }
+
+    public void setDBNAME(String DBNAME) {
+        this.DBNAME = DBNAME;
+    }
+
+    public void setDBUSER(String DBUSER) {
+        this.DBUSER = DBUSER;
+    }
+
+    public void setDBPW(String DBPW) {
+        this.DBPW = DBPW;
     }
 
     public String getDbUrl() {
