@@ -12,14 +12,18 @@ public class SzenarioThree extends Thread {
     InetAddress ia, ib;
     Queue<byte[]> cmdQueue = new LinkedList();
     Queue<Integer> durrQueue = new LinkedList();
-
+    private Attribute attribute = null;
 
     public SzenarioThree () {
+        if (attribute == null) {
+            attribute = new Attribute();
+        }
+
         try {
             ds = getDatagramSocketSending();
             dr = getDatagramSocketReceiving();
-            ia = InetAddress.getByName(Attribute.sendingAddress);
-            ib = InetAddress.getByName(Attribute.receivingAddress);
+            ia = InetAddress.getByName(attribute.getSendingAddress());
+            ib = InetAddress.getByName(attribute.getReceivingAddress());
         } catch (SocketException e) {
             e.printStackTrace();
         } catch (UnknownHostException e) {
@@ -30,14 +34,14 @@ public class SzenarioThree extends Thread {
 
     public DatagramSocket getDatagramSocketSending() throws SocketException {
         if (ds == null) {
-            ds = new DatagramSocket(Attribute.sendingPort);
+            ds = new DatagramSocket(attribute.getSendingPort());
         }
         return ds;
     }
 
     public DatagramSocket getDatagramSocketReceiving() throws SocketException {
         if (dr == null) {
-            dr = new DatagramSocket(Attribute.receivePort);
+            dr = new DatagramSocket(attribute.getReceivePort());
         }
         return dr;
     }
@@ -85,7 +89,7 @@ public class SzenarioThree extends Thread {
                         for (int i = 0; i < element.length; i++) {
                             System.out.print("0["+i+"]: " + element[i] + " ");
                         }
-                        DatagramPacket packet = new DatagramPacket(element, element.length, ia, Attribute.sendingPort);
+                        DatagramPacket packet = new DatagramPacket(element, element.length, ia, attribute.getSendingPort());
 
                         try {
                             ds.send(packet);
@@ -116,5 +120,4 @@ public class SzenarioThree extends Thread {
             e.printStackTrace();
         }
     }
-
 }

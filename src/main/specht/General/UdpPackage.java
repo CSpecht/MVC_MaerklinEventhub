@@ -13,8 +13,11 @@ public class UdpPackage {
     private DatagramPacket datagramm;
     private long nanotime;
     private int packetnr;
-
+    private Attribute attribute = null;
     public UdpPackage(DatagramPacket packet, int nr, long timestamp) {
+        if (attribute == null) {
+            attribute = new Attribute();
+        }
         this.datagramm = packet;
         setPacketnr(nr);
         setNanotime(timestamp);
@@ -55,7 +58,7 @@ public class UdpPackage {
         }
         TcpConnection tcp = null;
         try {
-            tcp = new TcpConnection(Attribute.sendingAddress);
+            tcp = new TcpConnection(attribute.getSendingAddress());
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }

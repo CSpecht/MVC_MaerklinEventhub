@@ -14,22 +14,19 @@ import java.util.concurrent.ConcurrentSkipListMap;
 public class TcpConnection extends Cs3Connection {
 
     private static ConcurrentSkipListMap<InetAddress, TcpConnection> tcpVerbindungen = new ConcurrentSkipListMap();
-
     private static WeakReference<TcpConnection> lastTcpVerbindung_weak = new WeakReference(null);
-
     private Socket tcp_socket;
-
     private InputStream tcp_inputStream;
-
     private ConcurrentLinkedQueue<UdpPackage> tcp_sendQueue;
-
     private OutputStream tcp_outputStream;
     private InetAddress tcp_ip;
-
     private boolean empfangIstEin = false;
-
+    private Attribute attribute = null;
 
     public TcpConnection(String ipAdresse) throws UnknownHostException  {
+        if (attribute == null) {
+            attribute = new Attribute();
+        }
         InetAddress ip = null;
         try {
             ip = InetAddress.getByName(ipAdresse);
@@ -40,8 +37,8 @@ public class TcpConnection extends Cs3Connection {
         this.tcp_ip = ip;
 
         try {
-            System.out.println("verbinde per TCP mit " + Attribute.sendingAddress);
-            this.tcp_socket = new Socket(InetAddress.getByName(Attribute.sendingAddress), Attribute.sendingPort);
+            System.out.println("verbinde per TCP mit " + attribute.getSendingAddress());
+            this.tcp_socket = new Socket(InetAddress.getByName(attribute.getSendingAddress()),attribute.getSendingPort());
 
         }
         //catch (UnknownHostException ignore) {
@@ -73,7 +70,7 @@ public class TcpConnection extends Cs3Connection {
 
     public TcpConnection () {
         try {
-            new TcpConnection(Attribute.sendingAddress);
+            new TcpConnection(attribute.getSendingAddress());
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }

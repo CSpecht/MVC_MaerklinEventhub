@@ -22,9 +22,11 @@ public class SzenarioTwoTimer extends TimerTask {
     InetAddress ia;
     int speed;
     boolean newGame = false;
-
+    private Attribute attribute = null;
     public SzenarioTwoTimer( AtomicInteger Second, DatagramSocket ds, InetAddress ia) {
-
+        if(attribute == null) {
+            attribute = new Attribute();
+        }
         this.Second = Second;
         this.ds = ds;
         this.ia = ia;
@@ -44,7 +46,7 @@ public class SzenarioTwoTimer extends TimerTask {
 
             if (getGameID() % 2 == 0) {
                 udpFrame = ConstructCANFrame.setSwitchRWGreenOff();
-                DatagramPacket packet = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+                DatagramPacket packet = new DatagramPacket(udpFrame, udpFrame.length, ia, attribute.getSendingPort());
                 try {
                     ds.send(packet);
                 } catch (IOException e) {
@@ -52,7 +54,7 @@ public class SzenarioTwoTimer extends TimerTask {
                 }
 
                 udpFrame = ConstructCANFrame.setSwitchRWRedOn();
-                packet = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+                packet = new DatagramPacket(udpFrame, udpFrame.length, ia, attribute.getSendingPort());
                 try {
                     ds.send(packet);
                 } catch (IOException e) {
@@ -61,7 +63,7 @@ public class SzenarioTwoTimer extends TimerTask {
             }
             else {
                 udpFrame = ConstructCANFrame.setSwitchRWRedOff();
-                DatagramPacket packet = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+                DatagramPacket packet = new DatagramPacket(udpFrame, udpFrame.length, ia, attribute.getSendingPort());
                 try {
                     ds.send(packet);
                 } catch (IOException e) {
@@ -69,7 +71,7 @@ public class SzenarioTwoTimer extends TimerTask {
                 }
 
                 udpFrame = ConstructCANFrame.setSwitchRWGreenOn();
-                packet = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+                packet = new DatagramPacket(udpFrame, udpFrame.length, ia, attribute.getSendingPort());
                 try {
                     ds.send(packet);
                 } catch (IOException e) {
@@ -107,7 +109,7 @@ public class SzenarioTwoTimer extends TimerTask {
 
                 udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, getSpeed());
             }
-            DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
+            DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length,ia,attribute.getSendingPort());
             try {
                 this.ds.send(sendPacket);
             } catch (IOException e) {
@@ -116,7 +118,7 @@ public class SzenarioTwoTimer extends TimerTask {
         } else {
             byte[] udpFrame;
             udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, 0);
-            DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
+            DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length,ia,attribute.getSendingPort());
             try {
                 this.ds.send(sendPacket);
             } catch (IOException e) {
@@ -156,9 +158,9 @@ public class SzenarioTwoTimer extends TimerTask {
         }
         Connection con = null;
         try {
-            con = DriverManager.getConnection(Attribute.dbUrl);
+            con = DriverManager.getConnection(attribute.getDbUrl());
             Statement stmt = con.createStatement();
-            String SQL = "SELECT GAME_ID FROM " + Attribute.DBNAME + ".dbo.T_GAME_INFO WHERE RUN_YN = 1 ";
+            String SQL = "SELECT GAME_ID FROM " + attribute.getDBNAME() + ".dbo.T_GAME_INFO WHERE RUN_YN = 1 ";
             ResultSet rs = stmt.executeQuery(SQL);
 
             if (rs.next() == false && debug) {
@@ -190,7 +192,7 @@ public class SzenarioTwoTimer extends TimerTask {
         Connection con = null;
 
         try {
-            con = DriverManager.getConnection(Attribute.dbUrl);
+            con = DriverManager.getConnection(attribute.getDbUrl());
             Statement stmt = con.createStatement();
             String SQL = "select TOP 1 VAL8_SPEED from D_GAME_RESOURCES WHERE GAME_ID = " + GameID + " AND RESTAPI_DONE_YN = 1 AND CAN_DONE_YN = 0 ORDER BY ROWID DESC";
             //String SQL = "SELECT dbo.get_train_speed(" + GameID + "," + Second +") as 'rs'";
@@ -222,7 +224,7 @@ public class SzenarioTwoTimer extends TimerTask {
         try {
 
             if (Second.get() != 0) {
-                con = DriverManager.getConnection(Attribute.dbUrl);
+                con = DriverManager.getConnection(attribute.getDbUrl());
                 CallableStatement cs = con.prepareCall("EXECUTE dbo.upd_can_done_yn @myGAME_ID=?, @myMINUTE=?");
                 cs.setEscapeProcessing(true);
                 cs.setQueryTimeout(10);

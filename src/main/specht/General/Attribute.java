@@ -25,6 +25,8 @@ public class Attribute {
             + "[TIME_STAMP], [DATASET], [DELIMITER]) VALUES ('";
     String sqlDataType = "STEAMDATA";
 
+
+
     final ConnectionStringBuilder azureConn = new ConnectionStringBuilder()
             .setNamespaceName("BIAcademyNS")
             .setEventHubName("eventhubmarklinsteamlok")
@@ -192,4 +194,6 @@ public class Attribute {
     public static String getCmdFilePath() {
         return cmdFilePath;
     }
+
+    public ConnectionStringBuilder getAzureConn() { return azureConn; }
 }

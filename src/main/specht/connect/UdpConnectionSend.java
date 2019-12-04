@@ -1,5 +1,6 @@
 package specht.connect;
 
+import org.w3c.dom.Attr;
 import specht.General.Attribute;
 
 import javax.swing.text.MaskFormatter;
@@ -21,22 +22,26 @@ public class UdpConnectionSend extends Thread {
     protected int ressourceAmmountInt;
     protected byte[] data = new byte[13];
     InetAddress ia;
+    private Attribute attribute = null;
 
     {
         try {
-            ia = InetAddress.getByName(Attribute.sendingAddress);
+            ia = InetAddress.getByName(attribute.getSendingAddress());
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
     }
 
     public UdpConnectionSend(byte[] data) throws SocketException {
+        if (attribute == null) {
+            attribute = new Attribute();
+        }
         //this.cs2LastPacketTime = new ArrayList();
 
         //setDaemon(true);
         setName("UdpConnectionSend");
 
-        socket = new DatagramSocket(Attribute.sendingPort);
+        socket = new DatagramSocket(attribute.getSendingPort());
         socket.setReuseAddress(true);
         this.data = data;
     }
@@ -49,7 +54,7 @@ public class UdpConnectionSend extends Thread {
         }
         //byte[] buf = new byte[13];
 
-        DatagramPacket packet = new DatagramPacket(data, data.length,ia,Attribute.sendingPort);
+        DatagramPacket packet = new DatagramPacket(data, data.length,ia,attribute.getSendingPort());
 
         while (listen) {
             try {

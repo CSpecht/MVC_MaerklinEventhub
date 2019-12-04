@@ -24,10 +24,14 @@ public class PatternListener extends Thread {
     protected int port = 0;
     private Socket tcp_socket = null;
     protected AtomicInteger direction = new AtomicInteger();
+    protected Attribute attribute;
 
     public PatternListener() throws IOException {
-        this.ip = Attribute.sendingAddress;
-        this.port = Attribute.sendingPort;
+        if (attribute == null) {
+            attribute = new Attribute();
+        }
+        this.ip = attribute.getSendingAddress();
+        this.port = attribute.getSendingPort();
         InetSocketAddress endpoint = new InetSocketAddress(this.ip,this.port);
         tcp_socket = new Socket();
         tcp_socket.connect(endpoint);
@@ -124,14 +128,14 @@ public class PatternListener extends Thread {
 
             //System.out.println("hexPattern: " + hexPattern);
             //System.out.println(Attribute.SpeedPattern);
-            if (Pattern.matches(Attribute.RoundCountPattern, hexPattern)) {
+            if (Pattern.matches(attribute.getRoundCountPattern(), hexPattern)) {
                 String lokId = hexPattern.substring(20 , 25).replace(",","");
                 setRoundCount(getRoundCount().incrementAndGet());
                 if (debug) {debugMethod(hexPattern, getRoundCount().toString(),"PatternRoundCount");}
 
             }
 
-            if (Pattern.matches(Attribute.SpeedPattern, hexPattern)) {
+            if (Pattern.matches(attribute.getSpeedPattern(), hexPattern)) {
                 //String lokId = hexPattern.substring(20 , 25).replace(",","");
                 System.out.println("");
                 String speedAm = hexPattern.substring(25,31).replace(",","");
@@ -140,13 +144,13 @@ public class PatternListener extends Thread {
 
             }
 
-            if (Pattern.matches(Attribute.DirectionPatternFw, hexPattern)) {
+            if (Pattern.matches(attribute.getDirectionPatternFw(), hexPattern)) {
                 setDirection(0);
                 if (debug) {debugMethod(hexPattern, getDirection().toString(),"PatternFw");}
 
             }
 
-            if (Pattern.matches(Attribute.DirectionPatternBw, hexPattern)) {
+            if (Pattern.matches(attribute.getDirectionPatternBw(), hexPattern)) {
                 setDirection(1);
                 if (debug) {debugMethod(hexPattern, getDirection().toString(), "PatternBw");}
             }

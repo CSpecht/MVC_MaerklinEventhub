@@ -28,14 +28,18 @@ public class UdpConnectionResponse extends Thread
     protected boolean listen = true;
     protected int ressourceAmmountInt;
     protected byte[] data = new byte[13];
+    private Attribute attribute = null;
 
     public UdpConnectionResponse() throws SocketException {
+        if(attribute == null) {
+            attribute = new Attribute();
+        }
         //this.cs2LastPacketTime = new ArrayList();
 
         //setDaemon(true);
         setName("UdpConnectionResponse");
 
-        socket = new DatagramSocket(Attribute.receivePort);
+        socket = new DatagramSocket(attribute.getReceivePort());
         socket.setReuseAddress(true);
     }
 

@@ -26,19 +26,23 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public class SendCan extends Thread implements Attribute {
+public class SendCan extends Thread {
     DatagramPacket dmp;
     byte[] dataFrame = new byte[13];
     LinkedList<String> csvPayload = new LinkedList<String>();
     LinkedList<String> jsonPayload = new LinkedList<String>();
-
+    private static Attribute attribute = null;
     private static final ExecutorService pool = Executors.newWorkStealingPool();
 
 
  //   public SendCan (DatagramPacket packet) {
   //      dmp = packet;
    // }
-    public SendCan() {}
+    public SendCan() {
+        if (attribute == null) {
+            attribute = new Attribute();
+        }
+    }
 
     public LinkedList<String> getCsvPayload() {
         return csvPayload;
@@ -125,7 +129,7 @@ public class SendCan extends Thread implements Attribute {
 
         // Each EventHubClient instance spins up a new TCP/SSL connection, which is expensive.
         // It is always a best practice to reuse these instances. The following sample shows this.
-        final EventHubClient ehClient = EventHubClient.createSync(String.valueOf(Attribute.azureConn), executorService);
+        final EventHubClient ehClient = EventHubClient.createSync(String.valueOf(attribute.getAzureConn()), executorService);
 
 
         //----SEND JSON FORMAT TO AZURE EVENTHUB----
@@ -165,14 +169,14 @@ public class SendCan extends Thread implements Attribute {
         }
 
         // create DateFormatter for the right format of date for SQLServer.
-        DateFormat sdf = new SimpleDateFormat(Attribute.DATEFORMAT);
+        DateFormat sdf = new SimpleDateFormat(attribute.getDATEFORMAT());
         Date date = new Date();
 
-        try (Connection con = DriverManager.getConnection(Attribute.dbUrl); Statement stmt = con.createStatement();) {
+        try (Connection con = DriverManager.getConnection(attribute.getDbUrl()); Statement stmt = con.createStatement();) {
             for (int i = 0; i < payload.size(); i++) {
                 String SQL = "INSERT INTO [dbo].[T_STREAMING_DATA] ([DATATYPE], [RECORDING_START_TIME], "
                         + "[TIME_STAMP], [DATASET], [DELIMITER],[INS_DATE],[DQS],[DQS_DATE],[GAME_ID],[CAN_DONE_YN],[RESTAPI_DONE_YN])"
-                        + "VALUES ('" + Attribute.sqlDataType + "','"
+                        + "VALUES ('" + attribute.getSqlDataType() + "','"
                         + sdf.format(date).toString() + "','"
                         + sdf.format(date).toString() + "','"
                         + payload.get(i)
@@ -232,7 +236,7 @@ public class SendCan extends Thread implements Attribute {
      * @throws UnknownHostException
      ***************************************************************************************/
     public static void sendCanToCS3 (String connectionUrl, String dType) throws IOException, InterruptedException {
-        InetAddress addresse = InetAddress.getByName(Attribute.sendingAddress);
+        InetAddress addresse = InetAddress.getByName(attribute.getSendingAddress());
         //General.ConstructCANFrame udp = new General.ConstructCANFrame();
         //String ipAdress = "192.168.0.2";
 
@@ -305,7 +309,7 @@ public class SendCan extends Thread implements Attribute {
         try {
 
             DatagramSocket dms = new DatagramSocket();
-            DatagramPacket dmp = new DatagramPacket(udpFrame, udpFrame.length, adress,Attribute.receivePort);
+            DatagramPacket dmp = new DatagramPacket(udpFrame, udpFrame.length, adress,attribute.getReceivePort());
             dms.send(dmp);
             System.out.println("SEND!");
 
@@ -321,7 +325,7 @@ public class SendCan extends Thread implements Attribute {
     public static void sendTCP (byte[] udpFrame, int start, int len) {
         try {
 
-            Socket socket = new Socket(Attribute.sendingAddress, Attribute.sendingPort);
+            Socket socket = new Socket(attribute.getSendingAddress(),attribute.getSendingPort());
             OutputStream out = socket.getOutputStream();
             DataOutputStream dos = new DataOutputStream(out);
 

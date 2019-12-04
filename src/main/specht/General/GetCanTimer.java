@@ -18,11 +18,14 @@ public class GetCanTimer extends TimerTask {
     AtomicInteger waterA, coilA, sandA;
     PatternListener pl;
     Timer t;
-
+    Attribute attribute = null;
     GetCanTimer (Timer t, DatagramSocket s, InetAddress ia, Resource rs, AtomicInteger waterA, AtomicInteger coilA, AtomicInteger sandA, PatternListener pl ){
+        if (attribute == null) {
+            attribute = new Attribute();
+        }
         try{
             this.ds = s;
-            this.ia = InetAddress.getByName(Attribute.sendingAddress);
+            this.ia = InetAddress.getByName(attribute.getSendingAddress());
             this.rs = rs;
             this.waterA = waterA;
             this.coilA = coilA;
@@ -49,7 +52,7 @@ public class GetCanTimer extends TimerTask {
 
         if (Second.get() <=10) {
             byte[] udpFrame = ConstructCANFrame.setSpeed(Attribute._STEAM_ID, 400);
-            DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
+            DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length,ia,attribute.getSendingPort());
             try{
                 ds.send(sendPacket);
             }  catch (SocketException e) {
@@ -61,7 +64,7 @@ public class GetCanTimer extends TimerTask {
         }
         else {
             byte[] udpFrame = ConstructCANFrame.setSpeed(Attribute._STEAM_ID, 0);
-            DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length,ia,Attribute.sendingPort);
+            DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length,ia,attribute.getSendingPort());
             try{
                 ds.send(sendPacket);
             }  catch (SocketException e) {
@@ -100,7 +103,7 @@ public class GetCanTimer extends TimerTask {
 
         if (Second.get() == 25) {
             byte[] udpFrame = ConstructCANFrame.go();
-            DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+            DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia,attribute.getSendingPort());
             try {
                 ds.send(sendPacket);
             } catch (IOException e) {
@@ -108,7 +111,7 @@ public class GetCanTimer extends TimerTask {
             }
 
             udpFrame = ConstructCANFrame.setSpeed(Attribute._STEAM_ID, 600);
-            sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+            sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, attribute.getSendingPort());
             try {
                 ds.send(sendPacket);
             } catch (IOException e) {

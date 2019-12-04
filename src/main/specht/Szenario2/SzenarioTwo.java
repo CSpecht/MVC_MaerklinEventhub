@@ -17,13 +17,17 @@ public class SzenarioTwo extends Thread {
     boolean startRun = false;
     DatagramSocket ds, dr;
     InetAddress ia, ib;
-
+    private Attribute attribute = null;
     public SzenarioTwo() {
+        if (attribute== null) {
+            attribute = new Attribute();
+        }
+
         try {
             ds = getDatagramSocketSending();
             dr = getDatagramSocketReceiving();
-            ia = InetAddress.getByName(Attribute.sendingAddress);
-            ib = InetAddress.getByName(Attribute.receivingAddress);
+            ia = InetAddress.getByName(attribute.getSendingAddress());
+            ib = InetAddress.getByName(attribute.getReceivingAddress());
         } catch (SocketException e) {
             e.printStackTrace();
         } catch (UnknownHostException e) {
@@ -33,14 +37,14 @@ public class SzenarioTwo extends Thread {
 
     public DatagramSocket getDatagramSocketSending() throws SocketException {
         if (ds == null) {
-            ds = new DatagramSocket(Attribute.sendingPort);
+            ds = new DatagramSocket(attribute.getSendingPort());
         }
         return ds;
     }
 
     public DatagramSocket getDatagramSocketReceiving() throws SocketException {
         if (dr == null) {
-            dr = new DatagramSocket(Attribute.receivePort);
+            dr = new DatagramSocket(attribute.getReceivePort());
         }
         return dr;
     }

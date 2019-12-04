@@ -16,9 +16,12 @@ public class SzenarioThreeTimer extends TimerTask {
     byte[] element = new byte[13];
     DatagramSocket ds;
     InetAddress ia;
-    
+    private Attribute attribute = null;
 
     SzenarioThreeTimer(int s, Iterator cmdIterator, DatagramSocket ds, InetAddress ia) {
+        if (attribute == null ) {
+            attribute = new Attribute();
+        }
         this.duration = s;
         this.cmdIterator = cmdIterator;
         this.ds = ds;
@@ -42,7 +45,7 @@ public class SzenarioThreeTimer extends TimerTask {
                 System.out.print("[" + i + "]: " + element[i] + " ");
             }
 
-            DatagramPacket packet = new DatagramPacket(element, element.length, ia, Attribute.sendingPort);
+            DatagramPacket packet = new DatagramPacket(element, element.length, ia, attribute.getSendingPort());
 
             try {
                 ds.send(packet);

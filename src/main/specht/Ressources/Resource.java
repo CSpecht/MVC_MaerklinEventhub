@@ -34,8 +34,9 @@ public class Resource extends Thread {
     protected byte[] dataSpeed = new byte[13];
 
 
+    protected static Attribute attribute = null;
     protected static int coaches;
-    protected static final DateFormat sdf = new SimpleDateFormat(Attribute.DATEFORMAT);
+    protected static final DateFormat sdf = new SimpleDateFormat(attribute.getDATEFORMAT());
     public LinkedList<String> payload = new LinkedList<String>();
     //protected ArrayList<String> SQLstment = new ArrayList<String>();
     public LinkedList<String> jsonPayload = new LinkedList<String>();
@@ -73,6 +74,9 @@ public class Resource extends Thread {
 
 
     public Resource(DatagramSocket sending, DatagramSocket receiving, InetAddress ia, InetAddress ib, String name) {
+        if (attribute == null) {
+            attribute = new Attribute();
+        }
         this.ds = sending;
         this.dr = receiving;
         this.ia = ia;
@@ -244,7 +248,7 @@ public class Resource extends Thread {
 
         //SET WATER
         udpFrame = ConstructCANFrame.setWater(Attribute._STEAM_ID);
-        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, attribute.getSendingPort());
         ds.send(sendPacket);
 
         //GET WATER for Verification
@@ -277,7 +281,7 @@ public class Resource extends Thread {
 
         //SET COIL
         udpFrame = ConstructCANFrame.setCoil(Attribute._STEAM_ID);
-        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, attribute.getSendingPort());
         ds.send(sendPacket);
 
         //GET COIL for Verification
@@ -310,7 +314,7 @@ public class Resource extends Thread {
 
         //SET SAND
         udpFrame = ConstructCANFrame.setSand(Attribute._STEAM_ID);
-        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, attribute.getSendingPort());
         ds.send(sendPacket);
 
         //GET SAND for Verification
@@ -340,7 +344,7 @@ public class Resource extends Thread {
         //GET COIL
         udpFrame = ConstructCANFrame.getWater(Attribute._STEAM_ID);
 
-        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, attribute.getSendingPort());
         ds.send(sendPacket);
 
         boolean empfang = true;
@@ -352,7 +356,7 @@ public class Resource extends Thread {
             long mills = now.getTime();
             int pkNr = 1;
 
-            sendPacket = new DatagramPacket(new byte[13], 13, ib, Attribute.receivePort);
+            sendPacket = new DatagramPacket(new byte[13], 13, ib, attribute.getReceivePort());
             dr.receive(sendPacket);
 
             data = sendPacket.getData();
@@ -391,7 +395,7 @@ public class Resource extends Thread {
 
         //GET COIL
         udpFrame = ConstructCANFrame.getCoil(Attribute._STEAM_ID);
-        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, attribute.getSendingPort());
         ds.send(sendPacket);
 
         boolean empfang = true;
@@ -403,7 +407,7 @@ public class Resource extends Thread {
             long mills = now.getTime();
             int pkNr = 1;
 
-            sendPacket = new DatagramPacket(new byte[13], 13, ib, Attribute.receivePort);
+            sendPacket = new DatagramPacket(new byte[13], 13, ib, attribute.getReceivePort());
             dr.receive(sendPacket);
             // Empfaenger auslesen
             InetAddress address = sendPacket.getAddress();
@@ -451,7 +455,7 @@ public class Resource extends Thread {
         //GET COIL
         udpFrame = ConstructCANFrame.getSand(Attribute._STEAM_ID);
 
-        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, attribute.getSendingPort());
         ds.send(sendPacket);
 
         boolean empfang = true;
@@ -463,7 +467,7 @@ public class Resource extends Thread {
             long mills = now.getTime();
             int pkNr = 1;
 
-            sendPacket = new DatagramPacket(new byte[13], 13, ib, Attribute.receivePort);
+            sendPacket = new DatagramPacket(new byte[13], 13, ib, attribute.getReceivePort());
             dr.receive(sendPacket);
             // Empfaenger auslesen
             InetAddress address = sendPacket.getAddress();
@@ -509,7 +513,7 @@ public class Resource extends Thread {
         //GET SPEED
         udpFrame = ConstructCANFrame.getSpeed(Attribute._STEAM_ID);
 
-        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+        DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, attribute.getSendingPort());
         ds.send(sendPacket);
 
         boolean empfang = true;

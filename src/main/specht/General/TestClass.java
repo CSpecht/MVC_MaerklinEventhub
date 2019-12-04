@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 public class TestClass {
 
-
+        Attribute attribute = null;
         boolean debug = false;
         HashMap<Integer, String> kvs = new HashMap<Integer, String>();
         HashMap hMap = new HashMap();
@@ -23,6 +23,9 @@ public class TestClass {
 */
 
         public TestClass() throws IOException {
+            if (attribute == null) {
+                attribute = new Attribute();
+            }
             getWater();
         }
 
@@ -35,10 +38,10 @@ public class TestClass {
             boolean result = false;
             byte[] udpFrame = new byte[13];
             byte[] packatData;
-            DatagramSocket ds = new DatagramSocket(Attribute.sendingPort);
-            DatagramSocket dsReceive = new DatagramSocket(Attribute.receivePort);
-            InetAddress ia = InetAddress.getByName(Attribute.sendingAddress);
-            InetAddress ib = InetAddress.getByName(Attribute.receivingAddress);
+            DatagramSocket ds = new DatagramSocket(attribute.getSendingPort());
+            DatagramSocket dsReceive = new DatagramSocket(attribute.getReceivePort());
+            InetAddress ia = InetAddress.getByName(attribute.getSendingAddress());
+            InetAddress ib = InetAddress.getByName(attribute.getReceivingAddress());
 
             //GET WATER
             udpFrame = ConstructCANFrame.getWater(Attribute._STEAM_ID);
@@ -51,7 +54,7 @@ public class TestClass {
             //int i = 0;
 
             //System.out.println("I: " + i);
-            DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+            DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, attribute.getSendingPort());
             //System.out.println("1");
             ds.send(sendPacket);
 
@@ -70,7 +73,7 @@ public class TestClass {
             while (empfang) {
 
 
-                sendPacket = new DatagramPacket(new byte[13], 13, ib, Attribute.receivePort);
+                sendPacket = new DatagramPacket(new byte[13], 13, ib, attribute.getReceivePort());
                 dsReceive.receive(sendPacket);
                 // Empf�nger auslesen
                 InetAddress address = sendPacket.getAddress();
@@ -180,19 +183,19 @@ public class TestClass {
             boolean result = false;
             byte[] udpFrame = new byte[13];
             byte[] packatData;
-            DatagramSocket ds = new DatagramSocket(Attribute.sendingPort);
-            DatagramSocket dsReceive = new DatagramSocket(Attribute.receivePort);
-            InetAddress ia = InetAddress.getByName(Attribute.sendingAddress);
-            InetAddress ib = InetAddress.getByName(Attribute.receivingAddress);
+            DatagramSocket ds = new DatagramSocket(attribute.getSendingPort());
+            DatagramSocket dsReceive = new DatagramSocket(attribute.getReceivePort());
+            InetAddress ia = InetAddress.getByName(attribute.getSendingAddress());
+            InetAddress ib = InetAddress.getByName(attribute.getReceivingAddress());
 
             //ressource Start
             udpFrame = ConstructCANFrame.resourceStart();
-            DatagramPacket sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+            DatagramPacket sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia,attribute.getSendingPort());
             ds.send(sendPacket);
 
             //train STOP
             udpFrame = ConstructCANFrame.stopTrain();
-            sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+            sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, attribute.getSendingPort());
             ds.send(sendPacket);
 
             //SET WATER
@@ -206,21 +209,21 @@ public class TestClass {
             //int i = 0;
 
             //System.out.println("I: " + i);
-            sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+            sendPacket = new DatagramPacket( udpFrame, udpFrame.length, ia, attribute.getSendingPort());
             //System.out.println("1");
             ds.send( sendPacket );
 
 
             //RESOURCE STOP
             udpFrame = ConstructCANFrame.resourceStop();
-            sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+            sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, attribute.getSendingPort());
             ds.send( sendPacket );
 
 
 
             //System.out.println("2");
             // Auf Anfrage warten
-            sendPacket = new DatagramPacket( new byte[13], 13, ib, Attribute.receivePort );
+            sendPacket = new DatagramPacket( new byte[13], 13, ib, attribute.getReceivePort());
             dsReceive.receive( sendPacket );
             //System.out.println("3");
             //comment
@@ -238,7 +241,7 @@ public class TestClass {
             }
 
             udpFrame = ConstructCANFrame.go();
-            sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
+            sendPacket = new DatagramPacket(udpFrame, udpFrame.length, ia, attribute.getSendingPort());
         }
 
 
