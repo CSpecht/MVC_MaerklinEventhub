@@ -43,8 +43,8 @@ public class SzenarioTwoTimer extends TimerTask {
         if (newGame) {
             byte[] udpFrame;
 
-
-            if (getGameID() % 2 == 0) {
+//SET THIS ON THAT EVERY SECOND GAME_ID A SWITCH WILL BE SWITCHED
+ /*           if (getGameID() % 2 == 0) {
                 udpFrame = ConstructCANFrame.setSwitchRWGreenOff();
                 DatagramPacket packet = new DatagramPacket(udpFrame, udpFrame.length, ia, attribute.getSendingPort());
                 try {
@@ -78,6 +78,8 @@ public class SzenarioTwoTimer extends TimerTask {
                     e.printStackTrace();
                 }
             }
+
+*/
 /*            udpFrame = ConstructCANFrame.setSwitchRWGreenOff();
             packet = new DatagramPacket(udpFrame, udpFrame.length, ia, Attribute.sendingPort);
             try {

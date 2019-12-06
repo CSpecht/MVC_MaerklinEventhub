@@ -1,6 +1,9 @@
 package specht.General;//import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 
+import specht.Szenario2.SzenarioTwo;
+import specht.Szenario3.SzenarioThree;
+
 import java.io.IOException;
 import java.sql.*;
 
@@ -21,7 +24,6 @@ public class CanMain {
 		System.out.println("receiving Port " + attribute.getReceivePort());
 		System.out.println("sending Port " + attribute.getSendingPort());
 
-/* MAIIIIIIIN APP!!!!!
 
 		getGameModeFromSQL();
 		switch (GAMEMODE) {
@@ -38,7 +40,6 @@ public class CanMain {
 				break;
 		}
 
-MAAAAAAIN APP ENDS!!!!! */
 
 
 		//General.ConstructCANFrame frame = new General.ConstructCANFrame();

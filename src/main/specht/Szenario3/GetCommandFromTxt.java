@@ -4,9 +4,7 @@ import specht.General.Attribute;
 import specht.General.ConstructCANFrame;
 
 import java.io.*;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 
 public class GetCommandFromTxt {
@@ -14,6 +12,7 @@ public class GetCommandFromTxt {
     Queue<byte[]> commandQueue;
     Queue<String> testQueue = new LinkedList();
     Queue<Integer> durrQueue = new LinkedList();
+
     boolean debug = false;
 
     byte[] udpFrame = new byte[13];
@@ -85,6 +84,7 @@ public class GetCommandFromTxt {
 
         if (component.trim().equalsIgnoreCase("weiche")) {
             int position = 0;
+
             if (command.trim().equalsIgnoreCase("rechts")) {
                 position = 0;
                 commandQueue.add(translateSwitch(id, position));

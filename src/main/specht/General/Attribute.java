@@ -2,6 +2,8 @@ package specht.General;
 
 import com.microsoft.azure.eventhubs.ConnectionStringBuilder;
 
+import java.util.*;
+
 public class Attribute {
     public static int receivePort;
     public static int sendingPort;
@@ -41,8 +43,9 @@ public class Attribute {
 
     public static final int firstByteOfSteamID = ConstructCANFrame.getFirstByteOfId(_STEAM_ID);
     public static final int secondByteOfSteamID = ConstructCANFrame.getSecondByteOfId(_STEAM_ID);
-    public static final String cmdFilePath = "C:\\Scripts\\lok_commands.txt";
+    public static final String cmdFilePath = "C:\\Scripts\\lok_commands3.txt";
 
+    public static Dictionary switches = new Hashtable();
 
     public int getReceivePort() {
         return receivePort;
@@ -213,4 +216,12 @@ public class Attribute {
     }
 
     public ConnectionStringBuilder getAzureConn() { return azureConn; }
+
+    public static Dictionary getSwitches() {
+        return switches;
+    }
+
+    public static void setSwitches(Dictionary switches) {
+        Attribute.switches = switches;
+    }
 }

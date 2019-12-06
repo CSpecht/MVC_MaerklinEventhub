@@ -3,9 +3,7 @@ package specht.General;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
-import java.util.InputMismatchException;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,6 +11,7 @@ public class GetPropertyValue {
     String result = "";
     InputStream is;
     private Attribute attribute = null;
+    Dictionary switches = new Hashtable();
 
     GetPropertyValue () {
         if (attribute == null) {
@@ -45,6 +44,20 @@ public class GetPropertyValue {
             String dbUser = prop.getProperty("dbUser");
             String dbPw = prop.getProperty("dbPw");
 
+            switches.put("w01",prop.getProperty("w01"));
+            switches.put("w02",prop.getProperty("w02"));
+            switches.put("w03",prop.getProperty("w03"));
+            switches.put("w04",prop.getProperty("w04"));
+            switches.put("w05",prop.getProperty("w05"));
+            switches.put("w06",prop.getProperty("w06"));
+            switches.put("w07",prop.getProperty("w07"));
+            switches.put("w08",prop.getProperty("w08"));
+            switches.put("w09",prop.getProperty("w09"));
+            switches.put("w10",prop.getProperty("w10"));
+            switches.put("w11",prop.getProperty("w11"));
+            switches.put("w12",prop.getProperty("w12"));
+
+
             if (!checkPropIpAdresse(cs3IpAdresse)) {
                 throw new InputMismatchException("IP Adress of CS3 is not valid!");
             } else if (!checkPropIpAdresse(pcIpAdresse)) {
@@ -61,6 +74,11 @@ public class GetPropertyValue {
                 attribute.setDBNAME(dbName);
                 attribute.setDBUSER(dbUser);
                 attribute.setDBPW(dbPw);
+                attribute.setSwitches(switches);
+
+
+
+
             }
 
             result = cs3Port + " " + pcPort + " " +  cs3IpAdresse + " " + pcIpAdresse ;
