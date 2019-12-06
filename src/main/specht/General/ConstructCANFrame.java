@@ -1047,7 +1047,7 @@ public class ConstructCANFrame extends Thread{
      * DLC HAS TO BE 8
      * switch the position of the Switch
      */
-    public static byte [] setSwitchRWRedOn () {
+    public static byte [] setSwitchRWRedOn (int id) {
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -1067,7 +1067,7 @@ public class ConstructCANFrame extends Thread{
                 udpFrame[5+i] = (byte)56;
             }
             if (i == 3) {
-                udpFrame[5+i] = (byte)1;
+                udpFrame[5+i] = (byte)id;
             }
             if (i == 4) {
                 udpFrame[5+i] = (byte)0;
@@ -1085,7 +1085,7 @@ public class ConstructCANFrame extends Thread{
      * switch the position of the Switch
      */
 
-    public static byte [] setSwitchRWRedOff () {
+    public static byte [] setSwitchRWRedOff (int id) {
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -1105,7 +1105,7 @@ public class ConstructCANFrame extends Thread{
                 udpFrame[5+i] = (byte)56;
             }
             if (i == 3) {
-                udpFrame[5+i] = (byte)1;
+                udpFrame[5+i] = (byte)id;
             }
             if (i == 4) {
                 udpFrame[5+i] = (byte)0;
@@ -1122,7 +1122,7 @@ public class ConstructCANFrame extends Thread{
      * switch the position of the Switch
      */
 
-    public static byte [] setSwitchRWGreenOff () {
+    public static byte [] setSwitchRWGreenOff (int id) {
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -1142,7 +1142,7 @@ public class ConstructCANFrame extends Thread{
                 udpFrame[5+i] = (byte)56;
             }
             if (i == 3) {
-                udpFrame[5+i] = (byte)1;
+                udpFrame[5+i] = (byte)id;
             }
             if (i == 4) {
                 udpFrame[5+i] = (byte)1;
@@ -1160,7 +1160,7 @@ public class ConstructCANFrame extends Thread{
      * switch the position of the Switch
      */
 
-    public static byte [] setSwitchRWGreenOn () {
+    public static byte [] setSwitchRWGreenOn (int id) {
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -1180,7 +1180,7 @@ public class ConstructCANFrame extends Thread{
                 udpFrame[5+i] = (byte)56;
             }
             if (i == 3) {
-                udpFrame[5+i] = (byte)1;
+                udpFrame[5+i] = (byte)id;
             }
             if (i == 4) {
                 udpFrame[5+i] = (byte)1;

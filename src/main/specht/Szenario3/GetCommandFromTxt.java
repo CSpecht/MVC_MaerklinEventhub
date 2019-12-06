@@ -150,14 +150,14 @@ public class GetCommandFromTxt {
     public byte[] translateSwitch (int id, int switchPosition) {
         //switch right
         if (switchPosition == 0) {
-            testQueue.add(translateByteInStr(ConstructCANFrame.setSwitchRWRedOff()));
-            commandQueue.add(ConstructCANFrame.setSwitchRWRedOff());
-            udpFrame = ConstructCANFrame.setSwitchRWGreenOn();
+            testQueue.add(translateByteInStr(ConstructCANFrame.setSwitchRWRedOff(id)));
+            commandQueue.add(ConstructCANFrame.setSwitchRWRedOff(id));
+            udpFrame = ConstructCANFrame.setSwitchRWGreenOn(id);
 
         } else {
-            testQueue.add(translateByteInStr(ConstructCANFrame.setSwitchRWGreenOff()));
-            commandQueue.add(ConstructCANFrame.setSwitchRWGreenOff());
-            udpFrame = ConstructCANFrame.setSwitchRWRedOn();
+            testQueue.add(translateByteInStr(ConstructCANFrame.setSwitchRWGreenOff(id)));
+            commandQueue.add(ConstructCANFrame.setSwitchRWGreenOff(id));
+            udpFrame = ConstructCANFrame.setSwitchRWRedOn(id);
         }
         return udpFrame;
     }
