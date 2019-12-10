@@ -9,13 +9,13 @@ import java.util.*;
 
 public class GetCommandFromTxt {
 
-    Queue<byte[]> commandQueue;
-    Queue<String> testQueue = new LinkedList();
-    Queue<Integer> durrQueue = new LinkedList();
+    private Queue<byte[]> commandQueue = null;
+    private Queue<String> testQueue = new LinkedList();
+    private Queue<Integer> durrQueue = new LinkedList();
 
-    boolean debug = false;
+    private boolean debug = false;
 
-    byte[] udpFrame = null;
+    private byte[] udpFrame = null;
 
     public GetCommandFromTxt(Queue<byte[]> cmdQueue) throws IOException {
         this.commandQueue = cmdQueue;
@@ -230,14 +230,9 @@ public class GetCommandFromTxt {
             } else {
                 s += (String.valueOf(array[i]));
             }
-
-
         }
-
         return s;
     }
-
-
 
 
     public void showTestQueue () {
