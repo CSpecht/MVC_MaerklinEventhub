@@ -9,13 +9,13 @@ import java.util.*;
 
 public class GetCommandFromTxt {
 
-    private Queue<byte[]> commandQueue = null;
-    private Queue<String> testQueue = new LinkedList();
-    private Queue<Integer> durrQueue = new LinkedList();
+    Queue<byte[]> commandQueue = null;
+    Queue<String> testQueue = new LinkedList();
+    Queue<Integer> durrQueue = new LinkedList();
 
-    private boolean debug = false;
+    boolean debug = false;
 
-    private byte[] udpFrame = null;
+    byte[] udpFrame = null;
 
     public GetCommandFromTxt(Queue<byte[]> cmdQueue) throws IOException {
         this.commandQueue = cmdQueue;
@@ -55,15 +55,19 @@ public class GetCommandFromTxt {
         String s = "";
         int id = 0;
         int durr = 0;
+        String component = "";
+        String identicator = "";
+        String command = "";
 
 
         if ((commandArgs == null) || (commandArgs.length == 0) || (commandArgs[0] == null)) {
             System.out.println("Null command!");
+            new Exception();
+        } else {
+            component = commandArgs[0];
+            identicator = commandArgs[1];
+            command = commandArgs[2];
         }
-
-        String component = commandArgs[0];
-        String identicator = commandArgs[1];
-        String command = commandArgs[2];
 
         if (commandArgs.length == 3) {
             durr = 0;
@@ -149,15 +153,16 @@ public class GetCommandFromTxt {
     /*FIXME: test switch Position, and add ID FOR communicating with the right switch! */
     /************************* ADD RIGHT CAN FRAME AND *************************/
     public byte[] translateSwitch (int id, int switchPosition) {
+        byte[] udpFrame = new byte[13];
         //switch right
         if (switchPosition == 0) {
-            testQueue.add(translateByteInStr(ConstructCANFrame.setSwitchRWRedOff(id)));
-            commandQueue.add(ConstructCANFrame.setSwitchRWRedOff(id));
+            //testQueue.add(translateByteInStr(ConstructCANFrame.setSwitchRWRedOff(id)));
+            //commandQueue.add(ConstructCANFrame.setSwitchRWRedOff(id));
             udpFrame = ConstructCANFrame.setSwitchRWGreenOn(id);
 
         } else {
-            testQueue.add(translateByteInStr(ConstructCANFrame.setSwitchRWGreenOff(id)));
-            commandQueue.add(ConstructCANFrame.setSwitchRWGreenOff(id));
+            //testQueue.add(translateByteInStr(ConstructCANFrame.setSwitchRWGreenOff(id)));
+            //commandQueue.add(ConstructCANFrame.setSwitchRWGreenOff(id));
             udpFrame = ConstructCANFrame.setSwitchRWRedOn(id);
         }
         return udpFrame;
@@ -166,6 +171,7 @@ public class GetCommandFromTxt {
     /*FIXME how to add durration to BYTE[] for QUEUE!!!! */
     /************************* ADD RIGHT CAN FRAME *************************/
     public byte[] translateLok(int lokID, int speed, int time) {
+        byte[] udpFrame = new byte[13];
         udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, 0);
         for (int i = 0; i < udpFrame.length; i++) {
             System.out.println("udpFrame ["+i+"]: " + udpFrame[i]);
@@ -176,6 +182,7 @@ public class GetCommandFromTxt {
     /*FIXME TEST if it's working */
     /************************* TRANSLATE STOP / GO COMMAND INTO CAN MESSAGE *************************/
     public byte[] translateLok(int lokID, int go) {
+        byte[] udpFrame = new byte[13];
         if (go == 0) {
             udpFrame = ConstructCANFrame.stopTrain();
         } else {
@@ -187,6 +194,7 @@ public class GetCommandFromTxt {
 
     /************************* ADD RIGHT CAN FRAME *************************/
     public byte[] translateSignal(int signalID, int signal) {
+        byte[] udpFrame = new byte[13];
         if (signal == 0) {
             testQueue.add(translateByteInStr(ConstructCANFrame.setLightSignalRedOff()));
             commandQueue.add(ConstructCANFrame.setLightSignalRedOff());
@@ -239,7 +247,25 @@ public class GetCommandFromTxt {
         Iterator it = testQueue.iterator();
         while (it.hasNext()) {
             String s = (String) it.next();
-            System.out.println(s);
+            System.out.println("tstQ: " + s);
+        }
+    }
+
+    public void showCommandQueue () {
+        Iterator it = commandQueue.iterator();
+        while (it.hasNext()) {
+            String s = translateByteInStr((byte[])it.next());
+            System.out.println("cmdQ: " + s);
+        }
+    }
+
+    public void showDurrQueue () {
+        Iterator it = durrQueue.iterator();
+        int i = 0;
+        while (it.hasNext()) {
+            String s = Integer.toString((int)it.next());
+            System.out.println("durr["+i+"]: " + s);
+            i++;
         }
     }
 }

@@ -61,16 +61,36 @@ public class SzenarioThree extends Thread {
             GetCommandFromTxt gcft = new GetCommandFromTxt(cmdQueue);
             gcft.processFile();
             gcft.showTestQueue();
+            gcft.showCommandQueue();
+            gcft.showDurrQueue();
             cmdQueue = gcft.getCommandQueue();
             durrQueue = gcft.getDurrQueue();
             Timer t = new Timer();
-            byte[] element = new byte[13];
+            byte[] element = null;
 
             Iterator durrIterator = durrQueue.iterator();
             int durrSecond = 0;
             Iterator cmdIterator = cmdQueue.iterator();
             int s = 0;
 
+            while (cmdIterator.hasNext()) {
+                byte[] queueElement = new byte[13];
+                queueElement = (byte[])cmdIterator.next();
+                //element = queueElement;
+                for (int i = 0; i < queueElement.length; i++) {
+                    System.out.print("["+i+"]: " + queueElement[i] + " ");
+                }
+                System.out.println("\n");
+                DatagramPacket packet = new DatagramPacket(queueElement, queueElement.length, ia, attribute.getSendingPort());
+
+                try {
+                    ds.send(packet);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                cmdIterator.remove();
+            }
+            /*
             while (durrIterator.hasNext()) {
                 durrSecond = (int) durrIterator.next();
                 System.out.println("durrSecond: " + durrSecond);
@@ -85,9 +105,10 @@ public class SzenarioThree extends Thread {
 
                 } else {
                     if(cmdIterator.hasNext()) {
+
                         element = (byte[]) cmdIterator.next();
                         for (int i = 0; i < element.length; i++) {
-                            System.out.print("0["+i+"]: " + element[i] + " ");
+                            System.out.print("["+i+"]: " + element[i] + " ");
                         }
                         DatagramPacket packet = new DatagramPacket(element, element.length, ia, attribute.getSendingPort());
 
@@ -101,7 +122,7 @@ public class SzenarioThree extends Thread {
                 }
 
             }
-
+        */
             //cmdQueue = gcft.getCommandQueue();
 
             if (debug == false) {
