@@ -58,7 +58,7 @@ public class SzenarioThree extends Thread {
     public void run () {
         try {
             //System.out.println("SAY HELLO");
-            GetCommandFromTxt gcft = new GetCommandFromTxt(cmdQueue);
+            GetCommandFromTxt gcft = new GetCommandFromTxt();
             gcft.processFile();
             gcft.showTestQueue();
             gcft.showCommandQueue();

@@ -4,23 +4,25 @@ import specht.General.Attribute;
 import specht.General.ConstructCANFrame;
 
 import java.io.*;
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
 
 
 public class GetCommandFromTxt {
 
-    Queue<byte[]> commandQueue = null;
+    Queue<byte[]> commandQueue = new LinkedList<>();
     Queue<String> testQueue = new LinkedList();
     Queue<Integer> durrQueue = new LinkedList();
 
     boolean debug = false;
 
-    byte[] udpFrame = null;
-
+    //byte[] udpFrame = null;
+/*
     public GetCommandFromTxt(Queue<byte[]> cmdQueue) throws IOException {
         this.commandQueue = cmdQueue;
     }
-
+*/
     public void processFile() throws IOException {
         String fileName = Attribute.cmdFilePath;
         File file = new File(fileName);
@@ -44,7 +46,7 @@ public class GetCommandFromTxt {
 
             }
             //System.out.println(line);
-            udpFrame = new byte[13];
+            //udpFrame = new byte[13];
             processCommandLine(tmp,lineCount);
             lineCount++;
         }
@@ -159,10 +161,12 @@ public class GetCommandFromTxt {
             //testQueue.add(translateByteInStr(ConstructCANFrame.setSwitchRWRedOff(id)));
             //commandQueue.add(ConstructCANFrame.setSwitchRWRedOff(id));
             udpFrame = ConstructCANFrame.setSwitchRWGreenOn(id);
+            System.out.println(translateByteInStr(udpFrame));
 
         } else {
             //testQueue.add(translateByteInStr(ConstructCANFrame.setSwitchRWGreenOff(id)));
             //commandQueue.add(ConstructCANFrame.setSwitchRWGreenOff(id));
+            System.out.println(translateByteInStr(udpFrame));
             udpFrame = ConstructCANFrame.setSwitchRWRedOn(id);
         }
         return udpFrame;
