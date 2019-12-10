@@ -15,7 +15,7 @@ public class GetCommandFromTxt {
 
     boolean debug = false;
 
-    byte[] udpFrame = new byte[13];
+    byte[] udpFrame = null;
 
     public GetCommandFromTxt(Queue<byte[]> cmdQueue) throws IOException {
         this.commandQueue = cmdQueue;
@@ -44,6 +44,7 @@ public class GetCommandFromTxt {
 
             }
             //System.out.println(line);
+            udpFrame = new byte[13];
             processCommandLine(tmp,lineCount);
             lineCount++;
         }
