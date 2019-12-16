@@ -93,14 +93,14 @@ public class GetCommandFromTxt {
 
             if (command.trim().equalsIgnoreCase("rechts")) {
                 position = 0;
-                commandQueue.add(translateSwitchRight(id,position));
+                commandQueue.add(translateSwitch(id,position));
                 durrQueue.add(durr);
-                testQueue.add(translateByteInStr(translateSwitchRight(id, position)));
+                testQueue.add(translateByteInStr(translateSwitch(id, position)));
             } else if (command.trim().equalsIgnoreCase("links")) {
                 position = 1;
-                commandQueue.add(translateSwitchLeft(id, position));
+                commandQueue.add(translateSwitch(id, position));
                 durrQueue.add(durr);
-                testQueue.add(translateByteInStr(translateSwitchLeft(id, position)));
+                testQueue.add(translateByteInStr(translateSwitch(id, position)));
             }
         }
 
@@ -153,11 +153,11 @@ public class GetCommandFromTxt {
     }
     /*FIXME: test switch Position, and add ID FOR communicating with the right switch! */
     /************************* ADD RIGHT CAN FRAME AND *************************/
-    public byte[] translateSwitchRight (int id, int switchPosition) {
+    public byte[] translateSwitch (int id, int switchPosition) {
         byte[] udpFrame = new byte[13];
         //switch right
         if (switchPosition == 0) {
-            udpFrame = ConstructCANFrame.setSwitchRWRedOff(id);
+            udpFrame = ConstructCANFrame.setSwitchRWGreenOn(id);
             System.out.println(translateByteInStr(udpFrame));
 
         } else {
@@ -166,22 +166,7 @@ public class GetCommandFromTxt {
         }
         return udpFrame;
     }
-
-    public byte[] translateSwitchLeft (int id, int switchPosition) {
-        byte[] udpFrame = new byte[13];
-        //switch right
-        if (switchPosition == 0) {
-            udpFrame = ConstructCANFrame.setSwitchRWGreenOff(id);
-            System.out.println(translateByteInStr(udpFrame));
-
-        } else {
-            udpFrame = ConstructCANFrame.setSwitchRWGreenOn(id);
-            System.out.println(translateByteInStr(udpFrame));
-        }
-        return udpFrame;
-    }
-
-
+    
     /*FIXME how to add durration to BYTE[] for QUEUE!!!! */
     /************************* ADD RIGHT CAN FRAME *************************/
     public byte[] translateLok(int lokID, int speed, int time) {
