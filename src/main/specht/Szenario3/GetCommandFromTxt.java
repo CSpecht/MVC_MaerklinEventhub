@@ -110,7 +110,7 @@ public class GetCommandFromTxt {
 
             if (isInteger(command.trim())) {
                 speed = Integer.parseInt(command);
-                commandQueue.add(translateLok(id, go));
+                commandQueue.add(translateLok(id, speed, 0));
                 durrQueue.add(durr);
                 testQueue.add(translateByteInStr(translateLok(id,go)));
 
@@ -166,12 +166,12 @@ public class GetCommandFromTxt {
         }
         return udpFrame;
     }
-    
+
     /*FIXME how to add durration to BYTE[] for QUEUE!!!! */
     /************************* ADD RIGHT CAN FRAME *************************/
     public byte[] translateLok(int lokID, int speed, int time) {
         byte[] udpFrame = new byte[13];
-        udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, 0);
+        udpFrame = ConstructCANFrame.setSpeed(Attribute.getCargoId(), speed);
         for (int i = 0; i < udpFrame.length; i++) {
             System.out.println("udpFrame ["+i+"]: " + udpFrame[i]);
         }
@@ -195,14 +195,14 @@ public class GetCommandFromTxt {
     public byte[] translateSignal(int signalID, int signal) {
         byte[] udpFrame = new byte[13];
         if (signal == 0) {
-            testQueue.add(translateByteInStr(ConstructCANFrame.setLightSignalRedOff()));
-            commandQueue.add(ConstructCANFrame.setLightSignalRedOff());
-            udpFrame = ConstructCANFrame.setLightSignalGreenOn();
+            //testQueue.add(translateByteInStr(ConstructCANFrame.setLightSignalRedOff()));
+            //commandQueue.add(ConstructCANFrame.setLightSignalRedOff());
+            udpFrame = ConstructCANFrame.setLightSignalRedOn();
         }
         else {
-            testQueue.add(translateByteInStr(ConstructCANFrame.setLightSignalGreenOff()));
-            commandQueue.add(ConstructCANFrame.setLightSignalGreenOff());
-            udpFrame = ConstructCANFrame.setLightSignalRedOn();
+            //testQueue.add(translateByteInStr(ConstructCANFrame.setLightSignalGreenOff()));
+            //commandQueue.add(ConstructCANFrame.setLightSignalGreenOff());
+            udpFrame = ConstructCANFrame.setLightSignalGreenOn();
         }
 
         return udpFrame;

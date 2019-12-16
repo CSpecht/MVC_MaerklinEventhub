@@ -1239,7 +1239,7 @@ public class ConstructCANFrame extends Thread{
                 udpFrame[5+i] = (byte)56;
             }
             if (i == 3) {
-                udpFrame[5+i] = (byte)0;
+                udpFrame[5+i] = (byte)15;
             }
             if (i == 4) {
                 udpFrame[5+i] = (byte)0;
@@ -1305,7 +1305,7 @@ public class ConstructCANFrame extends Thread{
                 udpFrame[5+i] = (byte)56;
             }
             if (i == 3) {
-                udpFrame[5+i] = (byte)0;
+                udpFrame[5+i] = (byte)15;
             }
             if (i == 4) {
                 udpFrame[5+i] = (byte)1;
