@@ -93,9 +93,7 @@ public class GetCommandFromTxt {
 
             if (command.trim().equalsIgnoreCase("rechts")) {
                 position = 0;
-                commandElement cmds = new commandElement();
-                cmds.setCommands(translateSwitchRight(id, position));
-                commandQueue.add(cmds.getCommands());
+                commandQueue.add(translateSwitchRight(id,position));
                 durrQueue.add(durr);
                 testQueue.add(translateByteInStr(translateSwitchRight(id, position)));
             } else if (command.trim().equalsIgnoreCase("links")) {
