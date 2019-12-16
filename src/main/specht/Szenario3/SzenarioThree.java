@@ -6,12 +6,11 @@ import java.io.IOException;
 import java.net.*;
 import java.util.*;
 
-public class SzenarioThree extends Thread {
+public class SzenarioThree {
     boolean debug = true;
     DatagramSocket ds, dr;
     InetAddress ia, ib;
-    Queue<byte[]> cmdQueue = new LinkedList();
-    Queue<Integer> durrQueue = new LinkedList();
+
     private Attribute attribute = null;
 
     public SzenarioThree () {
@@ -63,25 +62,30 @@ public class SzenarioThree extends Thread {
             gcft.showTestQueue();
             gcft.showCommandQueue();
             gcft.showDurrQueue();
+            Queue<byte[]> cmdQueue = new LinkedList();
+            Queue<Integer> durrQueue = new LinkedList();
+            Queue<String> testQueue = new LinkedList();
+            testQueue = gcft.getTestQueue();
             cmdQueue = gcft.getCommandQueue();
             durrQueue = gcft.getDurrQueue();
             Timer t = new Timer();
-            byte[] element = null;
+
 
             Iterator durrIterator = durrQueue.iterator();
             int durrSecond = 0;
             Iterator cmdIterator = cmdQueue.iterator();
             int s = 0;
+            Iterator testIterator = testQueue.iterator();
+            byte[] element = null;
 
             while (cmdIterator.hasNext()) {
-                byte[] queueElement = new byte[13];
-                queueElement = (byte[])cmdIterator.next();
-                //element = queueElement;
-                for (int i = 0; i < queueElement.length; i++) {
-                    System.out.print("["+i+"]: " + queueElement[i] + " ");
+
+                element = (byte[]) cmdIterator.next();
+                for (int i = 0; i < element.length; i++) {
+                    System.out.print("["+i+"]: " + element[i] + " ");
                 }
-                System.out.println("\n");
-                DatagramPacket packet = new DatagramPacket(queueElement, queueElement.length, ia, attribute.getSendingPort());
+                System.out.println("");
+                DatagramPacket packet = new DatagramPacket(element, element.length, ia, attribute.getSendingPort());
 
                 try {
                     ds.send(packet);
@@ -140,5 +144,16 @@ public class SzenarioThree extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public String translateByteInStr (byte[] array) {
+        String s = "";
+        for (int i = 0; i < array.length ; i++) {
+            if (i%2 == 0) {
+                s+="  " + (String.valueOf(array[i])) + "  ";
+            } else {
+                s += (String.valueOf(array[i]));
+            }
+        }
+        return s;
     }
 }

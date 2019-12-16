@@ -8,7 +8,7 @@ package specht.General;
 
 public class ConstructCANFrame extends Thread{
 
-    private static byte[] udpFrame= new byte[13];
+
     private static byte[] header = new byte[5];
     //uid 0x4006 cargo
     //uid 0x4007 dampf
@@ -31,6 +31,7 @@ public class ConstructCANFrame extends Thread{
      * Constructor
      */
     public ConstructCANFrame() {
+        byte[] udpFrame= new byte[13];
         udpFrame[0] = (byte) prio; //(cargoId >> 24);
         udpFrame[1] = (byte) command;
         udpFrame[2] = (byte) 15; // >> 8;//(uid >> 8);
@@ -43,6 +44,7 @@ public class ConstructCANFrame extends Thread{
      * Constructor
      */
     public ConstructCANFrame(int dataLength) {
+        byte[] udpFrame= new byte[13];
         udpFrame[0] = (byte) (uid >> 24);
         udpFrame[1] = (byte) uid;
         udpFrame[2] = (byte) 15; // >> 8;//(uid >> 8);
@@ -65,6 +67,7 @@ public class ConstructCANFrame extends Thread{
      * send stop to all
      */
     public static byte[] stopTrain() {
+        byte[] udpFrame= new byte[13];
         dlc = 5;
         data = new char[dlc];
         udpFrame[0] = (byte) prio ;
@@ -93,7 +96,7 @@ public class ConstructCANFrame extends Thread{
      * send stop command to the train id
      */
     public static byte[] stop(int id)   {
-
+        byte[] udpFrame= new byte[13];
         for (int i = 0; i < data.length; i++) {
             udpFrame[5+i] = (byte)data[i];
 
@@ -125,6 +128,7 @@ public class ConstructCANFrame extends Thread{
     }
 
     public static byte[] emergencyStop(int id) {
+        byte[] udpFrame= new byte[13];
         dlc = 5;
         data = new char[dlc];
         udpFrame[0] = (byte) prio ;
@@ -157,6 +161,7 @@ public class ConstructCANFrame extends Thread{
      * send horn on at train id
      */
     public static byte[] hornOn(int id) {
+        byte[] udpFrame= new byte[13];
         dlc = 6;
         data = new char[dlc];
         udpFrame[0] = (byte) prio ;
@@ -199,6 +204,7 @@ public class ConstructCANFrame extends Thread{
      * send horn off to a train ID
      */
     public static byte[] hornOff(int id) {
+        byte[] udpFrame= new byte[13];
         dlc = 6;
         data = new char[dlc];
         udpFrame[0] = (byte) prio ;
@@ -240,6 +246,7 @@ public class ConstructCANFrame extends Thread{
      * Send Light On to a train Id
      */
     public static byte[] lightOn(int id) {
+        byte[] udpFrame= new byte[13];
         dlc = 6;
         data = new char[dlc];
         udpFrame[0] = (byte) prio ;
@@ -281,6 +288,7 @@ public class ConstructCANFrame extends Thread{
      * Send Light off to a TrainID
      */
     public static byte[] lightOff(int id) {
+        byte[] udpFrame= new byte[13];
         dlc = 6;
         data = new char[dlc];
         udpFrame[0] = (byte) prio ;
@@ -320,6 +328,7 @@ public class ConstructCANFrame extends Thread{
      * Send go to All
      */
     public static byte[] go() {
+        byte[] udpFrame= new byte[13];
         dlc = 5;
         data = new char[dlc];
         udpFrame[0] = (byte) prio ;
@@ -348,6 +357,7 @@ public class ConstructCANFrame extends Thread{
      * Give a go for the provided train ID
      */
     public static byte[] go(int id) {
+        byte[] udpFrame= new byte[13];
         for (int i = 0; i < data.length; i++) {
             udpFrame[5+i] = (byte)data[i];
             if (i == 2) {
@@ -371,7 +381,7 @@ public class ConstructCANFrame extends Thread{
      * DLC HAS TO BE 6 to SET THE SPEED Otherwise you can't set the SPEED, defined by Maerklin
      */
     public static byte[] setSpeed (int locID,int speed) {
-
+        byte[] udpFrame= new byte[13];
         //dlc = 6 mandatory to set the speed!
         dlc = 6;
         data = new char[dlc];
@@ -426,7 +436,7 @@ public class ConstructCANFrame extends Thread{
      * DLC HAS TO BE 4 to get THE SPEED Otherwise you can't set the SPEED, defined by Maerklin
      */
     public static byte[] getSpeed(int locID) {
-
+        byte[] udpFrame= new byte[13];
         //dlc = 4 mandatory to get the speed!
         dlc = 4;
         data = new char[dlc];
@@ -463,6 +473,7 @@ public class ConstructCANFrame extends Thread{
     }
 
     public static byte[] resourceStart() {
+        byte[] udpFrame= new byte[13];
         dlc = 7;
         data = new char[8];
         udpFrame[0] = (byte) prio ;
@@ -500,6 +511,7 @@ public class ConstructCANFrame extends Thread{
         return udpFrame;
     }
     public static byte[] resourceStop() {
+        byte[] udpFrame= new byte[13];
         dlc = 6;
         data = new char[8];
         udpFrame[0] = (byte) prio ;
@@ -536,6 +548,7 @@ public class ConstructCANFrame extends Thread{
 
     //SEND THIS COMMAND RESPOND WITH ALL RESSOURCES BECUASE OF THE IDX
     public static byte[] getWater(int locID) {
+        byte[] udpFrame= new byte[13];
         dlc = 7;
         data = new char[8];
         udpFrame[0] = (byte) prio ;
@@ -581,6 +594,7 @@ public class ConstructCANFrame extends Thread{
     }
 
     public static byte[] getSand(int locID) {
+        byte[] udpFrame= new byte[13];
         dlc = 7;
         data = new char[dlc];
         udpFrame[0] = (byte) prio ;
@@ -615,6 +629,7 @@ public class ConstructCANFrame extends Thread{
     }
 
     public static byte[] getCoil(int locID) {
+        byte[] udpFrame= new byte[13];
         dlc = 7;
         data = new char[dlc];
         udpFrame[0] = (byte) prio ;
@@ -651,6 +666,7 @@ public class ConstructCANFrame extends Thread{
         return udpFrame;
     }
     public static byte[] getRound() {
+        byte[] udpFrame= new byte[13];
         //dlc = 5 mandatory to set the speed!
         dlc = 4;
         data = new char[dlc];
@@ -691,7 +707,7 @@ public class ConstructCANFrame extends Thread{
      * @return udpFrame
      */
     public static byte[] setWater (int locID) { //int oilAmount
-
+        byte[] udpFrame= new byte[13];
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -746,7 +762,7 @@ public class ConstructCANFrame extends Thread{
      * @return udpFrame
      */
     public static byte[] setCoil (int locID) { //int oilAmount
-
+        byte[] udpFrame= new byte[13];
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -801,7 +817,7 @@ public class ConstructCANFrame extends Thread{
      * @return udpFrame
      */
     public static byte[] setSand (int locID) { //int oilAmount
-
+        byte[] udpFrame= new byte[13];
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -863,6 +879,7 @@ public class ConstructCANFrame extends Thread{
      * 3 = direction switch
      */
     public static byte [] setDirection (int locID, int direction) {
+        byte[] udpFrame= new byte[13];
         //dlc = 6 mandatory to set the speed!
         dlc = 5;
         data = new char[dlc];
@@ -898,6 +915,7 @@ public class ConstructCANFrame extends Thread{
      * switch the position of the Switch
      */
     public static byte [] setSwitchRWSidingRedOn () {
+        byte[] udpFrame= new byte[13];
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -936,6 +954,7 @@ public class ConstructCANFrame extends Thread{
      */
 
     public static byte [] setSwitchRWSidingRedOff () {
+        byte[] udpFrame= new byte[13];
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -973,6 +992,7 @@ public class ConstructCANFrame extends Thread{
      */
 
     public static byte [] setSwitchRWSidingGreenOff () {
+        byte[] udpFrame= new byte[13];
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -1011,6 +1031,7 @@ public class ConstructCANFrame extends Thread{
      */
 
     public static byte [] setSwitchRWSidingGreenOn () {
+        byte[] udpFrame= new byte[13];
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -1048,6 +1069,7 @@ public class ConstructCANFrame extends Thread{
      * switch the position of the Switch
      */
     public static byte [] setSwitchRWRedOn (int id) {
+        byte[] udpFrame= new byte[13];
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -1086,6 +1108,7 @@ public class ConstructCANFrame extends Thread{
      */
 
     public static byte [] setSwitchRWRedOff (int id) {
+        byte[] udpFrame= new byte[13];
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -1123,6 +1146,7 @@ public class ConstructCANFrame extends Thread{
      */
 
     public static byte [] setSwitchRWGreenOff (int id) {
+        byte[] udpFrame= new byte[13];
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -1161,6 +1185,7 @@ public class ConstructCANFrame extends Thread{
      */
 
     public static byte [] setSwitchRWGreenOn (int id) {
+        byte[] udpFrame= new byte[13];
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -1194,6 +1219,7 @@ public class ConstructCANFrame extends Thread{
 
 
     public static byte [] setLightSignalRedOn () {
+        byte[] udpFrame= new byte[13];
         //dlc = 6 mandatory to set the Signal!
         dlc = 6;
         data = new char[dlc];
@@ -1226,6 +1252,7 @@ public class ConstructCANFrame extends Thread{
     }
 
     public static byte [] setLightSignalRedOff () {
+        byte[] udpFrame= new byte[13];
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -1258,6 +1285,7 @@ public class ConstructCANFrame extends Thread{
     }
 
     public static byte [] setLightSignalGreenOn () {
+        byte[] udpFrame= new byte[13];
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
@@ -1290,6 +1318,7 @@ public class ConstructCANFrame extends Thread{
     }
 
     public static byte [] setLightSignalGreenOff () {
+        byte[] udpFrame= new byte[13];
         //dlc = 6 mandatory to set the speed!
         dlc = 8;
         data = new char[dlc];
