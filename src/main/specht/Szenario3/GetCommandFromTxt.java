@@ -1,5 +1,6 @@
 package specht.Szenario3;
 
+import org.w3c.dom.Attr;
 import specht.General.Attribute;
 import specht.General.ConstructCANFrame;
 
@@ -107,7 +108,11 @@ public class GetCommandFromTxt {
         else if (component.trim().equalsIgnoreCase("lok")) {
             int speed = 0;
             int go = 0;
-
+            if(id == 0) {
+                id = Attribute.getCargoId();
+            } else {
+                id = Attribute.getSmlsteamId();
+            }
             if (isInteger(command.trim())) {
                 speed = Integer.parseInt(command);
                 commandQueue.add(translateLok(id, speed, 0));
@@ -171,7 +176,7 @@ public class GetCommandFromTxt {
     /************************* ADD RIGHT CAN FRAME *************************/
     public byte[] translateLok(int lokID, int speed, int time) {
         byte[] udpFrame = new byte[13];
-        udpFrame = ConstructCANFrame.setSpeed(Attribute.getCargoId(), speed);
+        udpFrame = ConstructCANFrame.setSpeed(lokID, speed);
         for (int i = 0; i < udpFrame.length; i++) {
             System.out.println("udpFrame ["+i+"]: " + udpFrame[i]);
         }
@@ -183,9 +188,9 @@ public class GetCommandFromTxt {
     public byte[] translateLok(int lokID, int go) {
         byte[] udpFrame = new byte[13];
         if (go == 0) {
-            udpFrame = ConstructCANFrame.stopTrain();
+            udpFrame = ConstructCANFrame.stop(lokID);
         } else {
-            udpFrame = ConstructCANFrame.go();
+            udpFrame = ConstructCANFrame.go(lokID);
         }
 
         return udpFrame;
