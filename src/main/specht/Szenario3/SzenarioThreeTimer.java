@@ -9,6 +9,8 @@ import java.net.InetAddress;
 import java.util.Iterator;
 import java.util.TimerTask;
 
+import static java.lang.Thread.sleep;
+
 
 public class SzenarioThreeTimer extends TimerTask {
     int actualSecond, duration;
@@ -32,11 +34,17 @@ public class SzenarioThreeTimer extends TimerTask {
     public void run() {
         actualSecond++;
 
-        System.out.println("durati: " + duration);
-        System.out.println("actual: " + actualSecond);
+        //System.out.println("durati: " + duration);
+        //System.out.println("actual: " + actualSecond);
 
         if (actualSecond <= duration) {
-            if (actualSecond == 1 && cmdIterator.hasNext()) {
+            try {
+                System.out.println("actual: " + actualSecond);
+                sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            /*if (actualSecond == 1 && cmdIterator.hasNext()) {
                 element = (byte[]) cmdIterator.next();
             }
             //if (element == new BigInteger("")) {
@@ -52,6 +60,7 @@ public class SzenarioThreeTimer extends TimerTask {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            */
             //  }
         } else {
             this.cancel();

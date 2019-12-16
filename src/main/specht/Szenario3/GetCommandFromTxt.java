@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import static java.lang.Thread.sleep;
+
 
 public class GetCommandFromTxt {
 
@@ -47,13 +49,17 @@ public class GetCommandFromTxt {
             }
             //System.out.println(line);
             //udpFrame = new byte[13];
-            processCommandLine(tmp,lineCount);
+            try {
+                processCommandLine(tmp,lineCount);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             lineCount++;
         }
 
     }
 
-    public void processCommandLine(String[] commandArgs, int lineNumber) {
+    public void processCommandLine(String[] commandArgs, int lineNumber) throws InterruptedException {
         String s = "";
         int id = 0;
         int durr = 0;
@@ -104,6 +110,11 @@ public class GetCommandFromTxt {
                 testQueue.add(translateByteInStr(translateSwitch(id, position)));
             }
         }
+        else if (component.trim().equalsIgnoreCase("sleep")) {
+            int position = 0;
+            durrQueue.add(durr);
+
+        }
 
         else if (component.trim().equalsIgnoreCase("lok")) {
             int speed = 0;
@@ -147,9 +158,7 @@ public class GetCommandFromTxt {
                 durrQueue.add(durr);
                 testQueue.add(translateByteInStr(translateSignal(id,signal)));
             }
-        }
-
-        else if (command.trim().equalsIgnoreCase("clear")) {
+        } else if (command.trim().equalsIgnoreCase("clear")) {
 
         } else {
             System.out.println("Invalid Command! on Line: " + lineNumber);

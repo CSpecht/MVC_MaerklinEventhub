@@ -103,7 +103,7 @@ public class SzenarioThree {
                     s = durrSecond;
                     t.schedule(new SzenarioThreeTimer(s, cmdIterator, getDatagramSocketSending(),ia),0,1000);
                     completeTask(s);
-                    cmdIterator.remove();
+                    //cmdIterator.remove();
                     System.out.println("finish");
 
                     //t.cancel();
