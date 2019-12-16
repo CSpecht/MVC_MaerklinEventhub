@@ -77,7 +77,7 @@ public class SzenarioThree {
             int s = 0;
             Iterator testIterator = testQueue.iterator();
             byte[] element = null;
-
+/*
             while (cmdIterator.hasNext()) {
 
                 element = (byte[]) cmdIterator.next();
@@ -94,7 +94,8 @@ public class SzenarioThree {
                 }
                 cmdIterator.remove();
             }
-            /*
+            */
+
             while (durrIterator.hasNext()) {
                 durrSecond = (int) durrIterator.next();
                 System.out.println("durrSecond: " + durrSecond);
@@ -126,7 +127,7 @@ public class SzenarioThree {
                 }
 
             }
-        */
+
             //cmdQueue = gcft.getCommandQueue();
 
             if (debug == false) {
