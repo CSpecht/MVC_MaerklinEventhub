@@ -44,7 +44,8 @@ public class GetCommandFromTxt {
 
 
         while ((line = br.readLine()) != null) {
-            for (int j = 0; j < 4; j++) {
+            //4
+            for (int j = 0; j < line.length(); j++) {
                 tmp = line.split("\\s+");
             }
             //System.out.println(line);
@@ -70,30 +71,47 @@ public class GetCommandFromTxt {
 
         if ((commandArgs == null) || (commandArgs.length == 0) || (commandArgs[0] == null)) {
             System.out.println("Null command!");
-            new Exception();
-        } else {
+            throw new IllegalArgumentException("not a command on Line:" + lineNumber);
+
+        } else if (commandArgs.length > 3) {
+            System.out.println("command is too long");
+            throw new IllegalArgumentException("command is too long on Line:" + lineNumber);
+        } else if (commandArgs.length == 2) { //Only Command with Length of 2 --> Sleep
+            if (isInteger(commandArgs[1].trim()) && commandArgs[0].equals("sleep")) {
+                component = commandArgs[0];
+                durr = Integer.parseInt(commandArgs[1]);
+            } else {
+                System.out.println("Not a recognized command!");
+                throw new IllegalArgumentException("not a recognized command on Line: " + lineNumber);
+            }
+        } else if (commandArgs.length == 3) { //Normal Command with {Component}{Indicator}{Command}
+            durr = 0;
             component = commandArgs[0];
             identicator = commandArgs[1];
             command = commandArgs[2];
-        }
 
-        if (commandArgs.length == 3) {
-            durr = 0;
+            if (isInteger(identicator.trim())) {
+                id = Integer.parseInt(identicator.trim());
+            } else {
+                System.out.println("identicator isn't a number");
+                throw new IllegalArgumentException("identicator isn't a number on line: " + lineNumber);
+            }
+
+
         }
-        else {
+        /*else if (commandArgs.length == 4) { //Command with Duration {Component}{Indicator}{Command}{durration}
             if (isInteger(commandArgs[3].trim())) {
+                component = commandArgs[0];
+                identicator = commandArgs[1];
+                command = commandArgs[2];
                 durr = Integer.parseInt(commandArgs[3]);
             }
             else {
                 System.out.println("No Integer for Duration");
             }
         }
+*/
 
-        if (isInteger(identicator.trim())) {
-            id = Integer.parseInt(identicator.trim());
-        } else {
-            System.out.println("identicator isn't a number");
-        }
 
         if (component.trim().equalsIgnoreCase("weiche")) {
             int position = 0;
@@ -144,7 +162,6 @@ public class GetCommandFromTxt {
             }
         }
 
-
         else if (component.trim().equalsIgnoreCase("signal")) {
             int signal = 0;
             if (command.trim().equalsIgnoreCase("rot")) {
@@ -158,10 +175,29 @@ public class GetCommandFromTxt {
                 durrQueue.add(durr);
                 testQueue.add(translateByteInStr(translateSignal(id,signal)));
             }
-        } else if (command.trim().equalsIgnoreCase("clear")) {
-
+        } else if (component.trim().equalsIgnoreCase("fahrtrichtung")) {
+            int direction = 0;
+            int lokID = 0;
+            if (id == 0) {
+                lokID = Attribute.getCargoId();
+            } else {
+                lokID = Attribute.getSmlsteamId();
+            }
+            if (command.trim().equalsIgnoreCase("vorwaerts")) {
+                direction = 1;
+                System.out.println("direction: " + direction);
+                commandQueue.add(translateDirection(lokID, direction));
+                durrQueue.add(durr);
+            } else if (command.trim().equalsIgnoreCase("rueckwaerts")) {
+                direction = 2;
+                System.out.println("direction: " + direction);
+                System.out.println("id: " + lokID);
+                commandQueue.add(translateDirection(lokID, direction));
+                durrQueue.add(durr);
+            }
         } else {
             System.out.println("Invalid Command! on Line: " + lineNumber);
+            throw new IllegalArgumentException("Invalid Command on line: " + lineNumber);
         }
 
     }
@@ -219,6 +255,12 @@ public class GetCommandFromTxt {
             udpFrame = ConstructCANFrame.setLightSignalGreenOn();
         }
 
+        return udpFrame;
+    }
+
+    public byte[] translateDirection(int LokID, int direction) {
+        byte[] udpFrame = new byte[13];
+        udpFrame = ConstructCANFrame.setDirection(LokID, direction);
         return udpFrame;
     }
 
