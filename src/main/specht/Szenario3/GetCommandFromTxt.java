@@ -159,6 +159,14 @@ public class GetCommandFromTxt {
                 //s = component.trim().toUpperCase()+ " " + id + " " +  command.trim().toUpperCase();
                 durrQueue.add(durr);
                 testQueue.add(translateByteInStr(translateLok(id,go)));
+            } else if (command.trim().equalsIgnoreCase("hupeOn")) {
+                System.out.println("HELLO HORN!");
+                commandQueue.add(translateHorn(id));
+                durrQueue.add(durr);
+            } else if (command.trim().equalsIgnoreCase("hupeOff")) {
+                System.out.println("HELLO HORN!");
+                commandQueue.add(translateHornOff(id));
+                durrQueue.add(durr);
             }
         }
 
@@ -263,6 +271,19 @@ public class GetCommandFromTxt {
         udpFrame = ConstructCANFrame.setDirection(LokID, direction);
         return udpFrame;
     }
+
+    public byte[] translateHorn (int LokID) {
+        byte[] udpFrame = new byte[13];
+        udpFrame = ConstructCANFrame.hornOn(LokID);
+        return udpFrame;
+    }
+
+    public byte[] translateHornOff (int LokID) {
+        byte[] udpFrame = new byte[13];
+        udpFrame = ConstructCANFrame.hornOff(LokID);
+        return udpFrame;
+    }
+
 
     public boolean isInteger (String str) {
         try{
