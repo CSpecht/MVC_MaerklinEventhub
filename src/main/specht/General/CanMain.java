@@ -24,6 +24,9 @@ public class CanMain {
 		System.out.println("receiving Port " + attribute.getReceivePort());
 		System.out.println("sending Port " + attribute.getSendingPort());
 
+		System.out.println("cargoID: " + attribute.getCargoId());
+		System.out.println("SteamID: " + attribute.getSteamId());
+		System.out.println("sml_steamID: " + attribute.getSmlsteamId());
 
 		getGameModeFromSQL();
 		switch (GAMEMODE) {

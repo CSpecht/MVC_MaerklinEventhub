@@ -43,6 +43,9 @@ public class GetPropertyValue {
             String dbName = prop.getProperty("dbName");
             String dbUser = prop.getProperty("dbUser");
             String dbPw = prop.getProperty("dbPw");
+            String cargoID = prop.getProperty("cargoId");
+            String steamID = prop.getProperty("steamId");
+            String sml_steamID = prop.getProperty("sml_steamId");
 
             switches.put("w01",prop.getProperty("w01"));
             switches.put("w02",prop.getProperty("w02"));
@@ -76,9 +79,14 @@ public class GetPropertyValue {
                 attribute.setDBPW(dbPw);
                 attribute.setSwitches(switches);
 
+                int cargoId = Integer.decode(cargoID);
+                int steamId = Integer.decode(steamID);
+                int sml_steamId = Integer.decode(sml_steamID);
 
-
-
+                attribute.setCargoId(cargoId);
+                attribute.setSteamId(steamId);
+                attribute.setSmlsteamId(sml_steamId);
+                
             }
 
             result = cs3Port + " " + pcPort + " " +  cs3IpAdresse + " " + pcIpAdresse ;

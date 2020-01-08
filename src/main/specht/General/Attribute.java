@@ -37,9 +37,13 @@ public class Attribute {
             .setSasKey("jiuer6fxPoEnrkrxzVwWVdRi1qw2+5A3rAoevEsiEVs=");
 
 
-    public static final int _CARGO_ID = 0x4006;
-    public static final int _STEAM_ID = 0x4007;
-    public static final int _SMLSTEAM_ID = 0x4008;
+
+
+    public static int _CARGO_ID; // = 0x4006;
+    public static int _STEAM_ID; // = 0x4007;
+    public static int _SMLSTEAM_ID;// = 0x4008;
+
+
 
     public static final int firstByteOfSteamID = ConstructCANFrame.getFirstByteOfId(_STEAM_ID);
     public static final int secondByteOfSteamID = ConstructCANFrame.getSecondByteOfId(_STEAM_ID);
@@ -203,6 +207,17 @@ public class Attribute {
         return _SMLSTEAM_ID;
     }
 
+    public static void setCargoId(int CargoId) {
+        _CARGO_ID = CargoId;
+    }
+
+    public static void setSteamId(int SteamId) {
+        _STEAM_ID = SteamId;
+    }
+
+    public static void setSmlsteamId(int SmlsteamId) {
+        _SMLSTEAM_ID = SmlsteamId;
+    }
     public static int getFirstByteOfSteamID() {
         return firstByteOfSteamID;
     }
