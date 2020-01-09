@@ -86,7 +86,7 @@ public class GetPropertyValue {
                 attribute.setCargoId(cargoId);
                 attribute.setSteamId(steamId);
                 attribute.setSmlsteamId(sml_steamId);
-                
+
             }
 
             result = cs3Port + " " + pcPort + " " +  cs3IpAdresse + " " + pcIpAdresse ;
