@@ -58,7 +58,8 @@ public class SzenarioThree {
         try {
             //System.out.println("SAY HELLO");
             GetCommandFromTxt gcft = new GetCommandFromTxt();
-            gcft.processFile();
+            //gcft.processFile();
+            gcft.getCommandFromSQLTable();
             gcft.showTestQueue();
             gcft.showCommandQueue();
             gcft.showDurrQueue();

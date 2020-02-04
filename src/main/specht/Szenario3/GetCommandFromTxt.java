@@ -1,15 +1,12 @@
 package specht.Szenario3;
 
-import org.w3c.dom.Attr;
 import specht.General.Attribute;
 import specht.General.ConstructCANFrame;
 
-import java.io.*;
+import java.sql.*;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
-
-import static java.lang.Thread.sleep;
 
 
 public class GetCommandFromTxt {
@@ -26,6 +23,55 @@ public class GetCommandFromTxt {
         this.commandQueue = cmdQueue;
     }
 */
+    public void getCommandFromSQLTable() {
+        //Connection con = getConnection();
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        Connection con = null;
+
+        try {
+            Attribute attribute = new Attribute();
+            con = DriverManager.getConnection(attribute.getDbUrl());
+            Statement stmt = con.createStatement();
+
+            String SQL = "select COMMAND from T_COMMANDS";
+            //String SQL = "SELECT dbo.get_train_speed(" + GameID + "," + Second +") as 'rs'";
+            System.out.println(SQL);
+            ResultSet rs = stmt.executeQuery(SQL);
+            String [] tmp = new String[4];
+            int lineCount = 0;
+            if (rs.next() == false && debug) {
+                System.out.println("NO COMMANDS FOUND");
+            } else {
+                do {
+                    String command = rs.getString("COMMAND");
+                    for (int j = 0; j < command.length(); j++) {
+                        tmp = command.split("\\s+");
+                    }
+                    try {
+                        processCommandLine(tmp,lineCount);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (debug) {
+                        System.out.println("COMMAND: " + rs.getString("COMMAND"));
+                    }
+                    lineCount++;
+                } while (rs.next());
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+/*
+//COMMENT THIS IN FOR HAVING ABILITY TO READ COMMANDS FROM TXT FILES
     public void processFile() throws IOException {
         String fileName = Attribute.cmdFilePath;
         File file = new File(fileName);
@@ -59,7 +105,7 @@ public class GetCommandFromTxt {
         }
 
     }
-
+*/
     public void processCommandLine(String[] commandArgs, int lineNumber) throws InterruptedException {
         String s = "";
         int id = 0;
