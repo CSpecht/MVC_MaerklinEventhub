@@ -406,4 +406,20 @@ public class GetCommandFromTxt {
             i++;
         }
     }
+
+    public void protocolToSql (int id, String part, String message ) {
+        Connection con = null;
+        Attribute attribute = new Attribute();
+        try {
+            con = DriverManager.getConnection(attribute.getDbUrl());
+            Statement stmt = con.createStatement();
+            String SQL = "INSERT INTO [dbo].[T_PROTOCOL] (PART_ID, PART, MESSAGE) VALUES ("+ id + ",'" + part + "','" + message +"')";
+            //String SQL = "SELECT dbo.get_train_speed(" + GameID + "," + Second +") as 'rs'";
+            System.out.println(SQL);
+            ResultSet rs = stmt.executeQuery(SQL);
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
