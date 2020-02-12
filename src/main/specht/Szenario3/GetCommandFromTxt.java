@@ -267,10 +267,12 @@ public class GetCommandFromTxt {
         if (switchPosition == 0) {
             udpFrame = ConstructCANFrame.setSwitchRWGreenOn(id);
             System.out.println(translateByteInStr(udpFrame));
+            protocolToSql(id,"Switch", "Rechts");
 
         } else {
             udpFrame = ConstructCANFrame.setSwitchRWRedOn(id);
             System.out.println(translateByteInStr(udpFrame));
+            protocolToSql(id,"Switch", "Links");
         }
         return udpFrame;
     }
@@ -280,6 +282,7 @@ public class GetCommandFromTxt {
     public byte[] translateLok(int lokID, int speed, int time) {
         byte[] udpFrame = new byte[13];
         udpFrame = ConstructCANFrame.setSpeed(lokID, speed);
+        protocolToSql(lokID,"Lok", "Speed: " + speed);
         for (int i = 0; i < udpFrame.length; i++) {
             System.out.println("udpFrame ["+i+"]: " + udpFrame[i]);
         }
@@ -292,8 +295,10 @@ public class GetCommandFromTxt {
         byte[] udpFrame = new byte[13];
         if (go == 0) {
             udpFrame = ConstructCANFrame.stop(lokID);
+            protocolToSql(lokID,"Lok", "stop");
         } else {
             udpFrame = ConstructCANFrame.go(lokID);
+            protocolToSql(lokID,"Lok", "go");
         }
 
         return udpFrame;
@@ -306,11 +311,13 @@ public class GetCommandFromTxt {
             //testQueue.add(translateByteInStr(ConstructCANFrame.setLightSignalRedOff()));
             //commandQueue.add(ConstructCANFrame.setLightSignalRedOff());
             udpFrame = ConstructCANFrame.setLightSignalRedOn();
+            protocolToSql(signalID,"Signal", "red");
         }
         else {
             //testQueue.add(translateByteInStr(ConstructCANFrame.setLightSignalGreenOff()));
             //commandQueue.add(ConstructCANFrame.setLightSignalGreenOff());
             udpFrame = ConstructCANFrame.setLightSignalGreenOn();
+            protocolToSql(signalID,"Signal", "green");
         }
 
         return udpFrame;
@@ -319,30 +326,35 @@ public class GetCommandFromTxt {
     public byte[] translateDirection(int LokID, int direction) {
         byte[] udpFrame = new byte[13];
         udpFrame = ConstructCANFrame.setDirection(LokID, direction);
+        protocolToSql(LokID,"Lok", "direction: " + direction);
         return udpFrame;
     }
 
     public byte[] translateHorn (int LokID) {
         byte[] udpFrame = new byte[13];
         udpFrame = ConstructCANFrame.hornOn(LokID);
+        protocolToSql(LokID,"Lok", "Horn On");
         return udpFrame;
     }
 
     public byte[] translateHornOff (int LokID) {
         byte[] udpFrame = new byte[13];
         udpFrame = ConstructCANFrame.hornOff(LokID);
+        protocolToSql(LokID,"Lok", "Horn Off");
         return udpFrame;
     }
 
     public byte[] translateLightOn (int LokID) {
         byte[] udpFrame = new byte[13];
         udpFrame = ConstructCANFrame.lightOn(LokID);
+        protocolToSql(LokID,"Lok", "Light On");
         return udpFrame;
     }
 
     public byte[] translateLightOff (int LokID) {
         byte[] udpFrame = new byte[13];
         udpFrame = ConstructCANFrame.lightOff(LokID);
+        protocolToSql(LokID,"Lok", "Light Off");
         return udpFrame;
     }
 

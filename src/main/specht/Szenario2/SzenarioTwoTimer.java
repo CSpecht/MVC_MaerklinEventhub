@@ -112,6 +112,7 @@ public class SzenarioTwoTimer extends TimerTask {
                 udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, getSpeed());
             }
             DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length,ia,attribute.getSendingPort());
+            protocolToSql(Attribute._SMLSTEAM_ID,"Lok", "Speed: " + getSpeed());
             try {
                 this.ds.send(sendPacket);
             } catch (IOException e) {
@@ -121,6 +122,7 @@ public class SzenarioTwoTimer extends TimerTask {
             byte[] udpFrame;
             udpFrame = ConstructCANFrame.setSpeed(Attribute._SMLSTEAM_ID, 0);
             DatagramPacket sendPacket = new DatagramPacket(udpFrame, udpFrame.length,ia,attribute.getSendingPort());
+            protocolToSql(Attribute._SMLSTEAM_ID,"Lok", "Speed: " + 0);
             try {
                 this.ds.send(sendPacket);
             } catch (IOException e) {
@@ -241,6 +243,22 @@ public class SzenarioTwoTimer extends TimerTask {
             e.printStackTrace();
         }
 
+    }
+
+    public void protocolToSql (int id, String part, String message ) {
+        Connection con = null;
+        Attribute attribute = new Attribute();
+        try {
+            con = DriverManager.getConnection(attribute.getDbUrl());
+            Statement stmt = con.createStatement();
+            String SQL = "INSERT INTO [dbo].[T_PROTOCOL] (PART_ID, PART, MESSAGE) VALUES ("+ id + ",'" + part + "','" + message +"')";
+            //String SQL = "SELECT dbo.get_train_speed(" + GameID + "," + Second +") as 'rs'";
+            System.out.println(SQL);
+            ResultSet rs = stmt.executeQuery(SQL);
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }
