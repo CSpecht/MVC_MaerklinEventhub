@@ -14,7 +14,7 @@ public class GetCommandFromTxt {
     Queue<byte[]> commandQueue = new LinkedList<>();
     Queue<String> testQueue = new LinkedList();
     Queue<Integer> durrQueue = new LinkedList();
-
+    Queue<Integer> idQueue = new LinkedList<>();
     boolean debug = false;
 
     //byte[] udpFrame = null;
@@ -38,7 +38,7 @@ public class GetCommandFromTxt {
             con = DriverManager.getConnection(attribute.getDbUrl());
             Statement stmt = con.createStatement();
 
-            String SQL = "select COMMAND from T_COMMANDS";
+            String SQL = "select ID, COMMAND from T_COMMANDS WHERE EXECUTED_YN = 0";
             //String SQL = "SELECT dbo.get_train_speed(" + GameID + "," + Second +") as 'rs'";
             System.out.println(SQL);
             ResultSet rs = stmt.executeQuery(SQL);
@@ -49,6 +49,8 @@ public class GetCommandFromTxt {
             } else {
                 do {
                     String command = rs.getString("COMMAND");
+                    idQueue.add(rs.getInt("ID"));
+
                     for (int j = 0; j < command.length(); j++) {
                         tmp = command.split("\\s+");
                     }
@@ -67,6 +69,7 @@ public class GetCommandFromTxt {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("NO COMMAND FOUND");
         }
     }
 
@@ -380,6 +383,8 @@ public class GetCommandFromTxt {
         return testQueue;
     }
 
+    public Queue<Integer> getIdQueue() { return idQueue; }
+
     public String translateByteInStr (byte[] array) {
         String s = "";
         for (int i = 0; i < array.length ; i++) {
@@ -427,8 +432,10 @@ public class GetCommandFromTxt {
             Statement stmt = con.createStatement();
             String SQL = "INSERT INTO [dbo].[T_PROTOCOL] (PART_ID, PART, MESSAGE) VALUES ("+ id + ",'" + part + "','" + message +"')";
             //String SQL = "SELECT dbo.get_train_speed(" + GameID + "," + Second +") as 'rs'";
-            System.out.println(SQL);
-            ResultSet rs = stmt.executeQuery(SQL);
+            stmt.executeUpdate(SQL);
+            if (debug)
+                System.out.println(SQL);
+
             con.close();
         } catch (SQLException e) {
             e.printStackTrace();

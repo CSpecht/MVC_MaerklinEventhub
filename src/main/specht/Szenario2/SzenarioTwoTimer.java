@@ -253,8 +253,10 @@ public class SzenarioTwoTimer extends TimerTask {
             Statement stmt = con.createStatement();
             String SQL = "INSERT INTO [dbo].[T_PROTOCOL] (PART_ID, PART, MESSAGE) VALUES ("+ id + ",'" + part + "','" + message +"')";
             //String SQL = "SELECT dbo.get_train_speed(" + GameID + "," + Second +") as 'rs'";
-            System.out.println(SQL);
-            ResultSet rs = stmt.executeQuery(SQL);
+            stmt.executeUpdate(SQL);
+            if (debug) {
+                System.out.println(SQL);
+            }
             con.close();
         } catch (SQLException e) {
             e.printStackTrace();

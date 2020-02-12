@@ -4,6 +4,10 @@ import specht.General.Attribute;
 
 import java.io.IOException;
 import java.net.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 
 public class SzenarioThree {
@@ -66,9 +70,11 @@ public class SzenarioThree {
             Queue<byte[]> cmdQueue = new LinkedList();
             Queue<Integer> durrQueue = new LinkedList();
             Queue<String> testQueue = new LinkedList();
+            Queue<Integer> idQueue = new LinkedList<>();
             testQueue = gcft.getTestQueue();
             cmdQueue = gcft.getCommandQueue();
             durrQueue = gcft.getDurrQueue();
+            idQueue = gcft.getIdQueue();
             Timer t = new Timer();
 
 
@@ -78,6 +84,9 @@ public class SzenarioThree {
             int s = 0;
             Iterator testIterator = testQueue.iterator();
             byte[] element = null;
+
+            Iterator idIterator = idQueue.iterator();
+            int id;
 /*
             while (cmdIterator.hasNext()) {
 
@@ -97,8 +106,9 @@ public class SzenarioThree {
             }
             */
 
-            while (durrIterator.hasNext()) {
+            while (durrIterator.hasNext() && idIterator.hasNext()) {
                 durrSecond = (int) durrIterator.next();
+                id = (int) idIterator.next();
                 System.out.println("durrSecond: " + durrSecond);
                 if (durrSecond != 0) {
                     s = durrSecond;
@@ -106,7 +116,7 @@ public class SzenarioThree {
                     completeTask(s);
                     //cmdIterator.remove();
                     System.out.println("finish");
-
+                    setExecutedInSql(id);
                     //t.cancel();
 
                 } else {
@@ -124,6 +134,8 @@ public class SzenarioThree {
                             e.printStackTrace();
                         }
                         cmdIterator.remove();
+                        setExecutedInSql(id);
+
                     }
                 }
 
@@ -157,5 +169,23 @@ public class SzenarioThree {
             }
         }
         return s;
+    }
+
+    private void setExecutedInSql (int id) {
+        Connection con = null;
+        Attribute attribute = new Attribute();
+        try {
+            con = DriverManager.getConnection(attribute.getDbUrl());
+            Statement stmt = con.createStatement();
+            String SQL = "UPDATE [dbo].[T_COMMANDS] SET EXECUTED_YN = 1 WHERE ID =" + id;
+            //String SQL = "SELECT dbo.get_train_speed(" + GameID + "," + Second +") as 'rs'";
+            stmt.executeUpdate(SQL);
+            if (debug) {
+                System.out.println(SQL);
+            }
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
